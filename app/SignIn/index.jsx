@@ -2,12 +2,14 @@ import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
-// import { EyeIcon } from "react-native-heroicons/outline";
+import { useNavigation } from "expo-router";
+import { EyeIcon } from "react-native-heroicons/outline";
 
 const FacebookIconVector = require("../../assets/icons/Facebook.png");
 
 const SignInScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.SignInScreen} className="bg-white h-full">
@@ -41,11 +43,11 @@ const SignInScreen = () => {
               onPress={() => setPasswordVisible(!passwordVisible)}
               style={styles.eyeIcon}
             >
-              {/* <EyeIcon
+              <EyeIcon
                 name={passwordVisible ? "visibility" : "visibility-off"}
                 size={20}
                 color="#888888"
-              /> */}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -66,14 +68,14 @@ const SignInScreen = () => {
           className="mt-[24] flex-row items-center space-x-4"
           style={styles.loginButtonFacebook}
         >
-          <Image source={FacebookIconVector} />
-          <Text style={styles.loginButtonFacebookText}>
+          <Image source={FacebookIconVector} className="mr-3"/>
+          <Text style={styles.loginButtonFacebookText} className="ml-1">
             Sign Up with Facebook
           </Text>
         </TouchableOpacity>
         <View className="flex-row justify-center items-center space-x-1 mt-[24]">
-          <Text style={styles.textSousSignIn}>Don't have an account?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignUpScreen")}>
+          <Text style={styles.textSousSignIn} className="mr-1">Don't have an account?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("SignUp/index")}>
             <Text style={styles.textForgotPassword}>Sign Up</Text>
           </TouchableOpacity>
         </View>

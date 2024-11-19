@@ -36,6 +36,12 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
+        name="SignUp/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="YourOrders/index"
         options={{
           headerShown: false,
