@@ -105,7 +105,7 @@ const SignUpScreen = () => {
             {isChecked && <CheckIcon name="check" size={15} color="white" />}
           </TouchableOpacity>
           <View className="flex-row space-x-1">
-            <Text style={styles.text}>Agree with</Text>
+            <Text style={styles.text} className='mr-1'>Agree with</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("SignIn/index")}
             >

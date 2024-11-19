@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
 import { View, Text } from "react-native";
 
-export default function NotFoundScreen() {
+export default function Index() {
   return (
     <View
       className="bg-red-500 h-full"
