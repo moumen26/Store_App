@@ -24,6 +24,12 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
+        name="YourCart/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="SignIn/index"
         options={{
           headerShown: false,

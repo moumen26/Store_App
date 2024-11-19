@@ -1,11 +1,12 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
-import { useNavigation } from "expo-router";
+import React, { useLayoutEffect } from "react";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
+import BackButton from "../../components/BackButton";
+import { Link, useNavigation } from "expo-router";
 
-const Home = require("../../assets/images/Home.png");
+const Cart = require("../../assets/images/Cart.png");
 
-const DiscoverScreen = () => {
+const YourCartScreen = () => {
   const navigation = useNavigation();
 
   return (
@@ -16,7 +17,7 @@ const DiscoverScreen = () => {
           className="flex items-center justify-center"
         >
           <View style={styles.Container}></View>
-          <Image style={styles.Image} source={Home} />
+          <Image style={styles.Image} source={Cart} />
           <TouchableOpacity
             onPress={() => navigation.navigate("SignIn/index")}
             className="mx-5"
@@ -27,31 +28,27 @@ const DiscoverScreen = () => {
         </View>
         <View className="mx-5 mt-[24] flex justify-center">
           <View className="flex h-[90] items-center justify-center">
-            <Text style={styles.title}>Discover the world</Text>
+            <Text style={styles.title}>Your Shopping</Text>
             <Text style={styles.title} className="text-[#26667E]">
-              of your Store
+              Cart
             </Text>
           </View>
           <View className="flex items-center justify-center h-[50]">
             <Text style={styles.description}>
-              Store is the world’s first all-in-one
+              Review your selected items before checkout
             </Text>
           </View>
-
           <View className="flex-row justify-between mx-5 mt-[40]">
-            <View style={styles.Vide}></View>
-            <View
-              className="flex-row justify-center items-center"
-              style={styles.threePoint}
-            >
-              <View className="w-[10] h-[10] rounded bg-[#26667E] mr-1"></View>
+            <BackButton />
+            <View className="flex-row space-x-2 items-center">
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
+              <View className="w-[10] h-[10] rounded bg-[#26667E] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
             </View>
 
             <TouchableOpacity
               style={styles.NextButton}
-              onPress={() => navigation.navigate("YourCart/index")}
+              onPress={() => navigation.navigate("SignIn/index")}
             >
               <ArrowRightIcon color="#fff" size={18} />
             </TouchableOpacity>
@@ -63,10 +60,6 @@ const DiscoverScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  Vide: {
-    width: 40,
-    height: 40,
-  },
   NextButton: {
     width: 40,
     height: 40,
@@ -126,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DiscoverScreen;
+export default YourCartScreen;
