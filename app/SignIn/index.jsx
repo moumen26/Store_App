@@ -57,10 +57,10 @@ const SignInScreen = () => {
         <TouchableOpacity className="mt-[24]" style={styles.loginButton}>
           <Text style={styles.loginButtonText}>Sign In</Text>
         </TouchableOpacity>
-        <View className="flex-row items-center justify-center space-x-3 mt-[24]">
-          <View style={styles.lineSignup}></View>
+        <View className="flex-row items-center justify-center space-x-4 mt-[24]">
+          <View style={styles.lineSignup} className="mr-1"></View>
           <Text style={styles.textSignUp}>Or Sign up with</Text>
-          <View style={styles.lineSignup}></View>
+          <View style={styles.lineSignup} className="ml-1"></View>
         </View>
         <TouchableOpacity
           className="mt-[24] flex-row items-center space-x-4"
@@ -71,7 +71,7 @@ const SignInScreen = () => {
             Sign Up with Facebook
           </Text>
         </TouchableOpacity>
-        <View className="flex-row justify-center items-center space-x-1 mt-[48]">
+        <View className="flex-row justify-center items-center space-x-1 mt-[24]">
           <Text style={styles.textSousSignIn}>Don't have an account?</Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignUpScreen")}>
             <Text style={styles.textForgotPassword}>Sign Up</Text>

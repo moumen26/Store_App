@@ -1,10 +1,12 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import { Link } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 
 const StepIntoImg = require("../../assets/images/StepInto.png");
 
 const StepIntoScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <View className="bg-white h-full">
       <View
@@ -27,16 +29,19 @@ const StepIntoScreen = () => {
             you need under one roof
           </Text>
         </View>
-        <View className="mt-[24]" style={styles.loginButton}>
-          <Link href={"/Discover"}>
-            <Text style={styles.loginButtonText}>Let’s get Started</Text>
-          </Link>
-        </View>
+        <TouchableOpacity
+          className="mt-[24]"
+          style={styles.loginButton}
+          onPress={() => navigation.navigate("Discover/index")}
+        >
+          <Text style={styles.loginButtonText}>Let’s get Started</Text>
+        </TouchableOpacity>
+
         <View className="flex-row justify-center items-center space-x-1 mt-[28]">
           <Text style={styles.text}>Already have an account?</Text>
-          <Link href={"/SignIn"}>
+          <TouchableOpacity onPress={() => navigation.navigate("SignIn/index")}>
             <Text style={styles.textForgotPassword}>Sign In</Text>
-          </Link>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

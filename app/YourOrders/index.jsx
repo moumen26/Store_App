@@ -1,12 +1,12 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "expo-router";
 
-const Cart = require("../../assets/images/Cart.png");
+const Track = require("../../assets/images/Track.png");
 
-const YourCartScreen = () => {
+const YourOrdersScreen = () => {
   const navigation = useNavigation();
 
   return (
@@ -17,38 +17,32 @@ const YourCartScreen = () => {
           className="flex items-center justify-center"
         >
           <View style={styles.Container}></View>
-          <Image style={styles.Image} source={Cart} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate("SignIn/index")}
-            className="mx-5"
-            style={styles.skipContainer}
-          >
-            <Text style={styles.skipText}>Skip</Text>
-          </TouchableOpacity>
+          <Image style={styles.Image} source={Track} />
         </View>
         <View className="mx-5 mt-[24] flex justify-center">
           <View className="flex h-[90] items-center justify-center">
-            <Text style={styles.title}>Your Shopping</Text>
+            <Text style={styles.title}>Stay in the know with</Text>
             <Text style={styles.title} className="text-[#26667E]">
-              Cart
+              Your Orders
             </Text>
           </View>
           <View className="flex items-center justify-center h-[50]">
             <Text style={styles.description}>
-              Review your selected items before checkout
+              Stay updated with the status of your orders and track their
+              progress with ease
             </Text>
           </View>
           <View className="flex-row justify-between mx-5 mt-[40]">
             <BackButton />
             <View className="flex-row space-x-2 items-center">
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
-              <View className="w-[10] h-[10] rounded bg-[#26667E] mr-1"></View>
-              <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
+              <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
+              <View className="w-[10] h-[10] rounded bg-[#26667E]"></View>
             </View>
 
             <TouchableOpacity
               style={styles.NextButton}
-              onPress={() => navigation.navigate("YourOrders/index")}
+              onPress={() => navigation.navigate("SignIn/index")}
             >
               <ArrowRightIcon color="#fff" size={18} />
             </TouchableOpacity>
@@ -95,17 +89,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     zIndex: 99,
   },
-  skipContainer: {
-    position: "absolute",
-    top: 60,
-    right: 0,
-    zIndex: 99,
-  },
-  skipText: {
-    fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-    color: "#26667E",
-  },
   title: {
     fontFamily: "Montserrat-Regular",
     fontSize: 30,
@@ -119,4 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default YourCartScreen;
+export default YourOrdersScreen;
