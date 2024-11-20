@@ -11,13 +11,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MagnifyingGlassIcon, BellIcon } from "react-native-heroicons/outline";
 import SpecialForYouCard from "../../components/SpecialForYouCard";
 import Store from "../../components/Store";
+import { useNavigation } from "expo-router";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 const SpecialForYouCardImg1 = require("../../assets/images/SpecialForYouBingo.jpg");
 const SpecialForYouCardImg2 = require("../../assets/images/SpecialForYouAigle.jpg");
 const SpecialForYouCardImg3 = require("../../assets/images/SpecialForYouAmir.jpg");
 
-const Home = () => {
+const home = () => {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView className="bg-white h-full">
       <View className="flex-row items-center mx-5 space-x-3">
@@ -38,6 +41,7 @@ const Home = () => {
       <TouchableOpacity
         className="flex-row items-center space-x-2 mx-5 mb-5"
         style={styles.searchClass}
+        onPress={() => navigation.navigate("Search/index")}
       >
         <View
           style={styles.searchButton}
@@ -123,4 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default home;

@@ -53,6 +53,12 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="Search/index"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }
