@@ -24,7 +24,11 @@ const SignInScreen = () => {
       <View className="mt-[36]">
         <View className="flex-col space-y-[6] mb-[16]">
           <Text style={styles.textlabel}>Email</Text>
-          <TextInput style={styles.textInput} placeholder="example@gmail.com" />
+          <TextInput
+            style={styles.textInput}
+            placeholder="example@gmail.com"
+            placeholderTextColor="#888888"
+          />
         </View>
         <View className="flex-col space-y-[6]">
           <Text style={styles.textlabel}>Password</Text>
@@ -35,6 +39,7 @@ const SignInScreen = () => {
             <TextInput
               style={styles.textInputPassword}
               placeholder="********"
+              placeholderTextColor="#888888"
               secureTextEntry={!passwordVisible}
               //   value={password}
               //   onChangeText={setPassword}

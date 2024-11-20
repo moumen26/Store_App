@@ -3,6 +3,7 @@ import React from "react";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SavedStoreItem from "../../components/SavedStoreItem";
+import { useNavigation } from "expo-router";
 
 const COLUMN_COUNT = 1;
 const DATA = [
@@ -73,6 +74,8 @@ const DATA = [
 ];
 
 const saved = () => {
+  const navigation = useNavigation();
+
   const renderItems = () => {
     const items = [];
 
@@ -81,7 +84,7 @@ const saved = () => {
         <SavedStoreItem
           key={item.id}
           StoreName={item.StoreName}
-          // onPress={}
+          onPress={() => navigation.navigate("MyWishList/index")}
         />
       ));
       items.push(

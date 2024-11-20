@@ -39,11 +39,16 @@ const SignUpScreen = () => {
           <TextInput
             style={styles.textInput}
             placeholder="Ex. Amine Faroukhi"
+            placeholderTextColor="#888888"
           />
         </View>
         <View className="flex-col space-y-[6] mb-[16]">
           <Text style={styles.textlabel}>Email</Text>
-          <TextInput style={styles.textInput} placeholder="example@gmail.com" />
+          <TextInput
+            style={styles.textInput}
+            placeholder="example@gmail.com"
+            placeholderTextColor="#888888"
+          />
         </View>
         <View className="flex-col space-y-[6] mb-[16]">
           <Text style={styles.textlabel}>Password</Text>
@@ -55,6 +60,8 @@ const SignUpScreen = () => {
               style={styles.textInputPassword}
               placeholder="********"
               secureTextEntry={!passwordVisible}
+              placeholderTextColor="#888888"
+
               //   value={password}
               //   onChangeText={setPassword}
             />
@@ -105,7 +112,9 @@ const SignUpScreen = () => {
             {isChecked && <CheckIcon name="check" size={15} color="white" />}
           </TouchableOpacity>
           <View className="flex-row space-x-1">
-            <Text style={styles.text} className='mr-1'>Agree with</Text>
+            <Text style={styles.text} className="mr-1">
+              Agree with
+            </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("SignIn/index")}
             >
@@ -117,13 +126,15 @@ const SignUpScreen = () => {
         <TouchableOpacity
           className="mt-[24]"
           style={styles.loginButton}
-          onPress={() => navigation.navigate("VerifyCodeScreen")}
+          onPress={() => navigation.navigate("VerifyCode/index")}
         >
           <Text style={styles.loginButtonText}>Sign Up</Text>
         </TouchableOpacity>
 
         <View className="flex-row justify-center items-center space-x-1 mt-[28]">
-          <Text style={styles.text} className="mr-1">Already have an account?</Text>
+          <Text style={styles.text} className="mr-1">
+            Already have an account?
+          </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignIn/index")}>
             <Text style={styles.textForgotPassword}>Sign In</Text>
           </TouchableOpacity>

@@ -30,6 +30,12 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
+        name="YourOrders/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="SignIn/index"
         options={{
           headerShown: false,
@@ -42,7 +48,7 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="YourOrders/index"
+        name="VerifyCode/index"
         options={{
           headerShown: false,
         }}
@@ -55,6 +61,24 @@ export default function RootLayout() {
       />
       <Stack.Screen
         name="Search/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="MyWishList/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Store/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Brand/index"
         options={{
           headerShown: false,
         }}

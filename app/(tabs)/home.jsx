@@ -69,7 +69,7 @@ const home = () => {
         </ScrollView>
       </View>
 
-      <View className="mx-5">
+      <View className="mx-5 mt-[10]">
         <Text style={styles.titleCategory}>Stores</Text>
         <Store />
       </View>

@@ -8,8 +8,11 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
+import { useNavigation } from "expo-router";
 
-const Store = ({ navigation }) => {
+const Store = () => {
+  const navigation = useNavigation();
+
   const [activeTab, setActiveTab] = useState("Alimentation");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -69,8 +72,6 @@ const Store = ({ navigation }) => {
             contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
             horizontal
             showsHorizontalScrollIndicator={false}
-            className="space-x-1"
-            style={styles.scrollViewHorizontal}
           >
             <TouchableOpacity
               style={[
@@ -157,7 +158,7 @@ const Store = ({ navigation }) => {
             >
               <StoreCard
                 title="Alimentation 1"
-                onPress={() => navigation.navigate("HomeAlimentationScreen")}
+                onPress={() => navigation.navigate("Store/index")}
               />
               <StoreCard
                 title="Alimentation 2"
