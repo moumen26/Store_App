@@ -13,7 +13,7 @@ export default function Index() {
       }}
     >
       <Link href={"/StepInto"}>
-        <Text>Go to Login </Text>
+        <Text>Go to Login</Text>
       </Link>
     </View>
   );
