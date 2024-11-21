@@ -1,15 +1,19 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import BackButton from "../../components/BackButton";
-import { CheckIcon } from "react-native-heroicons/outline";
 import FavoriteButton from "../../components/FavoriteButton";
 import ProductPer from "../../components/ProductPer";
 
 const LaveSol = require("../../assets/images/LaveSol.png");
 const BoxIcon = require("../../assets/icons/CartDark.png");
 
-const Product = () => {
+const ProductScreen = ({ onclose }) => {
   const [isCheckedUnit, setIsCheckedUnit] = useState(false);
 
   const toggleCheckboxUnit = () => {
@@ -22,16 +26,19 @@ const Product = () => {
     setIsCheckedBox((previousState) => !previousState);
   };
 
+  const handleApplyPress = () => {
+    onclose(); // Close modal on Apply button press
+  };
+
   return (
-    <SafeAreaView
-      style={styles.Container}
-      className="bg-white pt-5 relative h-full"
-    >
+    <Animated.View style={styles.modalView}>
       <View className="mb-[20] mx-5 flex-row justify-end">
-        {/* <BackButton /> */}
         <FavoriteButton />
       </View>
-      <View className="w-full mb-[20] items-center h-[35%]">
+      <View
+        style={styles.imageContainer}
+        className="w-full items-center h-[35%]"
+      >
         <Image style={styles.image} source={LaveSol} />
       </View>
       <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
@@ -54,12 +61,33 @@ const Product = () => {
           <Text style={styles.BoxText}>DA 1920.00</Text>
         </View>
       </View>
-      {/* <ProductPer /> */}
-    </SafeAreaView>
+      <ProductPer />
+      <View className="w-full absolute bottom-8 flex-row justify-center mt-[20]">
+        <TouchableOpacity style={styles.loginButton} onPress={handleApplyPress}>
+          <Text style={styles.loginButtonText}>Apply</Text>
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  loginButton: {
+    backgroundColor: "#26667E",
+    borderRadius: 10,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 340,
+  },
+  loginButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "Montserrat-Regular",
+  },
+  imageContainer: {
+    marginBottom: 30,
+  },
   container: {
     flex: 1,
     marginTop: 50,
@@ -111,6 +139,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 3,
   },
+  modalView: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 20,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    height: "80%",
+  },
 });
 
-export default Product;
+export default ProductScreen;

@@ -70,6 +70,7 @@ export default function RootLayout() {
         name="MyWishList/index"
         options={{
           headerShown: false,
+          presentation: "containedModal",
         }}
       />
       <Stack.Screen
@@ -82,24 +83,35 @@ export default function RootLayout() {
         name="Brand/index"
         options={{
           headerShown: false,
+          presentation: "containedModal",
         }}
       />
       <Stack.Screen
         name="AllProducts/index"
         options={{
           headerShown: false,
+          presentation: "containedModal",
         }}
       />
       <Stack.Screen
         name="PopularProducts/index"
         options={{
           headerShown: false,
+          presentation: "containedModal",
         }}
       />
       <Stack.Screen
         name="Product/index"
         options={{
           headerShown: false,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="MyCart/index"
+        options={{
+          headerShown: false,
+          presentation: "containedModal",
         }}
       />
     </Stack>

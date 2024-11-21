@@ -64,42 +64,20 @@ const ProductPer = ({
     });
   };
 
-  const dispatch = useDispatch();
-  const items = useSelector((state) => selectBasketItemsWithId(state, id));
-  console.log("ID:", id);
-  console.log(
-    "Basket state:",
-    useSelector((state) => state.basket)
-  );
-
-  const addItemToBasket = () => {
-    dispatch(
-      addToBasket({
-        id,
-        ProductName,
-        ProductBrand,
-        ProductQuantity,
-        ProductImage,
-      })
-    );
-  };
-
-  const removeItemFromBasket = () => {
-    if (!items.length) return;
-    dispatch(removeFromBasket({ id }));
-  };
-
   return (
     <View>
       <View>
-        <View className="flex-row items-center space-x-5 mx-5 mb-[40]">
+        <View
+          style={styles.boxUnit}
+          className="flex-row items-center space-x-5 mx-5 mb-[10]"
+        >
           <View
             className="flex-row items-center space-x-2"
-            style={
-              activeTab === "Unit" || activeTab === "Box"
-                ? styles.activeStyle
-                : null
-            }
+            style={[
+              styles.boxUnitText,
+              (activeTab === "Unit" || activeTab === "Box") &&
+                styles.activeStyle,
+            ]}
           >
             <TouchableOpacity
               style={[
@@ -114,7 +92,10 @@ const ProductPer = ({
             </TouchableOpacity>
             <Text style={styles.PriceText}>Per unit</Text>
           </View>
-          <View className="flex-row items-center space-x-2">
+          <View
+            style={styles.boxUnitText}
+            className="flex-row items-center space-x-2"
+          >
             <TouchableOpacity
               style={[
                 styles.checkbox,
@@ -136,23 +117,19 @@ const ProductPer = ({
           ]}
         >
           {activeTab === "Unit" && (
-            <View className="w-fit flex-col items-center">
-              <View className="w-[130] flex-row items-center justify-between">
-                <TouchableOpacity
-                  style={styles.touchMinus}
-                  disabled={!items.length}
-                  onPress={removeItemFromBesket}
-                >
+            <View
+              style={styles.boxUnitContainer}
+              className="w-fit items-center"
+            >
+              <View style={styles.minusPlus}>
+                <TouchableOpacity style={styles.touchMinus}>
                   <MinusIcon
                     size={20}
-                    color={items.length > 0 ? "#000" : "#888888"}
+                    // color={items.length > 0 ? "#000" : "#888888"}
                   />
                 </TouchableOpacity>
-                <Text style={styles.textQuantity}>{items.length}</Text>
-                <TouchableOpacity
-                  style={styles.touchPlus}
-                  onPress={addItemToBesket}
-                >
+                <Text style={styles.textQuantity}>{/* items.length */}0</Text>
+                <TouchableOpacity style={styles.touchPlus}>
                   <PlusIcon size={20} color="#fff" />
                 </TouchableOpacity>
               </View>
@@ -162,23 +139,19 @@ const ProductPer = ({
             </View>
           )}
           {activeTab === "Box" && (
-            <View className="w-fit flex-col items-center">
-              <View className="w-[130] flex-row items-center justify-between">
-                <TouchableOpacity
-                  style={styles.touchMinus}
-                  disabled={!items.length}
-                  onPress={removeItemFromBesket}
-                >
+            <View
+              style={styles.boxUnitContainer}
+              className="w-fit flex-col items-center"
+            >
+              <View style={styles.minusPlus}>
+                <TouchableOpacity style={styles.touchMinus}>
                   <MinusIcon
                     size={20}
-                    color={items.length > 0 ? "#000" : "#888888"}
+                    // color={items.length > 0 ? "#000" : "#888888"}
                   />
                 </TouchableOpacity>
-                <Text style={styles.textQuantity}>{items.length}</Text>
-                <TouchableOpacity
-                  style={styles.touchPlus}
-                  onPress={addItemToBesket}
-                >
+                <Text style={styles.textQuantity}>1</Text>
+                <TouchableOpacity style={styles.touchPlus}>
                   <PlusIcon size={20} color="#fff" />
                 </TouchableOpacity>
               </View>
@@ -194,6 +167,23 @@ const ProductPer = ({
 };
 
 const styles = StyleSheet.create({
+  boxUnit: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  boxUnitText: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+  },
+  boxUnitContainer: {
+    marginTop: 20,
+  },
+  minusPlus: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
+  },
   textSubTotal: {
     color: "#3E9CB9",
     fontSize: 14,

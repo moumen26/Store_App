@@ -9,7 +9,8 @@ const PopularProductCard = ({ imgUrl, ProductName, onPress }) => {
   return (
     <TouchableOpacity
       style={styles.productItem}
-      onPress={() => navigation.navigate(onPress)}
+      onPress={onPress}
+      // onPress={() => navigation.navigate(onPress)}
     >
       <View
         style={styles.imageClass}

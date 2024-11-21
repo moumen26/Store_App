@@ -33,7 +33,7 @@ const AllProductsScreen = () => {
           ProductBrand="Cevital"
           ProductPrice="120.00"
           imgUrl={Elio}
-        //   onPress={() => navigation.navigate("ProductScreen")}
+          //   onPress={() => navigation.navigate("ProductScreen")}
         />
       ));
       items.push(
@@ -46,7 +46,7 @@ const AllProductsScreen = () => {
     return items;
   };
   return (
-    <SafeAreaView className="bg-white pt-5 pb-2 relative h-full">
+    <SafeAreaView className="bg-white relative h-full">
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <BackButton />
         <Text className="text-center" style={styles.titleScreen}>

@@ -1,5 +1,12 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import React, { useCallback } from "react";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  Modal,
+} from "react-native";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
@@ -10,10 +17,10 @@ import {
   ShoppingCartIcon,
 } from "react-native-heroicons/outline";
 
-import SpecialForYouCard from "../../components/SpecialForYouCard";
 import PopularProductCard from "../../components/PopularProductCard";
 import BrandsCard from "../../components/BrandsCard";
 import SliderStore from "../../components/SliderStore";
+import ProductScreen from "../screens/ProductScreen";
 
 const StoreIconVector = require("../../assets/icons/Store.png");
 
@@ -27,12 +34,13 @@ const MamaCoucousImg = require("../../assets/images/MamaCoucous.png");
 
 const Store = () => {
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <SafeAreaView className="bg-white  h-full">
+    <SafeAreaView className="bg-white h-full">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="bg-white pb-5 relative h-full"
+        className="relative h-full"
       >
         <View className="flex-row items-center mx-5 mb-[10] space-x-3">
           <View className="flex-1 gap-1">
@@ -50,7 +58,7 @@ const Store = () => {
             </View>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("MyCartScreen")}
+            onPress={() => navigation.navigate("MyCart/index")}
             style={styles.notification}
           >
             <ShoppingCartIcon size={18} color="#26667E" />
@@ -101,9 +109,15 @@ const Store = () => {
             <PopularProductCard
               imgUrl={MamaCoucousImg}
               ProductName="Couscous Moyen    Mama - 1kg"
-              onPress={"Product/index"}
+              onPress={() => setModalVisible(true)}
+
+              // onPress={"Product/index"}
             />
-            <PopularProductCard imgUrl={ElioImg} ProductName="Elio - 1L" />
+            <PopularProductCard
+              imgUrl={ElioImg}
+              ProductName="Elio - 1L"
+              onPress={() => setModalVisible(true)}
+            />
           </View>
         </View>
         <View className="mx-5 mb-3">
@@ -127,6 +141,19 @@ const Store = () => {
           </View>
         </View>
       </ScrollView>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.modalView}>
+          {/* Pass the correct function as a prop */}
+          <ProductScreen onclose={() => setModalVisible(false)} />
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -186,6 +213,12 @@ const styles = StyleSheet.create({
     borderColor: "#26667E",
     borderRadius: 30,
     alignItems: "center",
+  },
+  modalView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(201, 228, 238, 0.4)",
   },
 });
 
