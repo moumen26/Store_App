@@ -164,7 +164,7 @@ const MyCartScreen = () => {
       >
         <TouchableOpacity
           style={styles.loginButton}
-          // onPress={() => navigation.navigate("EReceiptScreen")}
+          onPress={() => navigation.navigate("E-Receipt/index")}
         >
           <Text style={styles.loginButtonText}>Place Order</Text>
         </TouchableOpacity>

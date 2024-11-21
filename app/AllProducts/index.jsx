@@ -52,7 +52,7 @@ const AllProductsScreen = () => {
         <Text className="text-center" style={styles.titleScreen}>
           All Product
         </Text>
-        <View style={styles.Vide} onPress={navigation.goBack}></View>
+        <View style={styles.Vide}></View>
       </View>
       <ScrollView
         className="mx-5"

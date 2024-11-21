@@ -114,6 +114,20 @@ export default function RootLayout() {
           presentation: "containedModal",
         }}
       />
+      <Stack.Screen
+        name="E-Receipt/index"
+        options={{
+          headerShown: false,
+          presentation: "containedModal",
+        }}
+      />
+      <Stack.Screen
+        name="ShippingAddress/index"
+        options={{
+          headerShown: false,
+          presentation: "containedModal",
+        }}
+      />
     </Stack>
   );
 }

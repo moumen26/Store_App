@@ -58,7 +58,7 @@ const OrderType = ({ navigation }) => {
   };
 
   const handleChangePress = () => {
-    navigation.navigate("ShippingAddressScreen");
+    navigation.navigate("ShippingAddress/index");
   };
 
   return (
@@ -116,9 +116,11 @@ const OrderType = ({ navigation }) => {
             <View className="pt-[12]">
               <Text style={styles.titleCategory}>Delivery Address</Text>
               <View className="flex-row justify-between items-center mt-[12]">
-                <View className="flex-row space-x-1">
-                  <Image source={LocationIcon} />
-                  <View className="flex-col space-y-0.5">
+                <View style={styles.gapRow}>
+                  <View style={styles.iconClass}>
+                    <Image source={LocationIcon} />
+                  </View>
+                  <View style={styles.gapColumn}>
                     <Text style={styles.textPlace}>
                       {/* {AddressTitle} */}Home
                     </Text>
@@ -148,9 +150,11 @@ const OrderType = ({ navigation }) => {
             <View className="pt-[12]">
               <Text style={styles.titleCategory}>Pickup Address</Text>
               <View className="flex-row items-center mt-[12]">
-                <View className="flex-row space-x-1">
-                  <BuildingStorefrontIcon color="#26667E" size={20} />
-                  <View className="flex-col space-y-0.5">
+                <View style={styles.gapRow}>
+                  <View style={styles.iconClass}>
+                    <BuildingStorefrontIcon color="#26667E" size={20} />
+                  </View>
+                  <View style={styles.gapColumn}>
                     <Text style={styles.textPlace}>
                       {/* {AddressTitle} */}The Daily Grind Hub
                     </Text>
@@ -177,6 +181,15 @@ const OrderType = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  iconClass: { width: 20 },
+  gapRow: {
+    flexDirection: "row",
+    gap: 4,
+  },
+  gapColumn: {
+    flexDirection: "column",
+    gap: 4,
+  },
   changeButton: {
     width: 65,
     height: 24,
