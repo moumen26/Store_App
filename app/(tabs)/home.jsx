@@ -1,16 +1,11 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MagnifyingGlassIcon, BellIcon } from "react-native-heroicons/outline";
 import Store from "../../components/Store";
 import { useNavigation } from "expo-router";
 import SliderHome from "../../components/SliderHome";
+import { TextInput } from "react-native";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 
@@ -34,19 +29,25 @@ const home = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
+      <View
         className="flex-row items-center space-x-2 mx-5 mb-5"
         style={styles.searchClass}
-        onPress={() => navigation.navigate("Search/index")}
       >
         <View
           style={styles.searchButton}
           className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
         >
           <MagnifyingGlassIcon color="#888888" size={20} />
-          <Text style={styles.search}>Search by Store..</Text>
+          <TextInput
+            style={styles.searchButto}
+            placeholder="Search by Store.."
+            placeholderTextColor="#888888"
+            // value={searchQuery}
+            // onChangeText={setSearchQuery}
+          />
+          {/* <Text style={styles.search}>Search by Store..</Text> */}
         </View>
-      </TouchableOpacity>
+      </View>
 
       <View className="mx-5" style={styles.specialForYou}>
         <Text style={styles.titleCategory}>#SpecialForYou</Text>

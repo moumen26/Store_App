@@ -67,6 +67,7 @@ const Store = () => {
         <TouchableOpacity
           className="flex-row items-center space-x-2 mx-5 mb-[10]"
           style={styles.searchClass}
+          onPress={() => navigation.navigate("Search/index")}
         >
           <View
             style={styles.searchButton}

@@ -1,20 +1,26 @@
 import { Link } from "expo-router";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 export default function Index() {
   return (
     <View
-      className="bg-red-500 h-full"
+      className="bg-[#26667E] h-full"
       style={{
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        padding: 20,
       }}
     >
       <Link href={"/StepInto"}>
-        <Text>Go to Login</Text>
+        <Text style={styles.text}>Store</Text>
       </Link>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    color: "#fff",
+    fontSize: 32,
+  },
+});

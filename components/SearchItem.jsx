@@ -9,7 +9,7 @@ const SearchItem = ({ placeholder }) => {
       <MagnifyingGlassIcon size={20} color="#26667E" />
       <TextInput
         style={styles.searchBarItem}
-        placeholder="Search your store.."
+        placeholder={placeholder}
         placeholderTextColor="#888888"
         // value={searchQuery}
         // onChangeText={setSearchQuery}

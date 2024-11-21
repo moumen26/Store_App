@@ -100,7 +100,7 @@ const SearchScreen = () => {
           ProductBrand={item.ProductBrand}
           ProductPrice={item.ProductPrice}
           imgUrl={item.imgUrl}
-        //   onPress={() => navigation.navigate("ProductScreen")}
+          //   onPress={() => navigation.navigate("ProductScreen")}
         />
       ));
       items.push(
@@ -117,7 +117,7 @@ const SearchScreen = () => {
     <SafeAreaView className="bg-white pt-5 relative h-full">
       <View className="flex-row items-center mx-5 justify-between mb-[20]">
         <BackButton />
-        <SearchItem placeholder="Search by Store.." />
+        <SearchItem placeholder="Search by Product.." />
       </View>
       <View className="mx-5 h-[250] mb-[20]">
         <Text className="mb-[12]" style={styles.titleCategory}>
