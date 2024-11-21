@@ -1,5 +1,5 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import React, { useCallback, useLayoutEffect } from "react";
+import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
@@ -13,12 +13,9 @@ import {
 import SpecialForYouCard from "../../components/SpecialForYouCard";
 import PopularProductCard from "../../components/PopularProductCard";
 import BrandsCard from "../../components/BrandsCard";
+import SliderStore from "../../components/SliderStore";
 
 const StoreIconVector = require("../../assets/icons/Store.png");
-
-const SpecialForYouCardImg1 = require("../../assets/images/SpecialForYouCevital.jpg");
-const SpecialForYouCardImg2 = require("../../assets/images/SpecialForYouMama.jpg");
-const SpecialForYouCardImg3 = require("../../assets/images/SpecialForYouLesieur.jpg");
 
 const BrandCevitalImg = require("../../assets/images/Cevital.jpg");
 const BrandLesieurImg = require("../../assets/images/Lesieur.png");
@@ -29,6 +26,8 @@ const ElioImg = require("../../assets/images/Elio.png");
 const MamaCoucousImg = require("../../assets/images/MamaCoucous.png");
 
 const Store = () => {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView className="bg-white  h-full">
       <ScrollView
@@ -71,19 +70,7 @@ const Store = () => {
         </TouchableOpacity>
         <View className="mx-5 mb-[20]">
           <Text style={styles.titleCategory}>#SpecialForYou</Text>
-          <ScrollView
-            contentContainerStyle={{
-              flexDirection: "row",
-              gap: 6,
-              paddingTop: 10,
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            <SpecialForYouCard imgUrl={SpecialForYouCardImg1} />
-            <SpecialForYouCard imgUrl={SpecialForYouCardImg2} />
-            <SpecialForYouCard imgUrl={SpecialForYouCardImg3} />
-          </ScrollView>
+          <SliderStore />
         </View>
         <View className="mx-5 mb-[20]">
           <Text style={styles.titleCategory}>Brands</Text>
@@ -103,7 +90,7 @@ const Store = () => {
             <Text style={styles.titleCategory}>Popular Products</Text>
             <TouchableOpacity>
               <Text
-                onPress={() => navigation.navigate("PopularProductScreen")}
+                onPress={() => navigation.navigate("PopularProducts/index")}
                 style={styles.seeAll}
               >
                 See All
@@ -114,6 +101,7 @@ const Store = () => {
             <PopularProductCard
               imgUrl={MamaCoucousImg}
               ProductName="Couscous Moyen    Mama - 1kg"
+              onPress={"Product/index"}
             />
             <PopularProductCard imgUrl={ElioImg} ProductName="Elio - 1L" />
           </View>
@@ -123,7 +111,7 @@ const Store = () => {
             <Text style={styles.titleCategory}>All Products</Text>
             <TouchableOpacity>
               <Text
-                onPress={() => navigation.navigate("AllProductsScreen")}
+                onPress={() => navigation.navigate("AllProducts/index")}
                 style={styles.seeAll}
               >
                 See All

@@ -1,11 +1,16 @@
 import { Image, TouchableOpacity, Text, View } from "react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
+import { useNavigation } from "expo-router";
 
+const PopularProductCard = ({ imgUrl, ProductName, onPress }) => {
+  const navigation = useNavigation();
 
-const PopularProductCard = ({ imgUrl, ProductName }) => {
   return (
-    <TouchableOpacity style={styles.productItem}>
+    <TouchableOpacity
+      style={styles.productItem}
+      onPress={() => navigation.navigate(onPress)}
+    >
       <View
         style={styles.imageClass}
         className="flex-row items-center justify-center"

@@ -8,6 +8,7 @@ export default function RootLayout() {
     "Montserrat-Medium": require("../assets/fonts/Montserrat-Medium.ttf"),
     "Montserrat-Bold": require("../assets/fonts/Montserrat-Bold.ttf"),
   });
+
   return (
     <Stack>
       <Stack.Screen name="index" />
@@ -79,6 +80,24 @@ export default function RootLayout() {
       />
       <Stack.Screen
         name="Brand/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="AllProducts/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PopularProducts/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Product/index"
         options={{
           headerShown: false,
         }}

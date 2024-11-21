@@ -4,19 +4,15 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MagnifyingGlassIcon, BellIcon } from "react-native-heroicons/outline";
-import SpecialForYouCard from "../../components/SpecialForYouCard";
 import Store from "../../components/Store";
 import { useNavigation } from "expo-router";
+import SliderHome from "../../components/SliderHome";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
-const SpecialForYouCardImg1 = require("../../assets/images/SpecialForYouBingo.jpg");
-const SpecialForYouCardImg2 = require("../../assets/images/SpecialForYouAigle.jpg");
-const SpecialForYouCardImg3 = require("../../assets/images/SpecialForYouAmir.jpg");
 
 const home = () => {
   const navigation = useNavigation();
@@ -54,19 +50,7 @@ const home = () => {
 
       <View className="mx-5" style={styles.specialForYou}>
         <Text style={styles.titleCategory}>#SpecialForYou</Text>
-        <ScrollView
-          contentContainerStyle={{
-            flexDirection: "row",
-            gap: 6,
-            paddingTop: 10,
-          }}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >
-          <SpecialForYouCard imgUrl={SpecialForYouCardImg1} />
-          <SpecialForYouCard imgUrl={SpecialForYouCardImg2} />
-          <SpecialForYouCard imgUrl={SpecialForYouCardImg3} />
-        </ScrollView>
+        <SliderHome />
       </View>
 
       <View className="mx-5 mt-[10]">
