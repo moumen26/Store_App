@@ -17,30 +17,32 @@ import {
   UserIcon,
 } from "react-native-heroicons/outline";
 import { useNavigation } from "expo-router";
+import { useLogout } from "../hooks/useLogout";
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const settings = () => {
   const navigation = useNavigation();
-
+  const { logout } = useLogout();
+  const { user } = useAuthContext();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentSetting, setCurrentSetting] = useState({});
   const [currentValue, setCurrentValue] = useState("");
   const [newValue, setNewValue] = useState("");
 
-  const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
-    useState(false);
+  const [deleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false);
 
-  const [settings, setSettings] = useState([
+  const [settings, setSettings] = useState(() => [
     {
       id: "name",
       icon: <UserIcon color="#26667E" size={18} />,
       label: "Name",
-      value: "Ex. Faroukhi Amine",
+      value: `${user.info.firstName} ${user.info.lastName}`,
     },
     {
       id: "email",
       icon: <EnvelopeIcon color="#26667E" size={18} />,
       label: "Email",
-      value: "example@gmail.com",
+      value: user.info.email,
     },
     {
       id: "password",
@@ -52,7 +54,7 @@ const settings = () => {
       id: "phone",
       icon: <PhoneIcon color="#26667E" size={18} />,
       label: "Phone Number",
-      value: "+213 791 46 78 48",
+      value: user.info.phoneNumber,
     },
     {
       id: "delete",
@@ -63,10 +65,7 @@ const settings = () => {
   ]);
 
   const handleLogOut = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "SignIn/index" }],
-    });
+    logout();
   };
 
   const openModal = (setting) => {
@@ -95,10 +94,10 @@ const settings = () => {
   const confirmDeleteAccount = () => {
     // Implement logic to delete account here
     // For demonstration, let's reset to sign-in screen
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "SignInScreen" }],
-    });
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: "SignInScreen" }],
+    // });
   };
 
   return (

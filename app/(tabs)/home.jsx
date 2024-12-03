@@ -1,16 +1,167 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MagnifyingGlassIcon, BellIcon } from "react-native-heroicons/outline";
 import Store from "../../components/Store";
-import { useNavigation } from "expo-router";
 import SliderHome from "../../components/SliderHome";
 import { TextInput } from "react-native";
+import { useAuthContext } from '../hooks/useAuthContext';
+import { API_URL } from "@env";
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 const LocationIconVector = require("../../assets/icons/Location.png");
+// Axios instance for base URL configuration
+const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
 const home = () => {
-  const navigation = useNavigation();
+  const { user } = useAuthContext();  
+  
+  //--------------------------------------------APIs--------------------------------------------
+  // Function to fetch public publicities data
+  const fetchPublicPublicitiesData = async () => {
+    try {
+      const response = await api.get(`/Publicity/fetchAllPublicPublicities`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+  
+      // Check if the response is valid
+      if (response.status !== 200) {
+        const errorData = await response.data;
+        if (errorData.error.statusCode == 404) {
+          return []; // Return an empty array for 404 errors
+        } else {
+          throw new Error("Error receiving public publicities data");
+        }
+      }
+  
+      // Return the data from the response
+      return await response.data;
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const { 
+      data: PublicPublicitiesData,
+      error: PublicPublicitiesDataError,
+      isLoading: PublicPublicitiesDataLoading,
+      refetch: PublicPublicitiesDataRefetch
+  } = useQuery({
+      queryKey: ['PublicPublicitiesData', user?.token],  // Ensure token is part of the query key
+      queryFn: fetchPublicPublicitiesData,  // Pass token to the fetch function
+      enabled: !!user?.token,  // Only run the query if user is authenticated
+      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+  });
+  // Function to fetch stores data
+  const fetchStoresData = async () => {
+    try {
+      const response = await api.get(`/MyStores/${user?.info?.id}`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+  
+      // Check if the response is valid
+      if (response.status !== 200) {
+        const errorData = await response.data;
+        if (errorData.error.statusCode == 404) {
+          return []; // Return an empty array for 404 errors
+        } else {
+          throw new Error("Error receiving stores data");
+        }
+      }
+  
+      // Return the data from the response
+      return await response.data;
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const { 
+      data: StoresData,
+      error: StoresDataError, 
+      isLoading: StoresDataLoading, 
+      refetch: StoresDataRefetch
+  } = useQuery({
+      queryKey: ['StoresData', user?.token],  // Ensure token is part of the query key
+      queryFn: fetchStoresData,  // Pass token to the fetch function
+      enabled: !!user?.token,  // Only run the query if user is authenticated
+      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+  });
+  // Function to fetch stores data
+  const fetchCategoriesData = async () => {
+    try {
+      const response = await api.get(`/Category`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+
+      // Check if the response is valid
+      if (response.status !== 200) {
+        const errorData = await response.data;
+        if (errorData.error.statusCode == 404) {
+          return []; // Return an empty array for 404 errors
+        } else {
+          throw new Error("Error receiving categories data");
+        }
+      }
+
+      // Return the data from the response
+      return await response.data;
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const { 
+      data: CategoriesData,
+      error: CategoriesDataError, 
+      isLoading: CategoriesDataLoading, 
+      refetch: CategoriesDataRefetch
+  } = useQuery({
+      queryKey: ['CategoriesData', user?.token],  // Ensure token is part of the query key
+      queryFn: fetchCategoriesData,  // Pass token to the fetch function
+      enabled: !!user?.token,  // Only run the query if user is authenticated
+      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+  });
+  //--------------------------------------------RENDERING--------------------------------------------
+  if(PublicPublicitiesDataLoading || StoresDataLoading || CategoriesDataLoading){
+    return (
+      <SafeAreaView className="bg-white h-full">
+        <ActivityIndicator size="large" color="#6200EE" />
+        <Text style={styles.loadingText}>Loading data...</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if(PublicPublicitiesDataError || StoresDataError || CategoriesDataError){
+    return (
+      <SafeAreaView className="bg-white h-full">
+        <Text style={styles.errorText}>
+          Oops! Something went wrong. Please try again later.
+        </Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -51,12 +202,17 @@ const home = () => {
 
       <View className="mx-5" style={styles.specialForYou}>
         <Text style={styles.titleCategory}>#SpecialForYou</Text>
-        <SliderHome />
+        <SliderHome 
+          PublicPublicitiesData={PublicPublicitiesData}
+        />
       </View>
 
       <View className="mx-5 mt-[10]">
         <Text style={styles.titleCategory}>Stores</Text>
-        <Store />
+        <Store 
+          StoresData={StoresData}
+          CategoriesData={CategoriesData}
+        />
       </View>
     </SafeAreaView>
   );

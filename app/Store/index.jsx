@@ -7,35 +7,85 @@ import {
   Modal,
 } from "react-native";
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
-
 import {
   MagnifyingGlassIcon,
   BellIcon,
   ShoppingCartIcon,
 } from "react-native-heroicons/outline";
-
 import PopularProductCard from "../../components/PopularProductCard";
 import BrandsCard from "../../components/BrandsCard";
 import SliderStore from "../../components/SliderStore";
 import ProductScreen from "../screens/ProductScreen";
+import { API_URL } from "@env";
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const StoreIconVector = require("../../assets/icons/Store.png");
-
 const BrandCevitalImg = require("../../assets/images/Cevital.jpg");
 const BrandLesieurImg = require("../../assets/images/Lesieur.png");
 const BrandMamaImg = require("../../assets/images/Mama.png");
 const BrandSimImg = require("../../assets/images/Sim.png");
-
 const ElioImg = require("../../assets/images/Elio.png");
 const MamaCoucousImg = require("../../assets/images/MamaCoucous.png");
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+      'Content-Type': 'application/json',
+  },
+});
 
 const Store = () => {
+  const route = useRoute();
+  const { storeId } = route.params;
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-
+  const { user } = useAuthContext();  
+  
+  //--------------------------------------------APIs--------------------------------------------
+  // Function to fetch public publicities data
+  const fetchPrivatePublicitiesData = async () => {
+    try {
+      const response = await api.get(`/Publicity/fetchAllStorePublicities/${storeId}`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+  
+      // Check if the response is valid
+      if (response.status !== 200) {
+        const errorData = await response.data;
+        if (errorData.error.statusCode == 404) {
+          return []; // Return an empty array for 404 errors
+        } else {
+          throw new Error("Error receiving private publicities data");
+        }
+      }
+  
+      // Return the data from the response
+      return await response.data;
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const { 
+      data: PrivatePublicitiesData,
+      error: PrivatePublicitiesDataError,
+      isLoading: PrivatePublicitiesDataLoading,
+      refetch: PrivatePublicitiesDataRefetch
+  } = useQuery({
+      queryKey: ['PrivatePublicitiesData', user?.token],  // Ensure token is part of the query key
+      queryFn: fetchPrivatePublicitiesData,  // Pass token to the fetch function
+      enabled: !!user?.token,  // Only run the query if user is authenticated
+      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+  });
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView
@@ -79,7 +129,11 @@ const Store = () => {
         </TouchableOpacity>
         <View className="mx-5 mb-[20]">
           <Text style={styles.titleCategory}>#SpecialForYou</Text>
-          <SliderStore />
+          <SliderStore 
+            data={PrivatePublicitiesData}
+            isLoading={PrivatePublicitiesDataLoading}
+            error={PrivatePublicitiesDataError}
+          />
         </View>
         <View className="mx-5 mb-[20]">
           <Text style={styles.titleCategory}>Brands</Text>

@@ -4,12 +4,53 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "expo-router";
 import { EyeIcon } from "react-native-heroicons/outline";
+import { useAuthContext } from "../hooks/useAuthContext.jsx";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "@env";
 
 const FacebookIconVector = require("../../assets/icons/Facebook.png");
 
 const SignInScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigation = useNavigation();
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { dispatch } = useAuthContext();
+
+  const handleLogin = async () => {
+    setError("");
+    try {
+      const response = await fetch(`${API_URL}/Auth/signin/client`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          UserName: userName, 
+          Password: password
+        }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        setError(json.message);
+      } else {
+        await AsyncStorage.setItem("user", JSON.stringify(json));
+        dispatch({ type: "LOGIN", payload: json });
+        // navigation.navigate("(tabs)");
+        navigation.reset({
+          index: 0, 
+          routes: [{ name: '(tabs)' }], 
+        });
+        setPassword("")
+        setUserName("")
+        setError("")
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+      console.log(err)
+    }
+  };
 
   return (
     <SafeAreaView style={styles.SignInScreen} className="bg-white h-full">
@@ -23,11 +64,13 @@ const SignInScreen = () => {
       </View>
       <View className="mt-[36]">
         <View className="flex-col space-y-[6] mb-[16]">
-          <Text style={styles.textlabel}>Email</Text>
+          <Text style={styles.textlabel}>Username</Text>
           <TextInput
             style={styles.textInput}
-            placeholder="example@gmail.com"
+            placeholder="username or phone number"
             placeholderTextColor="#888888"
+            value={userName}
+            onChangeText={setUserName}
           />
         </View>
         <View className="flex-col space-y-[6]">
@@ -41,8 +84,8 @@ const SignInScreen = () => {
               placeholder="********"
               placeholderTextColor="#888888"
               secureTextEntry={!passwordVisible}
-              //   value={password}
-              //   onChangeText={setPassword}
+              value={password}
+              onChangeText={setPassword}
             />
             <TouchableOpacity
               onPress={() => setPasswordVisible(!passwordVisible)}
@@ -61,10 +104,18 @@ const SignInScreen = () => {
             Forgot Password?
           </Text>
         </TouchableOpacity>
+        <Text style={{ 
+          color: "red",
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>{error}</Text>
         <TouchableOpacity
           className="mt-[24]"
           style={styles.loginButton}
-          onPress={() => navigation.navigate("(tabs)")}
+          onPress={() => 
+            handleLogin()
+          }
         >
           <Text style={styles.loginButtonText}>Sign In</Text>
         </TouchableOpacity>

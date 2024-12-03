@@ -1,26 +1,28 @@
 import { View, StyleSheet, Image, FlatList, Dimensions } from "react-native";
 import React from "react";
+import { API_URL } from "@env";
 
 const SpecialForYouCardImg1 = require("../assets/images/SpecialForYouBingo.jpg");
 const SpecialForYouCardImg2 = require("../assets/images/SpecialForYouAigle.jpg");
 const SpecialForYouCardImg3 = require("../assets/images/SpecialForYouAmir.jpg");
 
-const SliderHome = () => {
-  const cards = [
-    { image: SpecialForYouCardImg1 },
-    { image: SpecialForYouCardImg2 },
-    { image: SpecialForYouCardImg3 },
-  ];
-
+const SliderHome = ({PublicPublicitiesData}) => {
   return (
     <View style={styles.sliderContainer}>
       <FlatList
-        data={cards}
-        horizontal={true}
+        data={PublicPublicitiesData}
+        horizontal
+        keyExtractor={(item) => item._id.toString()}
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <View>
-            <Image source={item.image} style={styles.sliderImage} />
+            <Image
+              source={{ uri: `${API_URL.replace(
+                "/api",
+                ""
+              )}/files/${item.image}` }}
+              style={styles.sliderImage}
+            />
           </View>
         )}
       />

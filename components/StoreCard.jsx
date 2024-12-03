@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-const StoreCard = ({ title, onPress }) => {
+const StoreCard = ({ title, sousTitle, onPress }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -11,6 +11,7 @@ const StoreCard = ({ title, onPress }) => {
       className="h-[59] w-full flex-row items-center justify-between pr-[17] pl-[17] mb-3"
     >
       <Text style={styles.text}>{title}</Text>
+      <Text style={styles.subText}>{sousTitle}</Text>
       <View style={styles.shopItem}>
         <Text style={styles.textItem}>Shop</Text>
       </View>
@@ -22,6 +23,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 13,
     fontFamily: "Montserrat-Regular",
+  },
+  subText: {
+    fontSize: 10,
+    fontFamily: "Montserrat-Regular",
+    color: "#888888",
   },
   textItem: {
     fontSize: 10,

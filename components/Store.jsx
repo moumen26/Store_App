@@ -10,10 +10,9 @@ import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import { useNavigation } from "expo-router";
 
-const Store = () => {
+const Store = ({ StoresData, CategoriesData }) => {
   const navigation = useNavigation();
-
-  const [activeTab, setActiveTab] = useState("Alimentation");
+  const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -32,14 +31,13 @@ const Store = () => {
     ]).start();
   }, []);
 
-  const handleMenuClick = (tab) => {
-    setActiveTab(tab);
+  const handleMenuClick = (tabId) => {
+    setActiveTab(tabId);
     Animated.timing(opacityAnim, {
       toValue: 0,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      setActiveTab(tab);
       Animated.parallel([
         Animated.timing(opacityAnim, {
           toValue: 1,
@@ -54,89 +52,38 @@ const Store = () => {
       ]).start();
     });
   };
-
+  const filteredStores = StoresData.filter((store) =>
+    store.store.categories.some((category) => category._id === activeTab)
+  );
+  
   return (
     <View>
       <View>
-        <View
-          style={[
-            (activeTab === "Alimentation" ||
-              activeTab === "Cosmetique" ||
-              activeTab === "Detergent" ||
-              activeTab === "Emballage" ||
-              activeTab === "Makeup") &&
-              styles.allTransparent,
-          ]}
-        >
+        <View style={[styles.allTransparent]}>
           <ScrollView
             contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
             horizontal
             showsHorizontalScrollIndicator={false}
           >
-            <TouchableOpacity
-              style={[
-                styles.buttonStore,
-                activeTab === "Alimentation" && styles.storeToggle,
-              ]}
-              onPress={() => handleMenuClick("Alimentation")}
-            >
-              <Text
+            {CategoriesData.map((category) => (
+              <TouchableOpacity
+                key={category._id}
                 style={[
-                  styles.text,
-                  activeTab === "Alimentation" && styles.storeToggle,
+                  styles.buttonStore,
+                  activeTab === category._id && styles.storeToggle,
                 ]}
+                onPress={() => handleMenuClick(category._id)}
               >
-                Alimentation
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.buttonStore,
-                activeTab === "Cosmetique" && styles.storeToggle,
-              ]}
-              onPress={() => handleMenuClick("Cosmetique")}
-            >
-              <Text
-                style={[
-                  styles.text,
-                  activeTab === "Cosmetique" && styles.storeToggle,
-                ]}
-              >
-                Cosmétique
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.buttonStore,
-                activeTab === "Detergent" && styles.storeToggle,
-              ]}
-              onPress={() => handleMenuClick("Detergent")}
-            >
-              <Text
-                style={[
-                  styles.text,
-                  activeTab === "Detergent" && styles.storeToggle,
-                ]}
-              >
-                Detergent
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.buttonStore,
-                activeTab === "Emballage" && styles.storeToggle,
-              ]}
-              onPress={() => handleMenuClick("Emballage")}
-            >
-              <Text
-                style={[
-                  styles.text,
-                  activeTab === "Emballage" && styles.storeToggle,
-                ]}
-              >
-                Emballage
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.text,
+                    activeTab === category._id && styles.storeToggle,
+                  ]}
+                >
+                  {category.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         </View>
       </View>
@@ -149,113 +96,34 @@ const Store = () => {
           },
         ]}
       >
-        {activeTab === "Alimentation" && (
-          <View>
+        {CategoriesData.map((category) => (
+          <View key={category._id} style={{ display: activeTab === category._id ? "flex" : "none" }}>
             <ScrollView
               contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 15 }}
               vertical
               showsVerticalScrollIndicator={false}
             >
-              <StoreCard
-                title="Alimentation 1"
-                onPress={() => navigation.navigate("Store/index")}
-              />
-              <StoreCard
-                title="Alimentation 2"
-                onPress={() => navigation.navigate("HomeAlimentationScreen")}
-              />
-              <StoreCard
-                title="Alimentation 3"
-                onPress={() => navigation.navigate("HomeAlimentationScreen")}
-              />
-              <StoreCard
-                title="Alimentation 4"
-                onPress={() => navigation.navigate("HomeAlimentationScreen")}
-              />
-              <StoreCard
-                title="Alimentation 3"
-                onPress={() => navigation.navigate("HomeAlimentationScreen")}
-              />
-              <StoreCard
-                title="Alimentation 3"
-                onPress={() => navigation.navigate("HomeAlimentationScreen")}
-              />
-              <StoreCard
-                title="Alimentation 3"
-                onPress={() => navigation.navigate("HomeAlimentationScreen")}
-              />
+              {filteredStores.length > 0 ? (
+                filteredStores.map((store) => (
+                  <StoreCard
+                    key={store._id}
+                    title={store.store.storeName}
+                    sousTitle={`${store.store.wilaya}, ${store.store.commune}`}
+                    onPress={() =>
+                      navigation.navigate("Store/index", {
+                        storeId: store.store._id,
+                      })
+                    }
+                  />
+                ))
+              ) : (
+                <Text style={styles.noStoresText}>
+                  Aucun magasin disponible pour cette catégorie.
+                </Text>
+              )}
             </ScrollView>
           </View>
-        )}
-        {activeTab === "Cosmetique" && (
-          <View>
-            <ScrollView
-              contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 15 }}
-              vertical
-              showsVerticalScrollIndicator={false}
-            >
-              <StoreCard
-                title="Cosmetique 1"
-                onPress={() => navigation.navigate("HomeCosmetiqueScreen")}
-              />
-              <StoreCard
-                title="Cosmetique 2"
-                onPress={() => navigation.navigate("HomeCosmetiqueScreen")}
-              />
-              <StoreCard
-                title="Cosmetique 3"
-                onPress={() => navigation.navigate("HomeCosmetiqueScreen")}
-              />
-            </ScrollView>
-          </View>
-        )}
-
-        {activeTab === "Detergent" && (
-          <View>
-            <ScrollView
-              contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 15 }}
-              vertical
-              showsVerticalScrollIndicator={false}
-            >
-              <StoreCard
-                title="Detergent 1"
-                onPress={() => navigation.navigate("HomeDetergentScreen")}
-              />
-              <StoreCard
-                title="Detergent 2"
-                onPress={() => navigation.navigate("HomeDetergentScreen")}
-              />
-              <StoreCard
-                title="Detergent 3"
-                onPress={() => navigation.navigate("HomeDetergentScreen")}
-              />
-            </ScrollView>
-          </View>
-        )}
-
-        {activeTab === "Emballage" && (
-          <View>
-            <ScrollView
-              contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 15 }}
-              vertical
-              showsVerticalScrollIndicator={false}
-              className="storesClass"
-            >
-              <StoreCard
-                title="Emballage 1"
-                onPress={() => navigation.navigate("HomeEmballageScreen")}
-              />
-              <StoreCard
-                title="Emballage 2"
-                onPress={() => navigation.navigate("HomeEmballageScreen")}
-              />
-              <StoreCard
-                title="Emballage 3"
-                onPress={() => navigation.navigate("HomeEmballageScreen")}
-              />
-            </ScrollView>
-          </View>
-        )}
+        ))}
       </Animated.View>
     </View>
   );
