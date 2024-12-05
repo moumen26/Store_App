@@ -1,18 +1,15 @@
 import { Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
 const BrandsCard = ({ imgUrl, onPress }) => {
-  const navigation = useNavigation();
-
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate(onPress)}
+      onPress={onPress}
       style={styles.imageClass}
       className="mr-1"
     >
-      <Image source={imgUrl} style={styles.image} />
+      <Image source={{uri: `${imgUrl || ''}`}} style={styles.image} />
     </TouchableOpacity>
   );
 };

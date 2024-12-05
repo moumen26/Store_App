@@ -9,27 +9,8 @@ const SpecialForYouCardImg3 = require("../assets/images/SpecialForYouLesieur.jpg
 
 const SliderStore = ({
   data,
-  error,
-  isLoading,
 }) => {
   //--------------------------------------------RENDERING--------------------------------------------
-  if (isLoading) {
-    return (
-      <View style={styles.centeredContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.centeredContainer}>
-        <Text style={styles.errorText}>Oops! Something went wrong. Please try again later.</Text>
-        <Text style={styles.errorText}>{error?.message}</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.sliderContainer}>
       <FlatList

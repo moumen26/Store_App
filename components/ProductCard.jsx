@@ -14,7 +14,7 @@ const ProductCard = ({
       onPress={onPress}
       className="h-[90] flex-row items-center space-x-1 mb-1"
     >
-      <Image source={imgUrl} style={styles.image} />
+      <Image source={{uri: `${imgUrl || ''}`}} style={styles.image} />
       <View>
         <Text style={styles.textName}>{ProductName}</Text>
         <Text style={styles.textBrand}>{ProductBrand}</Text>

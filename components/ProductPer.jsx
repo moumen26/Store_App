@@ -16,15 +16,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { MinusIcon, PlusIcon } from "react-native-heroicons/outline";
 
 const ProductPer = ({
-  id,
-  ProductName,
-  ProductBrand,
-  ProductQuantity,
-  ProductImage,
+  selling,
+  quantity,
+  buyingMathode,
+  boxItems,
+  quantityLimit,
 }) => {
-  const [activeTab, setActiveTab] = useState("Unit");
+  const [activeTab, setActiveTab] = useState(
+    buyingMathode == "unity" ? "unity" : "box"
+  );
+  const [itemQuantity, setItemQuantity] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // Calculate total price when itemQuantity or activeTab changes
+    const pricePerItem = activeTab === "box" ? boxItems * selling : selling;
+    setTotalPrice(itemQuantity * pricePerItem);
+  }, [itemQuantity, activeTab, selling, boxItems]);
 
   useEffect(() => {
     Animated.parallel([
@@ -42,6 +53,7 @@ const ProductPer = ({
   }, []);
 
   const handleMenuClick = (tab) => {
+    setItemQuantity(0);
     setActiveTab(tab);
     Animated.timing(opacityAnim, {
       toValue: 0,
@@ -64,6 +76,24 @@ const ProductPer = ({
     });
   };
 
+  const handleIncrease = () => {
+    if (quantityLimit > 0) {
+      if (itemQuantity <= quantityLimit) {
+        setItemQuantity(itemQuantity + 1);
+      }
+    }else if (activeTab === "unity" && itemQuantity < quantity*boxItems){
+      setItemQuantity(itemQuantity + 1);
+    }else if (activeTab === "box" && itemQuantity < quantity){
+      setItemQuantity(itemQuantity + 1);
+    }
+  };
+
+  const handleDecrease = () => {
+    if (itemQuantity > 0) {
+      setItemQuantity(itemQuantity - 1);
+    }
+  };
+
   return (
     <View>
       <View>
@@ -71,42 +101,46 @@ const ProductPer = ({
           style={styles.boxUnit}
           className="flex-row items-center space-x-5 mx-5 mb-[10]"
         >
-          <View
-            className="flex-row items-center space-x-2"
-            style={[
-              styles.boxUnitText,
-              (activeTab === "Unit" || activeTab === "Box") &&
-                styles.activeStyle,
-            ]}
-          >
-            <TouchableOpacity
+          {(buyingMathode == "unity" || buyingMathode == "both") &&
+            <View
+              className="flex-row items-center space-x-2"
               style={[
-                styles.checkbox,
-                activeTab === "Unit" && styles.checkboxChecked,
+                styles.boxUnitText,
+                (activeTab === "unity" || activeTab === "box") &&
+                  styles.activeStyle,
               ]}
-              onPress={() => handleMenuClick("Unit")}
             >
-              {/* {isCheckedUnit && (
-              <CheckIcon name="check" size={15} color="white" />
-            )} */}
-            </TouchableOpacity>
-            <Text style={styles.PriceText}>Per unit</Text>
-          </View>
-          <View
-            style={styles.boxUnitText}
-            className="flex-row items-center space-x-2"
-          >
-            <TouchableOpacity
-              style={[
-                styles.checkbox,
-                activeTab === "Box" && styles.checkboxChecked,
-              ]}
-              onPress={() => handleMenuClick("Box")}
+              <TouchableOpacity
+                style={[
+                  styles.checkbox,
+                  activeTab === "unity" && styles.checkboxChecked,
+                ]}
+                onPress={() => handleMenuClick("unity")}
+              >
+                {/* {isCheckedUnit && (
+                <CheckIcon name="check" size={15} color="white" />
+              )} */}
+              </TouchableOpacity>
+              <Text style={styles.PriceText}>Per unit</Text>
+            </View>
+          }
+          {(buyingMathode == "box" || buyingMathode == "both") &&
+            <View
+              style={styles.boxUnitText}
+              className="flex-row items-center space-x-2"
             >
-              {/* {isCheckedBox && <CheckIcon name="check" size={15} color="white" />} */}
-            </TouchableOpacity>
-            <Text style={styles.PriceText}>Per Box</Text>
-          </View>
+              <TouchableOpacity
+                style={[
+                  styles.checkbox,
+                  activeTab === "box" && styles.checkboxChecked,
+                ]}
+                onPress={() => handleMenuClick("box")}
+              >
+                {/* {isCheckedBox && <CheckIcon name="check" size={15} color="white" />} */}
+              </TouchableOpacity>
+              <Text style={styles.PriceText}>Per box</Text>
+            </View>
+          }
         </View>
         <Animated.View
           style={[
@@ -116,50 +150,36 @@ const ProductPer = ({
             },
           ]}
         >
-          {activeTab === "Unit" && (
-            <View
+          <View
               style={styles.boxUnitContainer}
               className="w-fit items-center"
             >
               <View style={styles.minusPlus}>
-                <TouchableOpacity style={styles.touchMinus}>
+                <TouchableOpacity 
+                  style={styles.touchMinus}
+                  onPress={handleDecrease}
+                >
                   <MinusIcon
                     size={20}
                     // color={items.length > 0 ? "#000" : "#888888"}
                   />
                 </TouchableOpacity>
-                <Text style={styles.textQuantity}>{/* items.length */}0</Text>
-                <TouchableOpacity style={styles.touchPlus}>
+                <Text 
+                  style={styles.textQuantity}
+                >
+                  {itemQuantity}
+                </Text>
+                <TouchableOpacity 
+                  style={styles.touchPlus}
+                  onPress={handleIncrease}  
+                >
                   <PlusIcon size={20} color="#fff" />
                 </TouchableOpacity>
               </View>
               <View style={styles.SubTotal}>
-                <Text style={styles.textSubTotal}>DA 1920.00</Text>
+                <Text style={styles.textSubTotal}>DA {totalPrice.toFixed(2)}</Text>
               </View>
             </View>
-          )}
-          {activeTab === "Box" && (
-            <View
-              style={styles.boxUnitContainer}
-              className="w-fit flex-col items-center"
-            >
-              <View style={styles.minusPlus}>
-                <TouchableOpacity style={styles.touchMinus}>
-                  <MinusIcon
-                    size={20}
-                    // color={items.length > 0 ? "#000" : "#888888"}
-                  />
-                </TouchableOpacity>
-                <Text style={styles.textQuantity}>1</Text>
-                <TouchableOpacity style={styles.touchPlus}>
-                  <PlusIcon size={20} color="#fff" />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.SubTotal}>
-                <Text style={styles.textSubTotal}>DA 1920.00</Text>
-              </View>
-            </View>
-          )}
         </Animated.View>
       </View>
     </View>

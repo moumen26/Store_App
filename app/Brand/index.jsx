@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
 import ProductCard from "../../components/ProductCard";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const imgUrl = require("../../assets/images/Cavital.webp");
 const Elio = require("../../assets/images/Elio.png");
@@ -22,6 +22,8 @@ const DATA = [
 
 const BrandScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { brandId, brandIMG } = route.params;
 
   const renderGridItems = () => {
     const items = [];
@@ -51,7 +53,7 @@ const BrandScreen = () => {
     <SafeAreaView className="bg-white relative h-full">
       <View style={styles.ligne} className="relative mb-[20]">
         <View className="mx-5 h-[200]">
-          <Image source={imgUrl} style={styles.imageBrand} />
+          <Image source={{uri: brandIMG}} style={styles.imageBrand} />
           <View className="flex-row items-center justify-between">
             <BackButton />
           </View>

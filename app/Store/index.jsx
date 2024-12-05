@@ -23,14 +23,9 @@ import { API_URL } from "@env";
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { ActivityIndicator, FlatList } from "react-native";
 
 const StoreIconVector = require("../../assets/icons/Store.png");
-const BrandCevitalImg = require("../../assets/images/Cevital.jpg");
-const BrandLesieurImg = require("../../assets/images/Lesieur.png");
-const BrandMamaImg = require("../../assets/images/Mama.png");
-const BrandSimImg = require("../../assets/images/Sim.png");
-const ElioImg = require("../../assets/images/Elio.png");
-const MamaCoucousImg = require("../../assets/images/MamaCoucous.png");
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -43,8 +38,18 @@ const Store = () => {
   const { storeId } = route.params;
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const { user } = useAuthContext();  
-  
+
+  //--------------------------------------------handle states--------------------------------------------
+  const handleOpenModel = (stock) => {
+    setModalVisible(true);
+    setSelectedProduct(stock);
+  };
+  const handleCloseModel = () => {
+    setModalVisible(false);
+    setSelectedProduct(null);
+  };
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchPrivatePublicitiesData = async () => {
@@ -83,6 +88,126 @@ const Store = () => {
   } = useQuery({
       queryKey: ['PrivatePublicitiesData', user?.token],  // Ensure token is part of the query key
       queryFn: fetchPrivatePublicitiesData,  // Pass token to the fetch function
+      enabled: !!user?.token,  // Only run the query if user is authenticated
+      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+  });
+  // Function to fetch brands data
+  const fetchBrandsData = async () => {
+    try {
+      const response = await api.get(`/Brand`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+  
+      // Check if the response is valid
+      if (response.status !== 200) {
+        const errorData = await response.data;
+        if (errorData.error.statusCode == 404) {
+          return []; // Return an empty array for 404 errors
+        } else {
+          throw new Error("Error receiving brands data");
+        }
+      }
+  
+      // Return the data from the response
+      return await response.data;
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const { 
+      data: BrandsData,
+      error: BrandsDataError,
+      isLoading: BrandsDataLoading,
+      refetch: BrandsDataRefetch
+  } = useQuery({
+      queryKey: ['BrandsData', user?.token],  // Ensure token is part of the query key
+      queryFn: fetchBrandsData,  // Pass token to the fetch function
+      enabled: !!user?.token,  // Only run the query if user is authenticated
+      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+  });
+  // Function to fetch brands data
+  const fetchPopularProductsData = async () => {
+    try {
+      const response = await api.get(`/PopularProduct/${storeId}`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+  
+      // Check if the response is valid
+      if (response.status !== 200) {
+        const errorData = await response.data;
+        if (errorData.error.statusCode == 404) {
+          return []; // Return an empty array for 404 errors
+        } else {
+          throw new Error("Error receiving popular products data");
+        }
+      }
+  
+      // Return the data from the response
+      return await response.data;
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const { 
+      data: PopularProductsData,
+      error: PopularProductsDataError,
+      isLoading: PopularProductsDataLoading,
+      refetch: PopularProductsDataRefetch
+  } = useQuery({
+      queryKey: ['PopularProductsData', user?.token],  // Ensure token is part of the query key
+      queryFn: fetchPopularProductsData,  // Pass token to the fetch function
+      enabled: !!user?.token,  // Only run the query if user is authenticated
+      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+  });
+  // Function to fetch brands data
+  const fetchProductsData = async () => {
+    try {
+      const response = await api.get(`/Stock/store/${storeId}`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+  
+      // Check if the response is valid
+      if (response.status !== 200) {
+        const errorData = await response.data;
+        if (errorData.error.statusCode == 404) {
+          return []; // Return an empty array for 404 errors
+        } else {
+          throw new Error("Error receiving products data");
+        }
+      }
+  
+      // Return the data from the response
+      return await response.data;
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const { 
+      data: ProductsData,
+      error: ProductsDataError,
+      isLoading: ProductsDataLoading,
+      refetch: ProductsDataRefetch
+  } = useQuery({
+      queryKey: ['ProductsData', user?.token],  // Ensure token is part of the query key
+      queryFn: fetchProductsData,  // Pass token to the fetch function
       enabled: !!user?.token,  // Only run the query if user is authenticated
       refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
   });
@@ -127,86 +252,166 @@ const Store = () => {
             <Text style={styles.search}>Search by Product..</Text>
           </View>
         </TouchableOpacity>
-        <View className="mx-5 mb-[20]">
-          <Text style={styles.titleCategory}>#SpecialForYou</Text>
-          <SliderStore 
-            data={PrivatePublicitiesData}
-            isLoading={PrivatePublicitiesDataLoading}
-            error={PrivatePublicitiesDataError}
-          />
-        </View>
-        <View className="mx-5 mb-[20]">
-          <Text style={styles.titleCategory}>Brands</Text>
-          <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            <BrandsCard imgUrl={BrandCevitalImg} onPress={"Brand/index"} />
-            <BrandsCard imgUrl={BrandLesieurImg} />
-            <BrandsCard imgUrl={BrandMamaImg} />
-            <BrandsCard imgUrl={BrandSimImg} />
-          </ScrollView>
-        </View>
-        <View className="mx-5 mb-[20]">
-          <View className="flex-row items-center justify-between">
-            <Text style={styles.titleCategory}>Popular Products</Text>
-            <TouchableOpacity>
-              <Text
-                onPress={() => navigation.navigate("PopularProducts/index")}
-                style={styles.seeAll}
-              >
-                See All
-              </Text>
-            </TouchableOpacity>
+        {PrivatePublicitiesDataLoading ? (
+            <View className="mx-5 mb-[20]">
+              <Text style={styles.titleCategory}>#SpecialForYou</Text>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          ) :
+          (
+            PrivatePublicitiesData && PrivatePublicitiesData?.length > 0 ? (
+              <View className="mx-5 mb-[20]">
+                <Text style={styles.titleCategory}>#SpecialForYou</Text>
+                <SliderStore 
+                  data={PrivatePublicitiesData}
+                />
+              </View>
+            ) : (
+              <></>
+            )
+            
+          )
+        }
+        {BrandsDataLoading ? (
+            <View className="mx-5 mb-[20]">
+              <Text style={styles.titleCategory}>Brands</Text>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          ) : (
+            BrandsData && BrandsData?.length > 0 ? (
+              <View className="mx-5 mb-[20]">
+                <Text style={styles.titleCategory}>Brands</Text>
+                <ScrollView
+                  contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {BrandsData.map((brand) => (
+                    <BrandsCard
+                      key={brand?._id}
+                      imgUrl={`${API_URL.replace("/api", "")}/files/${brand?.image}`}
+                      onPress={() => navigation.navigate("Brand/index", { 
+                        brandId: brand?._id,
+                        brandIMG: `${API_URL.replace("/api", "")}/files/${brand?.image}`
+                      })}
+                    />
+                  ))}
+                </ScrollView>
+              </View>
+            ) : (
+              <></>
+            )
+          )
+        }
+        {PopularProductsDataLoading ? (
+          <View className="mx-5 mb-[20]">
+            <View className="flex-row items-center justify-between">
+              <Text style={styles.titleCategory}>Popular Products</Text>
+            </View>
+            <ActivityIndicator size="large" color="#0000ff" />
           </View>
-          <View className="flex-row items-center justify-around mt-4">
-            <PopularProductCard
-              imgUrl={MamaCoucousImg}
-              ProductName="Couscous Moyen    Mama - 1kg"
-              onPress={() => setModalVisible(true)}
-
-              // onPress={"Product/index"}
-            />
-            <PopularProductCard
-              imgUrl={ElioImg}
-              ProductName="Elio - 1L"
-              onPress={() => setModalVisible(true)}
-            />
+          ) : (
+            PopularProductsData && PopularProductsData?.length > 0 ? (
+              <View className="mx-5 mb-[20]">
+                <View className="flex-row items-center justify-between">
+                  <Text style={styles.titleCategory}>Popular Products</Text>
+                  <TouchableOpacity>
+                    <Text
+                      onPress={() => navigation.navigate("PopularProducts/index",
+                        { popularProductsData: PopularProductsData }
+                      )}
+                      style={styles.seeAll}
+                    >
+                      See All
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View className="flex-row items-center justify-around mt-4">
+                  <FlatList
+                    data={PopularProductsData}
+                    horizontal
+                    keyExtractor={(item) => item._id.toString()}
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({ item }) => (
+                      <PopularProductCard
+                        key={item?._id}
+                        imgUrl={`${API_URL.replace("/api", "")}/files/${item?.image}`}
+                        ProductName={item?.name}
+                        onPress={() => handleOpenModel(item)}
+                      />
+                    )}
+                  />
+                </View>
+              </View>
+            ) : (
+              <></>
+            )
+          )
+        }
+        {ProductsDataLoading ? (
+          <View className="mx-5 mb-3">
+            <View className="flex-row items-center justify-between">
+              <Text style={styles.titleCategory}>All Products</Text>
+            </View>
+            <ActivityIndicator size="large" color="#0000ff" />
           </View>
-        </View>
-        <View className="mx-5 mb-3">
-          <View className="flex-row items-center justify-between">
-            <Text style={styles.titleCategory}>All Products</Text>
-            <TouchableOpacity>
-              <Text
-                onPress={() => navigation.navigate("AllProducts/index")}
-                style={styles.seeAll}
-              >
-                See All
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View className="flex-row items-center justify-around mt-4">
-            <PopularProductCard
-              imgUrl={MamaCoucousImg}
-              ProductName="Couscous Moyen    Mama - 1kg"
-            />
-            <PopularProductCard imgUrl={ElioImg} ProductName="Elio - 1L" />
-          </View>
-        </View>
+          )
+          : (
+            ProductsData && ProductsData?.length > 0 ? (
+              <View className="mx-5 mb-3">
+              <View className="flex-row items-center justify-between">
+                <Text style={styles.titleCategory}>All Products</Text>
+                <TouchableOpacity>
+                  <Text
+                    onPress={() => navigation.navigate("AllProducts/index",
+                      { productsData: ProductsData }
+                    )}
+                    style={styles.seeAll}
+                  >
+                    See All
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View className="flex-row items-center justify-around mt-4">
+                <FlatList
+                  data={ProductsData}
+                  horizontal
+                  keyExtractor={(item) => item._id.toString()}
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={({ item }) => (
+                    <PopularProductCard
+                      key={item?._id}
+                      imgUrl={`${API_URL.replace('/api', '')}/files/${item?.product?.image}`}
+                      ProductName={item?.product?.brand?.name + ' ' + item?.product?.name + ' ' + item?.product?.size}
+                      onPress={() => handleOpenModel(item)}
+                    />
+                  )}
+                />
+              </View>
+            </View>
+            ) : (
+              <></>
+            )
+          )
+        }
+        {(!ProductsData || ProductsData?.length <= 0) &&
+          <Text style={styles.text}>
+            No products available in this store
+          </Text>
+        }
       </ScrollView>
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
+        onRequestClose={handleCloseModel}
       >
         <View style={styles.modalView}>
           {/* Pass the correct function as a prop */}
-          <ProductScreen onclose={() => setModalVisible(false)} />
+          <ProductScreen 
+            data={selectedProduct}
+            onclose={handleCloseModel} 
+          />
         </View>
       </Modal>
     </SafeAreaView>

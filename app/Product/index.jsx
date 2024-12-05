@@ -1,15 +1,16 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import BackButton from "../../components/BackButton";
-import { CheckIcon } from "react-native-heroicons/outline";
 import FavoriteButton from "../../components/FavoriteButton";
-import ProductPer from "../../components/ProductPer";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 const LaveSol = require("../../assets/images/LaveSol.png");
 const BoxIcon = require("../../assets/icons/CartDark.png");
 
 const Product = () => {
+  const route = useRoute();
+  const { data } = route.params;
   const [isCheckedUnit, setIsCheckedUnit] = useState(false);
 
   const toggleCheckboxUnit = () => {
@@ -32,13 +33,13 @@ const Product = () => {
         <FavoriteButton />
       </View>
       <View className="w-full mb-[20] items-center h-[35%]">
-        <Image style={styles.image} source={LaveSol} />
+        <Image style={styles.image} source={{uri: `${`${API_URL.replace('/api', '')}/files/${data?.product?.image}` || ''}`}} />
       </View>
       <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
         <Text style={styles.ProductNameText}>
-          Lave Sol AMIR - Fleur Blanche
+          {data?.product?.brand?.name + ' ' + data?.product?.name + ' ' + data?.product?.size}
         </Text>
-        <Text style={styles.PriceText}>Price per unit: DA 160</Text>
+        <Text style={styles.PriceText}>Price per unit: DA {data?.selling}</Text>
         <View
           style={styles.boxClass}
           className="flex-row space-x-2 items-center"
@@ -47,11 +48,10 @@ const Product = () => {
             style={styles.boxClass}
             className="w-fit h-[20] flex-row items-center justify-center bg-[#EDEDED] rounded-xl pl-3 pr-3"
           >
-            <Text style={styles.BoxText}>12</Text>
+            <Text style={styles.BoxText}>{data?.quantity}</Text>
             <Text style={styles.BoxText}>/</Text>
             <Image style={styles.boxIcon} source={BoxIcon} />
           </View>
-          <Text style={styles.BoxText}>DA 1920.00</Text>
         </View>
       </View>
       {/* <ProductPer /> */}
