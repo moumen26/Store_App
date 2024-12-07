@@ -55,7 +55,7 @@ const Store = ({ StoresData, CategoriesData }) => {
   const filteredStores = StoresData.filter((store) =>
     store.store.categories.some((category) => category._id === activeTab)
   );
-  
+
   return (
     <View>
       <View>
@@ -97,7 +97,10 @@ const Store = ({ StoresData, CategoriesData }) => {
         ]}
       >
         {CategoriesData.map((category) => (
-          <View key={category._id} style={{ display: activeTab === category._id ? "flex" : "none" }}>
+          <View
+            key={category._id}
+            style={{ display: activeTab === category._id ? "flex" : "none" }}
+          >
             <ScrollView
               contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 15 }}
               vertical
@@ -130,10 +133,10 @@ const Store = ({ StoresData, CategoriesData }) => {
 };
 
 const styles = StyleSheet.create({
-  storesClass: {
-    flex: 1,
-    backgroundColor: "#F9F9FC",
-    paddingTop: 10,
+  noStoresText: {
+    fontSize: 13,
+    fontFamily: "Montserrat-Regular",
+    color: "#888888"
   },
   text: {
     fontSize: 13,

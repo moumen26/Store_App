@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import {
   addToBasket,
@@ -81,9 +82,9 @@ const ProductPer = ({
       if (itemQuantity <= quantityLimit) {
         setItemQuantity(itemQuantity + 1);
       }
-    }else if (activeTab === "unity" && itemQuantity < quantity*boxItems){
+    } else if (activeTab === "unity" && itemQuantity < quantity * boxItems) {
       setItemQuantity(itemQuantity + 1);
-    }else if (activeTab === "box" && itemQuantity < quantity){
+    } else if (activeTab === "box" && itemQuantity < quantity) {
       setItemQuantity(itemQuantity + 1);
     }
   };
@@ -95,13 +96,13 @@ const ProductPer = ({
   };
 
   return (
-    <View>
+    <View style={styles.ProductDetail}>
       <View>
         <View
           style={styles.boxUnit}
           className="flex-row items-center space-x-5 mx-5 mb-[10]"
         >
-          {(buyingMathode == "unity" || buyingMathode == "both") &&
+          {(buyingMathode == "unity" || buyingMathode == "both") && (
             <View
               className="flex-row items-center space-x-2"
               style={[
@@ -123,8 +124,8 @@ const ProductPer = ({
               </TouchableOpacity>
               <Text style={styles.PriceText}>Per unit</Text>
             </View>
-          }
-          {(buyingMathode == "box" || buyingMathode == "both") &&
+          )}
+          {(buyingMathode == "box" || buyingMathode == "both") && (
             <View
               style={styles.boxUnitText}
               className="flex-row items-center space-x-2"
@@ -140,7 +141,7 @@ const ProductPer = ({
               </TouchableOpacity>
               <Text style={styles.PriceText}>Per box</Text>
             </View>
-          }
+          )}
         </View>
         <Animated.View
           style={[
@@ -150,36 +151,31 @@ const ProductPer = ({
             },
           ]}
         >
-          <View
-              style={styles.boxUnitContainer}
-              className="w-fit items-center"
-            >
-              <View style={styles.minusPlus}>
-                <TouchableOpacity 
-                  style={styles.touchMinus}
-                  onPress={handleDecrease}
-                >
-                  <MinusIcon
-                    size={20}
-                    // color={items.length > 0 ? "#000" : "#888888"}
-                  />
-                </TouchableOpacity>
-                <Text 
-                  style={styles.textQuantity}
-                >
-                  {itemQuantity}
-                </Text>
-                <TouchableOpacity 
-                  style={styles.touchPlus}
-                  onPress={handleIncrease}  
-                >
-                  <PlusIcon size={20} color="#fff" />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.SubTotal}>
-                <Text style={styles.textSubTotal}>DA {totalPrice.toFixed(2)}</Text>
-              </View>
+          <View style={styles.boxUnitContainer} className="w-fit items-center">
+            <View style={styles.minusPlus}>
+              <TouchableOpacity
+                style={styles.touchMinus}
+                onPress={handleDecrease}
+              >
+                <MinusIcon
+                  size={20}
+                  // color={items.length > 0 ? "#000" : "#888888"}
+                />
+              </TouchableOpacity>
+              <Text style={styles.textQuantity}>{itemQuantity}</Text>
+              <TouchableOpacity
+                style={styles.touchPlus}
+                onPress={handleIncrease}
+              >
+                <PlusIcon size={20} color="#fff" />
+              </TouchableOpacity>
             </View>
+            <View style={styles.SubTotal}>
+              <Text style={styles.textSubTotal}>
+                DA {totalPrice.toFixed(2)}
+              </Text>
+            </View>
+          </View>
         </Animated.View>
       </View>
     </View>
@@ -187,6 +183,10 @@ const ProductPer = ({
 };
 
 const styles = StyleSheet.create({
+  ProductDetail: {
+    height: Dimensions.get("screen").height * 0.21,
+    flexDirection: "column"
+  },
   boxUnit: {
     flexDirection: "row",
     gap: 10,

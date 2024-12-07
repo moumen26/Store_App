@@ -1,9 +1,20 @@
-import { View, Text, ScrollView, StyleSheet, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  Dimensions,
+} from "react-native";
 import React from "react";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SavedStoreItem from "../../components/SavedStoreItem";
 import { useNavigation } from "expo-router";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const COLUMN_COUNT = 1;
 const DATA = [
@@ -114,18 +125,20 @@ const saved = () => {
           // onChangeText={setSearchQuery}
         />
       </View>
-      <ScrollView
-        className="mx-5"
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-        {renderItems()}
-      </ScrollView>
+      <View style={styles.container}>
+        <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
+          {renderItems()}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    height: hp(100),
+    paddingBottom: 250,
+  },
   titleCategory: {
     fontSize: 18,
     fontFamily: "Montserrat-Regular",

@@ -5,6 +5,7 @@ import {
   Image,
   Animated,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import React, { useState } from "react";
 import FavoriteButton from "../../components/FavoriteButton";
@@ -33,21 +34,33 @@ const ProductScreen = ({ data, onclose }) => {
 
   return (
     <Animated.View style={styles.modalView}>
-      <View className="mb-[20] mx-5 flex-row justify-end">
+      <View className="mx-5 flex-row justify-end">
         <FavoriteButton />
       </View>
-      <View
-        style={styles.imageContainer}
-        className="w-full items-center h-[35%]"
-      >
-        <Image style={styles.image} source={{uri: `${`${Config.API_URL.replace('/api', '')}/files/${data?.product?.image}` || ''}`}} />
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.image}
+          source={{
+            uri: `${
+              `${Config.API_URL.replace("/api", "")}/files/${
+                data?.product?.image
+              }` || ""
+            }`,
+          }}
+        />
       </View>
       <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
         <Text style={styles.ProductNameText}>
-          {data?.product?.brand?.name + ' ' + data?.product?.name + ' ' + data?.product?.size}
+          {data?.product?.brand?.name +
+            " " +
+            data?.product?.name +
+            " " +
+            data?.product?.size}
         </Text>
         <Text style={styles.PriceText}>Price per unit: DA {data?.selling}</Text>
-        <Text style={styles.PriceText}>Price per box: DA {data?.selling * data?.product?.boxItems}</Text>
+        <Text style={styles.PriceText}>
+          Price per box: DA {data?.selling * data?.product?.boxItems}
+        </Text>
         <View
           style={styles.boxClass}
           className="flex-row space-x-2 items-center"
@@ -62,7 +75,7 @@ const ProductScreen = ({ data, onclose }) => {
           </View>
         </View>
       </View>
-      <ProductPer 
+      <ProductPer
         selling={data?.selling}
         quantity={data?.quantity}
         buyingMathode={data?.buyingMathode}
@@ -93,7 +106,10 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   imageContainer: {
-    marginBottom: 30,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    height: Dimensions.get("screen").height * 0.3,
   },
   container: {
     flex: 1,
@@ -160,7 +176,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    height: "80%",
+    height: Dimensions.get("screen").height * 0.9,
+
+    // height: "80%",
   },
 });
 

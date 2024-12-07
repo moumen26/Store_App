@@ -3,6 +3,10 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CartOrderItem from "../../components/CartOrderItem";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const COLUMN_COUNT = 1;
 const DATA = [
@@ -123,18 +127,20 @@ const cart = () => {
           // onChangeText={setSearchQuery}
         />
       </View>
-      <ScrollView
-        className="mx-5"
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
-        {renderItems()}
-      </ScrollView>
+      <View style={styles.container}>
+        <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
+          {renderItems()}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    height: hp(100),
+    paddingBottom: 250,
+  },
   titleCategory: {
     fontSize: 18,
     fontFamily: "Montserrat-Regular",

@@ -1,27 +1,35 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MagnifyingGlassIcon, BellIcon } from "react-native-heroicons/outline";
 import Store from "../../components/Store";
 import SliderHome from "../../components/SliderHome";
 import { TextInput } from "react-native";
-import { useAuthContext } from '../hooks/useAuthContext';
+import { useAuthContext } from "../hooks/useAuthContext";
 import Config from "../config";
-import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 // Axios instance for base URL configuration
 const api = axios.create({
-    baseURL: Config.API_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+  baseURL: Config.API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 const home = () => {
-  const { user } = useAuthContext();  
-  
+  const { user } = useAuthContext();
+
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchPublicPublicitiesData = async () => {
@@ -31,7 +39,7 @@ const home = () => {
           Authorization: `Bearer ${user?.token}`,
         },
       });
-  
+
       // Check if the response is valid
       if (response.status !== 200) {
         const errorData = await response.data;
@@ -41,7 +49,7 @@ const home = () => {
           throw new Error("Error receiving public publicities data");
         }
       }
-  
+
       // Return the data from the response
       return await response.data;
     } catch (error) {
@@ -52,16 +60,16 @@ const home = () => {
       throw new Error(error?.message || "Network error");
     }
   };
-  const { 
-      data: PublicPublicitiesData,
-      error: PublicPublicitiesDataError,
-      isLoading: PublicPublicitiesDataLoading,
-      refetch: PublicPublicitiesDataRefetch
+  const {
+    data: PublicPublicitiesData,
+    error: PublicPublicitiesDataError,
+    isLoading: PublicPublicitiesDataLoading,
+    refetch: PublicPublicitiesDataRefetch,
   } = useQuery({
-      queryKey: ['PublicPublicitiesData', user?.token],  // Ensure token is part of the query key
-      queryFn: fetchPublicPublicitiesData,  // Pass token to the fetch function
-      enabled: !!user?.token,  // Only run the query if user is authenticated
-      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+    queryKey: ["PublicPublicitiesData", user?.token], // Ensure token is part of the query key
+    queryFn: fetchPublicPublicitiesData, // Pass token to the fetch function
+    enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   // Function to fetch stores data
   const fetchStoresData = async () => {
@@ -71,7 +79,7 @@ const home = () => {
           Authorization: `Bearer ${user?.token}`,
         },
       });
-  
+
       // Check if the response is valid
       if (response.status !== 200) {
         const errorData = await response.data;
@@ -81,7 +89,7 @@ const home = () => {
           throw new Error("Error receiving stores data");
         }
       }
-  
+
       // Return the data from the response
       return await response.data;
     } catch (error) {
@@ -92,16 +100,16 @@ const home = () => {
       throw new Error(error?.message || "Network error");
     }
   };
-  const { 
-      data: StoresData,
-      error: StoresDataError, 
-      isLoading: StoresDataLoading, 
-      refetch: StoresDataRefetch
+  const {
+    data: StoresData,
+    error: StoresDataError,
+    isLoading: StoresDataLoading,
+    refetch: StoresDataRefetch,
   } = useQuery({
-      queryKey: ['StoresData', user?.token],  // Ensure token is part of the query key
-      queryFn: fetchStoresData,  // Pass token to the fetch function
-      enabled: !!user?.token,  // Only run the query if user is authenticated
-      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+    queryKey: ["StoresData", user?.token], // Ensure token is part of the query key
+    queryFn: fetchStoresData, // Pass token to the fetch function
+    enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   // Function to fetch stores data
   const fetchCategoriesData = async () => {
@@ -132,19 +140,23 @@ const home = () => {
       throw new Error(error?.message || "Network error");
     }
   };
-  const { 
-      data: CategoriesData,
-      error: CategoriesDataError, 
-      isLoading: CategoriesDataLoading, 
-      refetch: CategoriesDataRefetch
+  const {
+    data: CategoriesData,
+    error: CategoriesDataError,
+    isLoading: CategoriesDataLoading,
+    refetch: CategoriesDataRefetch,
   } = useQuery({
-      queryKey: ['CategoriesData', user?.token],  // Ensure token is part of the query key
-      queryFn: fetchCategoriesData,  // Pass token to the fetch function
-      enabled: !!user?.token,  // Only run the query if user is authenticated
-      refetchOnWindowFocus: true,  // Optional: refetching on window focus for React Native
+    queryKey: ["CategoriesData", user?.token], // Ensure token is part of the query key
+    queryFn: fetchCategoriesData, // Pass token to the fetch function
+    enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   //--------------------------------------------RENDERING--------------------------------------------
-  if(PublicPublicitiesDataLoading || StoresDataLoading || CategoriesDataLoading){
+  if (
+    PublicPublicitiesDataLoading ||
+    StoresDataLoading ||
+    CategoriesDataLoading
+  ) {
     return (
       <SafeAreaView className="bg-white h-full">
         <ActivityIndicator size="large" color="#6200EE" />
@@ -153,7 +165,7 @@ const home = () => {
     );
   }
 
-  if(PublicPublicitiesDataError || StoresDataError || CategoriesDataError){
+  if (PublicPublicitiesDataError || StoresDataError || CategoriesDataError) {
     return (
       <SafeAreaView className="bg-white h-full">
         <Text style={styles.errorText}>
@@ -164,61 +176,64 @@ const home = () => {
   }
 
   return (
-    <SafeAreaView className="bg-white pt-5 h-full">
-      <View className="flex-row items-center mx-5 space-x-3">
-        <View style={styles.topClass}>
-          <Text style={styles.text} className="text-gray-400">
-            Location
-          </Text>
-          <View style={styles.iconText} className="flex-row">
-            <Image source={LocationIconVector} />
-            <Text style={styles.text}>Blida, Algeria</Text>
+    <SafeAreaView className="bg-white pt-5 pb-10 h-full">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="relative h-full"
+      >
+        <View className="flex-row items-center mx-5 space-x-3">
+          <View style={styles.topClass}>
+            <Text style={styles.text} className="text-gray-400">
+              Location
+            </Text>
+            <View style={styles.iconText} className="flex-row">
+              <Image source={LocationIconVector} />
+              <Text style={styles.text}>Blida, Algeria</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.notification}>
+            <BellIcon size={18} color="#26667E" />
+          </TouchableOpacity>
+        </View>
+
+        <View
+          className="flex-row items-center space-x-2 mx-5 mb-5"
+          style={styles.searchClass}
+        >
+          <View
+            style={styles.searchButton}
+            className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
+          >
+            <MagnifyingGlassIcon color="#888888" size={20} />
+            <TextInput
+              style={styles.searchButto}
+              placeholder="Search by Store.."
+              placeholderTextColor="#888888"
+              // value={searchQuery}
+              // onChangeText={setSearchQuery}
+            />
+            {/* <Text style={styles.search}>Search by Store..</Text> */}
           </View>
         </View>
-        <TouchableOpacity style={styles.notification}>
-          <BellIcon size={18} color="#26667E" />
-        </TouchableOpacity>
-      </View>
 
-      <View
-        className="flex-row items-center space-x-2 mx-5 mb-5"
-        style={styles.searchClass}
-      >
-        <View
-          style={styles.searchButton}
-          className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
-        >
-          <MagnifyingGlassIcon color="#888888" size={20} />
-          <TextInput
-            style={styles.searchButto}
-            placeholder="Search by Store.."
-            placeholderTextColor="#888888"
-            // value={searchQuery}
-            // onChangeText={setSearchQuery}
-          />
-          {/* <Text style={styles.search}>Search by Store..</Text> */}
+        <View className="mx-5" style={styles.specialForYou}>
+          <Text style={styles.titleCategory}>#SpecialForYou</Text>
+          <SliderHome PublicPublicitiesData={PublicPublicitiesData} />
         </View>
-      </View>
 
-      <View className="mx-5" style={styles.specialForYou}>
-        <Text style={styles.titleCategory}>#SpecialForYou</Text>
-        <SliderHome 
-          PublicPublicitiesData={PublicPublicitiesData}
-        />
-      </View>
-
-      <View className="mx-5 mt-[10]">
-        <Text style={styles.titleCategory}>Stores</Text>
-        <Store 
-          StoresData={StoresData}
-          CategoriesData={CategoriesData}
-        />
-      </View>
+        <View style={styles.stores} className="mx-5 mt-[10]">
+          <Text style={styles.titleCategory}>Stores</Text>
+          <Store StoresData={StoresData} CategoriesData={CategoriesData} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  stores: {
+    paddingBottom: 100,
+  },
   specialForYou: {
     marginBottom: 10,
   },
