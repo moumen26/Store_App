@@ -6,14 +6,14 @@ import Store from "../../components/Store";
 import SliderHome from "../../components/SliderHome";
 import { TextInput } from "react-native";
 import { useAuthContext } from '../hooks/useAuthContext';
-import { API_URL } from "@env";
+import Config from "../config";
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 // Axios instance for base URL configuration
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: Config.API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -164,7 +164,7 @@ const home = () => {
   }
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className="bg-white pt-5 h-full">
       <View className="flex-row items-center mx-5 space-x-3">
         <View style={styles.topClass}>
           <Text style={styles.text} className="text-gray-400">

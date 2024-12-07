@@ -9,7 +9,7 @@ import {
 import React, { useState } from "react";
 import FavoriteButton from "../../components/FavoriteButton";
 import ProductPer from "../../components/ProductPer";
-import { API_URL } from "@env";
+import Config from "../config";
 
 const LaveSol = require("../../assets/images/LaveSol.png");
 const BoxIcon = require("../../assets/icons/CartDark.png");
@@ -40,13 +40,14 @@ const ProductScreen = ({ data, onclose }) => {
         style={styles.imageContainer}
         className="w-full items-center h-[35%]"
       >
-        <Image style={styles.image} source={{uri: `${`${API_URL.replace('/api', '')}/files/${data?.product?.image}` || ''}`}} />
+        <Image style={styles.image} source={{uri: `${`${Config.API_URL.replace('/api', '')}/files/${data?.product?.image}` || ''}`}} />
       </View>
       <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
         <Text style={styles.ProductNameText}>
           {data?.product?.brand?.name + ' ' + data?.product?.name + ' ' + data?.product?.size}
         </Text>
         <Text style={styles.PriceText}>Price per unit: DA {data?.selling}</Text>
+        <Text style={styles.PriceText}>Price per box: DA {data?.selling * data?.product?.boxItems}</Text>
         <View
           style={styles.boxClass}
           className="flex-row space-x-2 items-center"
@@ -55,7 +56,7 @@ const ProductScreen = ({ data, onclose }) => {
             style={styles.boxClass}
             className="w-fit h-[20] flex-row items-center justify-center bg-[#EDEDED] rounded-xl pl-3 pr-3"
           >
-            <Text style={styles.BoxText}>{data?.quantity}</Text>
+            <Text style={styles.BoxText}>{data?.product?.boxItems}</Text>
             <Text style={styles.BoxText}>/</Text>
             <Image style={styles.boxIcon} source={BoxIcon} />
           </View>

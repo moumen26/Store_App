@@ -6,7 +6,7 @@ import { useNavigation } from "expo-router";
 import { EyeIcon } from "react-native-heroicons/outline";
 import { useAuthContext } from "../hooks/useAuthContext.jsx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from "@env";
+import Config from "../config.jsx";
 
 const FacebookIconVector = require("../../assets/icons/Facebook.png");
 
@@ -20,8 +20,10 @@ const SignInScreen = () => {
 
   const handleLogin = async () => {
     setError("");
+    console.log(Config.API_URL);
+    
     try {
-      const response = await fetch(`${API_URL}/Auth/signin/client`, {
+      const response = await fetch(`${Config.API_URL}/Auth/signin/client`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

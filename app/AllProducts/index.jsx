@@ -5,7 +5,7 @@ import BackButton from "../../components/BackButton";
 import { StyleSheet } from "react-native";
 import ProductCard from "../../components/ProductCard";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { API_URL } from "@env";
+import Config from "../config";
 
 const AllProductsScreen = () => {
   const navigation = useNavigation();
@@ -13,7 +13,7 @@ const AllProductsScreen = () => {
   const { productsData } = route.params;
 
   return (
-    <SafeAreaView className="bg-white relative h-full">
+    <SafeAreaView className="bg-white pt-5 relative h-full">
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <BackButton />
         <Text className="text-center" style={styles.titleScreen}>
@@ -32,7 +32,7 @@ const AllProductsScreen = () => {
             ProductName={item?.product?.name + ' ' + item?.product?.size}
             ProductBrand={item?.product?.brand?.name}
             ProductPrice={item.selling}
-            imgUrl={`${API_URL.replace('/api', '')}/files/${item?.product?.image}`}
+            imgUrl={`${Config.API_URL.replace('/api', '')}/files/${item?.product?.image}`}
             onPress={() => navigation.navigate("Product/index", { data: item })}
           />
         ))

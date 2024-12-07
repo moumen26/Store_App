@@ -50,7 +50,7 @@ const BrandScreen = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white relative h-full">
+    <SafeAreaView className="bg-white pt-5 relative h-full">
       <View style={styles.ligne} className="relative mb-[20]">
         <View className="mx-5 h-[200]">
           <Image source={{uri: brandIMG}} style={styles.imageBrand} />

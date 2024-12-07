@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FavoriteButton from "../../components/FavoriteButton";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { API_URL } from "@env";
+import Config from "../config";
 
 const LaveSol = require("../../assets/images/LaveSol.png");
 const BoxIcon = require("../../assets/icons/CartDark.png");
@@ -33,7 +33,7 @@ const Product = () => {
         <FavoriteButton />
       </View>
       <View className="w-full mb-[20] items-center h-[35%]">
-        <Image style={styles.image} source={{uri: `${`${API_URL.replace('/api', '')}/files/${data?.product?.image}` || ''}`}} />
+        <Image style={styles.image} source={{uri: `${`${Config.API_URL.replace('/api', '')}/files/${data?.product?.image}` || ''}`}} />
       </View>
       <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
         <Text style={styles.ProductNameText}>

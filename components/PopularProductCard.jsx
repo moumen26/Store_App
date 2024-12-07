@@ -1,18 +1,15 @@
-import { Image, TouchableOpacity, Text, View } from "react-native";
+import { Image, TouchableOpacity, Text, View, Dimensions } from "react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
 
 const PopularProductCard = ({ imgUrl, ProductName, onPress }) => {
   return (
-    <TouchableOpacity
-      style={styles.productItem}
-      onPress={onPress}
-    >
+    <TouchableOpacity style={styles.productItem} onPress={onPress}>
       <View
         style={styles.imageClass}
         className="flex-row items-center justify-center"
       >
-        <Image source={{uri: `${imgUrl || ''}`}} style={styles.image} />
+        <Image source={{ uri: `${imgUrl || ""}` }} style={styles.image} />
       </View>
       <View className="h-[53px] w-full flex-row items-center justify-center">
         <Text style={styles.text}>{ProductName}</Text>
@@ -23,12 +20,15 @@ const PopularProductCard = ({ imgUrl, ProductName, onPress }) => {
 
 const styles = StyleSheet.create({
   productItem: {
-    width: 165,
+    // width: 165,
+    width: Dimensions.get("screen").width * 0.44,
+
     height: 233,
     borderRadius: 20,
     borderColor: "#C9E4EE",
     borderWidth: 0.5,
     alignItems: "center",
+    marginRight: 15,
   },
   imageClass: {
     width: 165,

@@ -1,6 +1,6 @@
 import { View, StyleSheet, Image, FlatList, Dimensions } from "react-native";
 import React from "react";
-import { API_URL } from "@env";
+import Config from "../app/config";
 
 const SpecialForYouCardImg1 = require("../assets/images/SpecialForYouBingo.jpg");
 const SpecialForYouCardImg2 = require("../assets/images/SpecialForYouAigle.jpg");
@@ -17,7 +17,7 @@ const SliderHome = ({PublicPublicitiesData}) => {
         renderItem={({ item }) => (
           <View>
             <Image
-              source={{ uri: `${API_URL.replace(
+              source={{ uri: `${Config.API_URL.replace(
                 "/api",
                 ""
               )}/files/${item.image}` }}
