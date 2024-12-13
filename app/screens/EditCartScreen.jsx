@@ -8,96 +8,48 @@ import {
   Animated,
 } from "react-native";
 import CartRowModified from "../../components/CartRowModified";
+import useAuthContext from "../hooks/useAuthContext";
 
 const Elio = require("../../assets/images/Elio.png");
 
-const EditCartScreen = ({ onClose }) => {
-  // const panY = useRef(new Animated.Value(0)).current;
+const EditCartScreen = ({ 
+  data,
+  storeId,
+  onClose 
+}) => {
+  const { dispatch } = useAuthContext();
 
-  // const panResponder = useRef(
-  //   PanResponder.create({
-  //     onStartShouldSetPanResponder: () => true,
-  //     onPanResponderMove: Animated.event([null, { dy: panY }], {
-  //       useNativeDriver: false,
-  //     }),
-  //     onPanResponderRelease: (e, gestureState) => {
-  //       if (gestureState.dy > 50) {
-  //         onClose(); // Close modal if dragged down by more than 50 units
-  //       } else {
-  //         Animated.spring(panY, {
-  //           toValue: 0,
-  //           useNativeDriver: false,
-  //         }).start();
-  //       }
-  //     },
-  //   })
-  // ).current;
+  const handleQuantityChange = (id, newQuantity) => {
+    const itemToUpdate = data.find(item => item.stock === id);
+    const updatedPrice = (itemToUpdate.price * newQuantity) / itemToUpdate.quantity;
 
-  const [items, setItems] = useState([
-    {
-      id: "1",
-      ProductName: "Item 1",
-      ProductBrand: "Cevital",
-      ProductQuantity: 0,
-      ProductPriceTotal: "900",
-    },
-    {
-      id: "2",
-      ProductName: "Item 2",
-      ProductBrand: "Cevital",
-      ProductQuantity: 0,
-      ProductPriceTotal: "900",
-    },
-    {
-      id: "3",
-      ProductName: "Item 3",
-      ProductBrand: "Cevital",
-      ProductQuantity: 0,
-      ProductPriceTotal: "900",
-    },
-    {
-      id: "4",
-      ProductName: "Item 4",
-      ProductBrand: "Cevital",
-      ProductQuantity: 0,
-      ProductPriceTotal: "900",
-    },
-    {
-      id: "5",
-      ProductName: "Item 5",
-      ProductBrand: "Cevital",
-      ProductQuantity: 0,
-      ProductPriceTotal: "900",
-    },
-    {
-      id: "6",
-      ProductName: "Item 6",
-      ProductBrand: "Cevital",
-      ProductQuantity: 0,
-      ProductPriceTotal: "900",
-    },
-    {
-      id: "7",
-      ProductName: "Item 3",
-      ProductBrand: "Cevital",
-      ProductQuantity: 0,
-      ProductPriceTotal: "900",
-    },
-  ]);
-
+    dispatch({
+      type: "UPDATE_CART",
+      payload: { stock: id, quantity: newQuantity, price: updatedPrice, storeId: storeId },
+    });
+  };
+  
+  const handleRemoveItem = (id) => {
+    dispatch({
+      type: "REMOVE_FROM_CART",
+      payload: { stock: id, storeId: storeId },
+    });
+  };
   const handleApplyPress = () => {
-    onClose(); // Close modal on Apply button press
+    onClose();
   };
 
   const renderProductItems = () => {
-    return items.map((item) => (
+    return data?.map((item, index) => (
       <CartRowModified
-        key={item.id}
-        id={item.id}
-        ProductName={item.ProductName}
-        ProductBrand={item.ProductBrand}
-        initialQuantity={item.ProductQuantity}
-        ProductImage={Elio}
+        key={index}
+        id={item.stock}
+        ProductName={item?.product?.name}
+        ProductBrand={item?.product?.brand}
+        initialQuantity={item?.quantity}
+        ProductImage={item?.product?.image}
+        handleQuantityChange={handleQuantityChange}
+        handleRemoveItem={handleRemoveItem}
       />
     ));
   };
@@ -111,16 +63,6 @@ const EditCartScreen = ({ onClose }) => {
       >
         {renderProductItems()}
       </ScrollView>
-
-      <View className="w-full flex-row justify-center mt-[20]">
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleApplyPress}
-          // onPress={() => navigation.navigate("")}
-        >
-          <Text style={styles.loginButtonText}>Apply</Text>
-        </TouchableOpacity>
-      </View>
     </Animated.View>
   );
 };

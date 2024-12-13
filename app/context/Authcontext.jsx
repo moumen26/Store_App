@@ -11,13 +11,32 @@ const AuthReducer = (state, action) => {
       return { user: action.payload };
     case "LOGOUT":
       return { user: null };
+    case "ADD_TO_CART":
+      return { 
+        ...state, 
+        cart: [...(state.cart || []), action.payload] 
+      };
+    case "UPDATE_CART":
+      return { 
+        ...state, 
+        cart: state.cart.map(item =>
+          item.stock === action.payload.stock && item.store === action.payload.storeId
+            ? { ...item, ...action.payload } 
+            : item
+        ),
+      };
+    case "REMOVE_FROM_CART":
+      return { 
+        ...state, 
+        cart: state.cart.filter(item => !(item.stock === action.payload.stock  && item.store === action.payload.storeId)) 
+      };
     default:
       return state;
   }
 };
 
 export const AuthContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(AuthReducer, { user: null });
+  const [state, dispatch] = useReducer(AuthReducer, { user: null, cart: [] });
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -69,7 +88,7 @@ export const AuthContextProvider = ({ children }) => {
   }, [navigation, dispatch]);
 
   return (
-    <AuthContext.Provider value={{ ...state, dispatch }}>
+    <AuthContext.Provider value={{ ...state, cart: state.cart, dispatch }}>
       {children}
     </AuthContext.Provider>
   );

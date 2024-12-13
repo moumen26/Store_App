@@ -8,28 +8,57 @@ const CartRowModified = ({
   ProductBrand,
   initialQuantity,
   ProductImage,
+  handleQuantityChange, 
+  handleRemoveItem
 }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
+
+  const handleIncrease = () => {
+    const newQuantity = quantity + 1;
+    setQuantity(newQuantity);
+    handleQuantityChange(id, newQuantity);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+      handleQuantityChange(id, newQuantity);
+    }
+  };
+
+  const handleRemove = () => {
+    handleRemoveItem(id);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Image source={ProductImage} style={styles.image} />
+        <Image source={{uri: ProductImage}} style={styles.image} />
         <View style={styles.details}>
           <Text style={styles.productName}>{ProductName}</Text>
           <Text style={styles.productDescription}>
             {ProductBrand} | Qty.: {quantity}
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleRemove}
+          >
             <Text style={styles.removeText}>Remove</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.actions} className="space-x-3">
-          <TouchableOpacity style={styles.touchMinus} disabled={quantity === 1}>
+          <TouchableOpacity 
+            onPress={handleDecrease}
+            style={styles.touchMinus} 
+            disabled={quantity === 1}
+          >
             <MinusIcon size={20} color={quantity === 1 ? "#888888" : "#000"} />
           </TouchableOpacity>
           <Text>{quantity}</Text>
-          <TouchableOpacity style={styles.touchPlus}>
+          <TouchableOpacity 
+            onPress={handleIncrease}
+            style={styles.touchPlus}
+          >
             <PlusIcon size={20} color="#fff" />
           </TouchableOpacity>
         </View>

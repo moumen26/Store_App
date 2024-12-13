@@ -13,100 +13,44 @@ import { PencilSquareIcon } from "react-native-heroicons/outline";
 import CartRow from "../../components/CartRow";
 import CommandeDetailsItem from "../../components/CommandeDetailsItem";
 import OrderType from "../../components/OrderType";
-import CartRowModified from "../../components/CartRowModified";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import EditCartScreen from "../screens/EditCartScreen";
-
-const Elio = require("../../assets/images/Elio.png");
-
-const COLUMN_COUNT = 1;
-const DATA = [
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-];
+import useAuthContext from "../hooks/useAuthContext";
 
 const MyCartScreen = () => {
+  const { cart } = useAuthContext();
+  const route = useRoute();
+  const { storeId } = route.params;
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+  // Filter cart items for the current store
+  const storeCart = cart?.filter(item => item.store == storeId) || [];
 
   const renderProductItems = () => {
-    const items = [];
-    for (let i = 0; i < DATA.length; i += COLUMN_COUNT) {
-      const rowItems = DATA.slice(i, i + COLUMN_COUNT).map((item) => (
-        <CartRow
-          key={item.id}
-          ProductName={item.ProductName}
-          ProductBrand={item.ProductBrand}
-          ProductQuantity={item.ProductQuantity}
-          ProductImage={Elio}
-        />
-      ));
-      items.push(
-        <View className="mb-4" key={i} style={styles.row}>
-          {rowItems}
-        </View>
-      );
-    }
-    return items;
+    return storeCart?.map((item, index) => (
+      <CartRow
+        key={index}
+        ProductName={item?.product?.name}
+        ProductBrand={item?.product?.brand}
+        ProductQuantity={item?.quantity}
+        ProductImage={item?.product?.image}
+        BoxItems={item?.product?.boxItems}
+      />
+    ));
   };
 
   const renderDetailsItems = () => {
-    const items = [];
-    for (let i = 0; i < DATA.length; i += COLUMN_COUNT) {
-      const rowItems = DATA.slice(i, i + COLUMN_COUNT).map((item) => (
-        <CommandeDetailsItem
-          key={item.id}
-          ProductName={item.ProductName}
-          ProductPriceTotal={item.ProductPriceTotal}
-        />
-      ));
-      items.push(
-        <View className="mb-2" key={i} style={styles.row}>
-          {rowItems}
-        </View>
-      );
-    }
-    return items;
+    return storeCart?.map((item, index) => (
+      <CommandeDetailsItem
+        key={index}
+        ProductName={item?.product?.name}
+        ProductPriceTotal={item?.price}
+      />
+    ));
+  };
+
+  const calculateSubTotal = () => {
+    return storeCart?.reduce((total, item) => total + parseFloat(item?.price || 0), 0).toFixed(2) || parseFloat(0).toFixed(2);
   };
 
   return (
@@ -120,9 +64,11 @@ const MyCartScreen = () => {
       </View>
       <View className="mx-5 flex-row justify-between items-center">
         <Text style={styles.titleCategory}>Order Details</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <PencilSquareIcon size={24} color="#26667E" />
-        </TouchableOpacity>
+        {storeCart?.length > 0 && 
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <PencilSquareIcon size={24} color="#26667E" />
+          </TouchableOpacity>
+        }
       </View>
       <View className="h-[28%] mt-[12]">
         <ScrollView
@@ -130,28 +76,38 @@ const MyCartScreen = () => {
           contentContainerStyle={styles.container}
           showsVerticalScrollIndicator={false}
         >
-          {renderProductItems()}
+          {storeCart?.length > 0 ?
+              renderProductItems() 
+            :
+              <Text>
+                No product is available
+              </Text>
+          }
         </ScrollView>
       </View>
-      <View
-        className="h-fit max-h-[23%] mx-5 mt-[12] pr-2 pl-2 pt-[12] pb-[12] flex-col space-y-2"
-        style={styles.commandeContainer}
-      >
-        <Text style={styles.sousTitre}>Default Price</Text>
-        <ScrollView
-          contentContainerStyle={styles.container}
-          showsVerticalScrollIndicator={false}
-        >
-          {renderDetailsItems()}
-        </ScrollView>
+      {storeCart?.length > 0 ?
         <View
-          style={styles.subTotalContainer}
-          className="flex-row items-center justify-between w-full pt-[12]"
+          className="h-fit max-h-[23%] mx-5 mt-[12] pr-2 pl-2 pt-[12] pb-[12] flex-col space-y-2"
+          style={styles.commandeContainer}
         >
-          <Text style={styles.sousTitre}>Sub total</Text>
-          <Text style={styles.sousTitre}>DA 9990</Text>
+          <Text style={styles.sousTitre}>Default Price</Text>
+          <ScrollView
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
+          >
+            {renderDetailsItems()}
+          </ScrollView>
+          <View
+            style={styles.subTotalContainer}
+            className="flex-row items-center justify-between w-full pt-[12]"
+            >
+            <Text style={styles.sousTitre}>Sub total</Text>
+            <Text style={styles.sousTitre}>DA {calculateSubTotal()}</Text>
+          </View>
         </View>
-      </View>
+        :
+          <></>
+        }
       <View className="mx-5 flex-col mt-[12]">
         <Text className="mb-[12]" style={styles.titleCategory}>
           Order Type
@@ -178,7 +134,11 @@ const MyCartScreen = () => {
         }}
       >
         <View style={styles.modalView}>
-          <EditCartScreen onClose={() => setModalVisible(false)} />
+          <EditCartScreen 
+            data={storeCart}
+            storeId={storeId}
+            onClose={() => setModalVisible(false)} 
+          />
         </View>
       </Modal>
     </SafeAreaView>

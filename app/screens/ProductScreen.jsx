@@ -11,25 +11,52 @@ import React, { useState } from "react";
 import FavoriteButton from "../../components/FavoriteButton";
 import ProductPer from "../../components/ProductPer";
 import Config from "../config";
+import useAuthContext from "../hooks/useAuthContext";
 
 const LaveSol = require("../../assets/images/LaveSol.png");
 const BoxIcon = require("../../assets/icons/CartDark.png");
 
-const ProductScreen = ({ data, onclose }) => {
-  const [isCheckedUnit, setIsCheckedUnit] = useState(false);
+const ProductScreen = ({ data, storeId, onclose }) => {
+  const { dispatch } = useAuthContext();
+  const [Product, setProduct] = useState(null);
+  const handleProductOnChange = (val) => {
+    setProduct(val);
+  }
 
+  const [isCheckedUnit, setIsCheckedUnit] = useState(false);
   const toggleCheckboxUnit = () => {
     setIsCheckedUnit((previousState) => !previousState);
   };
 
   const [isCheckedBox, setIsCheckedBox] = useState(false);
-
   const toggleCheckboxBox = () => {
     setIsCheckedBox((previousState) => !previousState);
   };
 
   const handleApplyPress = () => {
-    onclose(); // Close modal on Apply button press
+    if(Product == null || Product.quantity == 0) {
+      //Toast msg
+      alert("Please select a valid product quantity.");
+      return;
+    }
+    //add stock id to Product
+    const updatedProduct = { 
+      store: storeId,
+      ...Product, 
+      stock: data?._id,
+      product: {
+        image:  `${
+          `${Config.API_URL.replace("/api", "")}/files/${
+            data?.product?.image
+          }` || ""
+        }`,
+        name: data?.product?.name + " " + data?.product?.size,
+        brand: data?.product?.brand?.name,
+      }
+    };
+    dispatch({ type: "ADD_TO_CART", payload: updatedProduct });
+    setProduct(null);
+    onclose();
   };
 
   return (
@@ -81,6 +108,7 @@ const ProductScreen = ({ data, onclose }) => {
         buyingMathode={data?.buyingMathode}
         boxItems={data?.product?.boxItems}
         quantityLimit={data?.quantityLimit}
+        handleProductOnChange={handleProductOnChange}
       />
       <View className="w-full absolute bottom-8 flex-row justify-center mt-[20]">
         <TouchableOpacity style={styles.loginButton} onPress={handleApplyPress}>

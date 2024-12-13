@@ -22,6 +22,7 @@ const ProductPer = ({
   buyingMathode,
   boxItems,
   quantityLimit,
+  handleProductOnChange
 }) => {
   const [activeTab, setActiveTab] = useState(
     buyingMathode == "unity" ? "unity" : "box"
@@ -34,8 +35,13 @@ const ProductPer = ({
 
   useEffect(() => {
     // Calculate total price when itemQuantity or activeTab changes
-    const pricePerItem = activeTab === "box" ? boxItems * selling : selling;
-    setTotalPrice(itemQuantity * pricePerItem);
+    const quantityPerItem = activeTab === "box" ? boxItems * itemQuantity : itemQuantity;
+    const pricePerItem = quantityPerItem * selling;
+    setTotalPrice(pricePerItem);
+    handleProductOnChange({
+      quantity: quantityPerItem,
+      price: pricePerItem,
+    });
   }, [itemQuantity, activeTab, selling, boxItems]);
 
   useEffect(() => {
@@ -94,6 +100,7 @@ const ProductPer = ({
       setItemQuantity(itemQuantity - 1);
     }
   };
+
 
   return (
     <View style={styles.ProductDetail}>

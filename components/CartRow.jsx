@@ -14,7 +14,7 @@ const CartRow = ({
         <View className="flex-row items-center">
           <Image
             style={styles.Image}
-            source={ProductImage}
+            source={{uri: ProductImage}}
           />
 
           <View className="flex-col space-y-[1.5]">

@@ -219,6 +219,7 @@ const Store = () => {
     enabled: !!user?.token, // Only run the query if user is authenticated
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
   return (
     <SafeAreaView className="bg-white pt-5 h-full">
       <ScrollView
@@ -246,7 +247,9 @@ const Store = () => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => navigation.navigate("MyCart/index")}
+              onPress={() => navigation.navigate("MyCart/index", {
+                storeId: storeId,
+              })}
               style={styles.notification}
             >
               <ShoppingCartIcon size={18} color="#26667E" />
@@ -427,7 +430,7 @@ const Store = () => {
       >
         <View style={styles.modalView}>
           {/* Pass the correct function as a prop */}
-          <ProductScreen data={selectedProduct} onclose={handleCloseModel} />
+          <ProductScreen data={selectedProduct} storeId={storeId} onclose={handleCloseModel} />
         </View>
       </Modal>
     </SafeAreaView>
