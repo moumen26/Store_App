@@ -35,7 +35,7 @@ const EditCartScreen = ({
       payload: { stock: id, storeId: storeId },
     });
   };
-  const handleApplyPress = () => {
+  const handleClosePress = () => {
     onClose();
   };
 
@@ -63,6 +63,14 @@ const EditCartScreen = ({
       >
         {renderProductItems()}
       </ScrollView>
+      <View className="w-full flex-row justify-center mt-[20]">
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleClosePress}
+        >
+          <Text style={styles.loginButtonText}>Close</Text>
+        </TouchableOpacity>
+      </View>
     </Animated.View>
   );
 };
