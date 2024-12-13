@@ -42,7 +42,7 @@ const EditCartScreen = ({
   const renderProductItems = () => {
     return data?.map((item, index) => (
       <CartRowModified
-        key={index}
+        key={item.stock}
         id={item.stock}
         ProductName={item?.product?.name}
         ProductBrand={item?.product?.brand}

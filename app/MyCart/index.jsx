@@ -29,7 +29,7 @@ const MyCartScreen = () => {
   const renderProductItems = () => {
     return storeCart?.map((item, index) => (
       <CartRow
-        key={index}
+        key={item?.stock}
         ProductName={item?.product?.name}
         ProductBrand={item?.product?.brand}
         ProductQuantity={item?.quantity}
@@ -42,7 +42,7 @@ const MyCartScreen = () => {
   const renderDetailsItems = () => {
     return storeCart?.map((item, index) => (
       <CommandeDetailsItem
-        key={index}
+        key={item?.stock}
         ProductName={item?.product?.name}
         ProductPriceTotal={item?.price}
       />

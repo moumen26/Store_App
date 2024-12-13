@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   Modal,
+  Dimensions,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -29,7 +30,7 @@ import Brands from "../loading/Brands";
 import AllProducts from "../loading/AllProducts";
 import Search from "../loading/Search";
 import TopHomeScreen from "../loading/TopHomeScreen";
-
+import COMING_SOON from '../../assets/images/comingSoon.jpg'
 const StoreIconVector = require("../../assets/icons/Store.png");
 const api = axios.create({
   baseURL: Config.API_URL,
@@ -293,6 +294,7 @@ const Store = () => {
         ) : (
           <></>
         )}
+
         {BrandsDataLoading ? (
           <View className="mx-5 mb-[20]">
             <Brands />
@@ -326,6 +328,7 @@ const Store = () => {
         ) : (
           <></>
         )}
+
         {PopularProductsDataLoading ? (
           <View className="mx-5 mb-[20]">
             <AllProducts />
@@ -369,6 +372,7 @@ const Store = () => {
         ) : (
           <></>
         )}
+
         {ProductsDataLoading ? (
           <View className="mx-5 mb-3">
             <AllProducts />
@@ -418,9 +422,17 @@ const Store = () => {
         ) : (
           <></>
         )}
-        {(!ProductsData || ProductsData?.length <= 0) && (
-          <Text style={styles.text}>No products available in this store</Text>
-        )}
+
+        {(!ProductsData || ProductsData?.length <= 0) &&
+          <SafeAreaView className="bg-white pt-5 h-full">
+            <View style={styles.imageContainer}>
+              <Image
+                style={styles.image}
+                source={COMING_SOON}
+              />
+            </View>        
+          </SafeAreaView>
+        }
       </ScrollView>
       <Modal
         animationType="slide"
@@ -429,7 +441,6 @@ const Store = () => {
         onRequestClose={handleCloseModel}
       >
         <View style={styles.modalView}>
-          {/* Pass the correct function as a prop */}
           <ProductScreen data={selectedProduct} storeId={storeId} onclose={handleCloseModel} />
         </View>
       </Modal>
@@ -498,6 +509,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(201, 228, 238, 0.4)",
+  },
+  image: {
+    width: 150,
+    height: 200,
+    resizeMode: "contain",
+  },
+  imageContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    height: Dimensions.get("screen").height * 0.3,
   },
 });
 
