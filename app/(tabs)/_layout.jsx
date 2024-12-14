@@ -5,8 +5,9 @@ import {
   HeartIcon,
   HomeIcon,
   ShoppingCartIcon,
+  BuildingStorefrontIcon,
 } from "react-native-heroicons/solid";
-import ProtectedScreen from '../util/ProtectedScreen';
+import ProtectedScreen from "../util/ProtectedScreen";
 
 const TabLayout = () => {
   return (
@@ -34,6 +35,16 @@ const TabLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <HomeIcon name="home" size={24} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="stores"
+          options={{
+            title: "Cart",
+            headerShown: false,
+            tabBarIcon: ({ color }) => (
+              <BuildingStorefrontIcon name="cart" size={24} color={color} />
             ),
           }}
         />
