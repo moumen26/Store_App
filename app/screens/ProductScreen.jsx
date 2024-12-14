@@ -12,6 +12,7 @@ import FavoriteButton from "../../components/FavoriteButton";
 import ProductPer from "../../components/ProductPer";
 import Config from "../config";
 import useAuthContext from "../hooks/useAuthContext";
+import BackButtonCloseModal from "../../components/BackButtonCloseModal";
 
 const LaveSol = require("../../assets/images/LaveSol.png");
 const BoxIcon = require("../../assets/icons/CartDark.png");
@@ -21,7 +22,7 @@ const ProductScreen = ({ data, storeId, onclose }) => {
   const [Product, setProduct] = useState(null);
   const handleProductOnChange = (val) => {
     setProduct(val);
-  }
+  };
 
   const [isCheckedUnit, setIsCheckedUnit] = useState(false);
   const toggleCheckboxUnit = () => {
@@ -34,25 +35,25 @@ const ProductScreen = ({ data, storeId, onclose }) => {
   };
 
   const handleApplyPress = () => {
-    if(Product == null || Product.quantity == 0) {
+    if (Product == null || Product.quantity == 0) {
       //Toast msg
       alert("Please select a valid product quantity.");
       return;
     }
     //add stock id to Product
-    const updatedProduct = { 
+    const updatedProduct = {
       store: storeId,
-      ...Product, 
+      ...Product,
       stock: data?._id,
       product: {
-        image:  `${
+        image: `${
           `${Config.API_URL.replace("/api", "")}/files/${
             data?.product?.image
           }` || ""
         }`,
         name: data?.product?.name + " " + data?.product?.size,
         brand: data?.product?.brand?.name,
-      }
+      },
     };
     dispatch({ type: "ADD_TO_CART", payload: updatedProduct });
     setProduct(null);
@@ -61,7 +62,8 @@ const ProductScreen = ({ data, storeId, onclose }) => {
 
   return (
     <Animated.View style={styles.modalView}>
-      <View className="mx-5 flex-row justify-end">
+      <View className="mx-5 flex-row justify-between">
+        <BackButtonCloseModal handleCloseModal={onclose} />
         <FavoriteButton />
       </View>
       <View style={styles.imageContainer}>

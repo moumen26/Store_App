@@ -8,8 +8,8 @@ const CartRowModified = ({
   ProductBrand,
   initialQuantity,
   ProductImage,
-  handleQuantityChange, 
-  handleRemoveItem
+  handleQuantityChange,
+  handleRemoveItem,
 }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
 
@@ -34,31 +34,28 @@ const CartRowModified = ({
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <Image source={{uri: ProductImage}} style={styles.image} />
+        <Image source={{ uri: ProductImage }} style={styles.image} />
         <View style={styles.details}>
           <Text style={styles.productName}>{ProductName}</Text>
           <Text style={styles.productDescription}>
             {ProductBrand} | Qty.: {quantity}
           </Text>
-          <TouchableOpacity
-            onPress={handleRemove}
-          >
+          <TouchableOpacity onPress={handleRemove}>
             <Text style={styles.removeText}>Remove</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.actions} className="space-x-3">
-          <TouchableOpacity 
+        <View style={styles.actions}>
+          <TouchableOpacity
             onPress={handleDecrease}
-            style={styles.touchMinus} 
+            style={styles.touchMinus}
             disabled={quantity === 1}
           >
             <MinusIcon size={20} color={quantity === 1 ? "#888888" : "#000"} />
           </TouchableOpacity>
-          <Text>{quantity}</Text>
-          <TouchableOpacity 
-            onPress={handleIncrease}
-            style={styles.touchPlus}
-          >
+          <View style={styles.quantityCLass}>
+            <Text>{quantity}</Text>
+          </View>
+          <TouchableOpacity onPress={handleIncrease} style={styles.touchPlus}>
             <PlusIcon size={20} color="#fff" />
           </TouchableOpacity>
         </View>
@@ -68,6 +65,13 @@ const CartRowModified = ({
 };
 
 const styles = StyleSheet.create({
+  quantityCLass: {
+    width: 18,
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
   container: {
     backgroundColor: "white",
     marginBottom: 12,

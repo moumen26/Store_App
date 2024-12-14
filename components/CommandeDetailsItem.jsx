@@ -5,7 +5,9 @@ const CommandeDetailsItem = ({ ProductName, ProductPriceTotal }) => {
   return (
     <View className="flex-row items-center justify-between w-full">
       <Text style={styles.title}>{ProductName}</Text>
-      <Text style={styles.title}>DA {parseFloat(ProductPriceTotal).toFixed(2)}</Text>
+      <Text style={styles.title}>
+        DA {parseFloat(ProductPriceTotal).toFixed(2)}
+      </Text>
     </View>
   );
 };

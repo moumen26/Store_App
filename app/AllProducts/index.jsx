@@ -29,14 +29,15 @@ const AllProductsScreen = () => {
         {productsData.map((item) => (
           <ProductCard
             key={item._id}
-            ProductName={item?.product?.name + ' ' + item?.product?.size}
+            ProductName={item?.product?.name + " " + item?.product?.size}
             ProductBrand={item?.product?.brand?.name}
             ProductPrice={item.selling}
-            imgUrl={`${Config.API_URL.replace('/api', '')}/files/${item?.product?.image}`}
+            imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+              item?.product?.image
+            }`}
             onPress={() => navigation.navigate("Product/index", { data: item })}
           />
-        ))
-        }
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    justifyContent: "space-between",
+    gap: 8,
     flexDirection: "column",
   },
   row: {

@@ -17,6 +17,11 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import EditCartScreen from "../screens/EditCartScreen";
 import useAuthContext from "../hooks/useAuthContext";
 
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
 const MyCartScreen = () => {
   const { cart } = useAuthContext();
   const route = useRoute();
@@ -24,7 +29,7 @@ const MyCartScreen = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   // Filter cart items for the current store
-  const storeCart = cart?.filter(item => item.store == storeId) || [];
+  const storeCart = cart?.filter((item) => item.store == storeId) || [];
 
   const renderProductItems = () => {
     return storeCart?.map((item, index) => (
@@ -50,70 +55,77 @@ const MyCartScreen = () => {
   };
 
   const calculateSubTotal = () => {
-    return storeCart?.reduce((total, item) => total + parseFloat(item?.price || 0), 0).toFixed(2) || parseFloat(0).toFixed(2);
+    return (
+      storeCart
+        ?.reduce((total, item) => total + parseFloat(item?.price || 0), 0)
+        .toFixed(2) || parseFloat(0).toFixed(2)
+    );
   };
 
   return (
     <SafeAreaView className="bg-white pt-5 relative h-full">
-      <View className="mx-5 mb-[20] flex-row items-center justify-between">
-        <BackButton />
-        <Text className="text-center" style={styles.titleScreen}>
-          My Cart
-        </Text>
-        <View style={styles.Vide}></View>
-      </View>
-      <View className="mx-5 flex-row justify-between items-center">
-        <Text style={styles.titleCategory}>Order Details</Text>
-        {storeCart?.length > 0 && 
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <PencilSquareIcon size={24} color="#26667E" />
-          </TouchableOpacity>
-        }
-      </View>
-      <View className="h-[28%] mt-[12]">
-        <ScrollView
-          className="mx-5"
-          contentContainerStyle={styles.container}
-          showsVerticalScrollIndicator={false}
-        >
-          {storeCart?.length > 0 ?
-              renderProductItems() 
-            :
-              <Text>
-                No product is available
-              </Text>
-          }
-        </ScrollView>
-      </View>
-      {storeCart?.length > 0 ?
-        <View
-          className="h-fit max-h-[23%] mx-5 mt-[12] pr-2 pl-2 pt-[12] pb-[12] flex-col space-y-2"
-          style={styles.commandeContainer}
-        >
-          <Text style={styles.sousTitre}>Default Price</Text>
-          <ScrollView
-            contentContainerStyle={styles.container}
-            showsVerticalScrollIndicator={false}
-          >
-            {renderDetailsItems()}
-          </ScrollView>
-          <View
-            style={styles.subTotalContainer}
-            className="flex-row items-center justify-between w-full pt-[12]"
-            >
-            <Text style={styles.sousTitre}>Sub total</Text>
-            <Text style={styles.sousTitre}>DA {calculateSubTotal()}</Text>
-          </View>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 0,
+          paddingTop: 10,
+          paddingBottom: 95,
+        }}
+        vertical
+        showsHorizontalScrollIndicator={false}
+      >
+        <View className="mx-5 mb-[20] flex-row items-center justify-between">
+          <BackButton />
+          <Text className="text-center" style={styles.titleScreen}>
+            My Cart
+          </Text>
+          <View style={styles.Vide}></View>
         </View>
-        :
+        <View className="mx-5 flex-row justify-between items-center">
+          <Text style={styles.titleCategory}>Order Details</Text>
+          {storeCart?.length > 0 && (
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <PencilSquareIcon size={24} color="#26667E" />
+            </TouchableOpacity>
+          )}
+        </View>
+        <View className="mt-[12]" style={styles.container}>
+          <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
+            {storeCart?.length > 0 ? (
+              renderProductItems()
+            ) : (
+              <View style={styles.containerNoAvailable}>
+                <Text style={styles.noText}>No product is available</Text>
+              </View>
+            )}
+          </ScrollView>
+        </View>
+        {storeCart?.length > 0 ? (
+          <View
+            className="h-fit max-h-[23%] mx-5 mt-[12] pr-2 pl-2 pt-[12] pb-[12] flex-col space-y-2"
+            style={styles.commandeContainer}
+          >
+            <Text style={styles.sousTitre}>Default Price</Text>
+            <View style={styles.defaultPriceScroll}>
+              {renderDetailsItems()}
+            </View>
+            <View
+              style={styles.subTotalContainer}
+              className="flex-row items-center justify-between w-full pt-[12]"
+            >
+              <Text style={styles.sousTitre}>Sub total</Text>
+              <Text style={styles.sousTitre}>DA {calculateSubTotal()}</Text>
+            </View>
+          </View>
+        ) : (
           <></>
-        }
-      <View className="mx-5 flex-col mt-[12]">
-        <Text className="mb-[12]" style={styles.titleCategory}>
-          Order Type
-        </Text>
-        <OrderType navigation={navigation} />
-      </View>
+        )}
+        <View className="mx-5 flex-col mt-[12]">
+          <Text className="mb-[12]" style={styles.titleCategory}>
+            Order Type
+          </Text>
+          <OrderType navigation={navigation} />
+        </View>
+      </ScrollView>
       <View
         className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
         style={styles.navigationClass}
@@ -134,10 +146,10 @@ const MyCartScreen = () => {
         }}
       >
         <View style={styles.modalView}>
-          <EditCartScreen 
+          <EditCartScreen
             data={storeCart}
             storeId={storeId}
-            onClose={() => setModalVisible(false)} 
+            onClose={() => setModalVisible(false)}
           />
         </View>
       </Modal>
@@ -146,6 +158,14 @@ const MyCartScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  defaultPriceScroll: {
+    gap: 2,
+  },
+  noText: {
+    fontSize: 13,
+    fontFamily: "Montserrat-Regular",
+    color: "#888888",
+  },
   loginButton: {
     backgroundColor: "#26667E",
     borderRadius: 10,
@@ -170,6 +190,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: "#F7F7F7",
+    gap: 3,
   },
   subTotalContainer: {
     borderTopWidth: 1,
@@ -194,8 +215,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    justifyContent: "space-between",
     flexDirection: "column",
+    minHeight: hp(32),
+    height: "fit-content",
+  },
+  containerNoAvailable: {
+    height: hp(45),
   },
   row: {
     flexDirection: "row",
