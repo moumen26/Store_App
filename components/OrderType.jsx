@@ -14,8 +14,12 @@ import {
 
 const LocationIcon = require("../assets/icons/Location.png");
 
-const OrderType = ({ navigation }) => {
-  const [activeTab, setActiveTab] = useState("Delivery");
+const OrderType = ({ storeId, storeCart, navigation, handleChangeType}) => {
+  const [activeTab, setActiveTab] = useState("delivery");
+  const handleChangeActiveTab = (val) => {
+    setActiveTab(val)
+    handleChangeType(val)
+  }
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -35,13 +39,13 @@ const OrderType = ({ navigation }) => {
   }, []);
 
   const handleMenuClick = (tab) => {
-    setActiveTab(tab);
+    handleChangeActiveTab(tab);
     Animated.timing(opacityAnim, {
       toValue: 0,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      setActiveTab(tab);
+      handleChangeActiveTab(tab);
       Animated.parallel([
         Animated.timing(opacityAnim, {
           toValue: 1,
@@ -58,30 +62,32 @@ const OrderType = ({ navigation }) => {
   };
 
   const handleChangePress = () => {
-    navigation.navigate("ShippingAddress/index");
+    navigation.navigate("ShippingAddress/index", {
+      storeId: storeId,
+    });
   };
-
+  
   return (
     <View>
       <View>
         <View
           className="flex-row justify-around pb-[12]"
           style={[
-            (activeTab === "Delivery" || activeTab === "Pickup") &&
+            (activeTab === "delivery" || activeTab === "pickup") &&
               styles.orderTypeButtonContainer,
           ]}
         >
           <TouchableOpacity
             style={[
               styles.buttonOrderType,
-              activeTab === "Delivery" && styles.orderTypeToggle,
+              activeTab === "delivery" && styles.orderTypeToggle,
             ]}
-            onPress={() => handleMenuClick("Delivery")}
+            onPress={() => handleMenuClick("delivery")}
           >
             <Text
               style={[
                 styles.text,
-                activeTab === "Delivery" && styles.orderTypeToggleText,
+                activeTab === "delivery" && styles.orderTypeToggleText,
               ]}
             >
               Delivery
@@ -90,14 +96,14 @@ const OrderType = ({ navigation }) => {
           <TouchableOpacity
             style={[
               styles.buttonOrderType,
-              activeTab === "Pickup" && styles.orderTypeToggle,
+              activeTab === "pickup" && styles.orderTypeToggle,
             ]}
-            onPress={() => handleMenuClick("Pickup")}
+            onPress={() => handleMenuClick("pickup")}
           >
             <Text
               style={[
                 styles.text,
-                activeTab === "Pickup" && styles.orderTypeToggleText,
+                activeTab === "pickup" && styles.orderTypeToggleText,
               ]}
             >
               Pickup
@@ -112,41 +118,51 @@ const OrderType = ({ navigation }) => {
             },
           ]}
         >
-          {activeTab === "Delivery" && (
+          {activeTab === "delivery" && (
             <View className="pt-[12]">
-              <Text style={styles.titleCategory}>Delivery Address</Text>
               <View className="flex-row justify-between items-center mt-[12]">
-                <View style={styles.gapRow}>
-                  <View style={styles.iconClass}>
-                    <Image source={LocationIcon} />
-                  </View>
-                  <View style={styles.gapColumn}>
-                    <Text style={styles.textPlace}>
-                      {/* {AddressTitle} */}Home
-                    </Text>
-                    <Text style={styles.textdescription}>
-                      {/* {AddressPlace} */}
-                      Rue Yousfi Abdelkader, Blida
-                    </Text>
-                    <View style={styles.timeContainer}>
-                      <ClockIcon size={16} color="#888888" />
-                      <Text style={styles.textdescription}>
-                        {/* {AddressTime} */}
-                        25 minutes estimate arrived
+                <Text style={styles.titleCategory}>Delivery Address</Text>
+                {!storeCart[0]?.shippingAddress &&
+                  <TouchableOpacity
+                    style={styles.changeButton}
+                    onPress={handleChangePress}
+                  >
+                    <Text style={styles.textChange}>add</Text>
+                  </TouchableOpacity>
+                }
+              </View>
+              {storeCart[0]?.shippingAddress &&
+                <View className="flex-row justify-between items-center mt-[12]">
+                  <View style={styles.gapRow}>
+                    <View style={styles.iconClass}>
+                      <Image source={LocationIcon} />
+                    </View>
+                    <View style={styles.gapColumn}>
+                      <Text style={styles.textPlace}>
+                        {storeCart[0]?.shippingAddress?.name}
                       </Text>
+                      <Text style={styles.textdescription}>
+                        {storeCart[0]?.shippingAddress?.address}
+                      </Text>
+                      <View style={styles.timeContainer}>
+                        <ClockIcon size={16} color="#888888" />
+                        <Text style={styles.textdescription}>
+                          25 minutes estimate arrived
+                        </Text>
+                      </View>
                     </View>
                   </View>
+                  <TouchableOpacity
+                    style={styles.changeButton}
+                    onPress={handleChangePress}
+                  >
+                    <Text style={styles.textChange}>Change</Text>
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                  style={styles.changeButton}
-                  onPress={handleChangePress}
-                >
-                  <Text style={styles.textChange}>Change</Text>
-                </TouchableOpacity>
-              </View>
+              }
             </View>
           )}
-          {activeTab === "Pickup" && (
+          {activeTab === "pickup" && (
             <View className="pt-[12]">
               <Text style={styles.titleCategory}>Pickup Address</Text>
               <View className="flex-row items-center mt-[12]">

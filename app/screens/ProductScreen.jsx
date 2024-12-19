@@ -35,8 +35,13 @@ const ProductScreen = ({ data, storeId, onclose }) => {
   };
 
   const handleApplyPress = () => {
+    if (data.quantity == 0) {
+      //Toast msg out of stock
+      alert("This product is out of stock.");
+      return;
+    }
     if (Product == null || Product.quantity == 0) {
-      //Toast msg
+      //Toast msg to select quantity
       alert("Please select a valid product quantity.");
       return;
     }
@@ -59,7 +64,7 @@ const ProductScreen = ({ data, storeId, onclose }) => {
     setProduct(null);
     onclose();
   };
-
+  
   return (
     <Animated.View style={styles.modalView}>
       <View className="mx-5 flex-row justify-between">

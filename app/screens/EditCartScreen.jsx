@@ -10,7 +10,6 @@ import {
 import CartRowModified from "../../components/CartRowModified";
 import useAuthContext from "../hooks/useAuthContext";
 
-const Elio = require("../../assets/images/Elio.png");
 
 const EditCartScreen = ({ 
   data,

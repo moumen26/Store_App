@@ -24,6 +24,7 @@ const ProductPer = ({
   quantityLimit,
   handleProductOnChange
 }) => {
+  
   const [activeTab, setActiveTab] = useState(
     buyingMathode == "unity" ? "unity" : "box"
   );
@@ -41,6 +42,7 @@ const ProductPer = ({
     handleProductOnChange({
       quantity: quantityPerItem,
       price: pricePerItem,
+      unityPrice: selling,
     });
   }, [itemQuantity, activeTab, selling, boxItems]);
 
@@ -88,9 +90,9 @@ const ProductPer = ({
       if (itemQuantity <= quantityLimit) {
         setItemQuantity(itemQuantity + 1);
       }
-    } else if (activeTab === "unity" && itemQuantity < quantity * boxItems) {
+    } else if (activeTab === "unity" && itemQuantity < quantity) {
       setItemQuantity(itemQuantity + 1);
-    } else if (activeTab === "box" && itemQuantity < quantity) {
+    } else if (activeTab === "box" && itemQuantity < quantity / boxItems) {
       setItemQuantity(itemQuantity + 1);
     }
   };
@@ -159,24 +161,30 @@ const ProductPer = ({
           ]}
         >
           <View style={styles.boxUnitContainer} className="w-fit items-center">
-            <View style={styles.minusPlus}>
-              <TouchableOpacity
-                style={styles.touchMinus}
-                onPress={handleDecrease}
-              >
-                <MinusIcon
-                  size={20}
-                  // color={items.length > 0 ? "#000" : "#888888"}
-                />
-              </TouchableOpacity>
-              <Text style={styles.textQuantity}>{itemQuantity}</Text>
-              <TouchableOpacity
-                style={styles.touchPlus}
-                onPress={handleIncrease}
-              >
-                <PlusIcon size={20} color="#fff" />
-              </TouchableOpacity>
-            </View>
+            {quantity > 0 ?
+              <View style={styles.minusPlus}>
+                <TouchableOpacity
+                  style={styles.touchMinus}
+                  onPress={handleDecrease}
+                >
+                  <MinusIcon
+                    size={20}
+                    // color={items.length > 0 ? "#000" : "#888888"}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.textQuantity}>{itemQuantity}</Text>
+                <TouchableOpacity
+                  style={styles.touchPlus}
+                  onPress={handleIncrease}
+                >
+                  <PlusIcon size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
+              :
+              <Text style={styles.OutOfStock}>
+                Out of stock
+              </Text>
+            }
             <View style={styles.SubTotal}>
               <Text style={styles.textSubTotal}>
                 DA {totalPrice.toFixed(2)}
@@ -284,6 +292,11 @@ const styles = StyleSheet.create({
   checkboxChecked: {
     backgroundColor: "#26667E",
     borderWidth: 0,
+  },
+  OutOfStock: {
+    color: "#EF0107",
+    fontSize: 20,
+    fontFamily: "Montserrat-Regular",
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
@@ -16,6 +17,7 @@ import OrderType from "../../components/OrderType";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import EditCartScreen from "../screens/EditCartScreen";
 import useAuthContext from "../hooks/useAuthContext";
+import Config from "../config.jsx";
 
 import {
   widthPercentageToDP as wp,
@@ -23,13 +25,22 @@ import {
 } from "react-native-responsive-screen";
 
 const MyCartScreen = () => {
-  const { cart } = useAuthContext();
+  const { cart, user, dispatch } = useAuthContext();
   const route = useRoute();
   const { storeId } = route.params;
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+  //form
+  const [total, setTotal] = useState(0);
+  const [type, setType] = useState("");
+  const [submitionLoading, setSubmitionLoading] = useState(false);
+  const handleChangeType = (val) => {
+    setType(val)
+  }
   // Filter cart items for the current store
-  const storeCart = cart?.filter((item) => item.store == storeId) || [];
+  const storeCart = useMemo(() => {
+    return cart?.filter((item) => item.store === storeId) || [];
+  }, [cart, storeId]);
 
   const renderProductItems = () => {
     return storeCart?.map((item, index) => (
@@ -54,105 +65,166 @@ const MyCartScreen = () => {
     ));
   };
 
-  const calculateSubTotal = () => {
-    return (
-      storeCart
-        ?.reduce((total, item) => total + parseFloat(item?.price || 0), 0)
-        .toFixed(2) || parseFloat(0).toFixed(2)
-    );
-  };
+  useEffect(() => {
+    const total = storeCart?.reduce((total, item) => total + parseFloat(item?.price || 0), 0).toFixed(2) || '0.00';
+    setTotal(total);
+  }, [storeCart]);
+  
+//--------------------------------------------APIs--------------------------------------------
+  const handleSubmitOrder = async () => {   
+    setSubmitionLoading(true); 
+    try {
+      const response = await fetch(`${Config.API_URL}/Receipt/${user?.info?.id}`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: JSON.stringify({ 
+          store: storeId,
+          type: type,
+          products: storeCart.map((item) => ({
+            stock: item.stock,
+            quantity: item.quantity,
+            price: item.unityPrice,
+          })),
+          total: total,
+          deliveredLocation: storeCart[0]?.shippingAddress,
+        }),
+      });
 
+      const json = await response.json();
+      if (!response.ok) {
+        setSubmitionLoading(false);
+        alert(json.message);
+      } else {
+        dispatch({
+          type: "REMOVE_ALL_CART",
+          payload: storeId,
+        });
+        setSubmitionLoading(false);
+        alert(json.message);
+      }
+    } catch (err) {
+      console.log(err)
+    }finally{
+      setSubmitionLoading(false);
+    }
+  };
+  
   return (
     <SafeAreaView className="bg-white pt-5 relative h-full">
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 0,
-          paddingTop: 10,
-          paddingBottom: 95,
-        }}
-        vertical
-        showsHorizontalScrollIndicator={false}
-      >
-        <View className="mx-5 mb-[20] flex-row items-center justify-between">
-          <BackButton />
-          <Text className="text-center" style={styles.titleScreen}>
-            My Cart
-          </Text>
-          <View style={styles.Vide}></View>
-        </View>
-        <View className="mx-5 flex-row justify-between items-center">
-          <Text style={styles.titleCategory}>Order Details</Text>
-          {storeCart?.length > 0 && (
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <PencilSquareIcon size={24} color="#26667E" />
-            </TouchableOpacity>
-          )}
-        </View>
-        <View className="mt-[12]" style={styles.container}>
-          <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
-            {storeCart?.length > 0 ? (
-              renderProductItems()
-            ) : (
-              <View style={styles.containerNoAvailable}>
-                <Text style={styles.noText}>No product is available</Text>
-              </View>
-            )}
-          </ScrollView>
-        </View>
-        {storeCart?.length > 0 ? (
-          <View
-            className="h-fit max-h-[23%] mx-5 mt-[12] pr-2 pl-2 pt-[12] pb-[12] flex-col space-y-2"
-            style={styles.commandeContainer}
+      {!submitionLoading ?
+        <>
+          <ScrollView
+            contentContainerStyle={{
+              paddingHorizontal: 0,
+              paddingTop: 10,
+              paddingBottom: 95,
+            }}
+            vertical
+            showsHorizontalScrollIndicator={false}
           >
-            <Text style={styles.sousTitre}>Default Price</Text>
-            <View style={styles.defaultPriceScroll}>
-              {renderDetailsItems()}
+            <View className="mx-5 mb-[20] flex-row items-center justify-between">
+              <BackButton />
+              <Text className="text-center" style={styles.titleScreen}>
+                My Cart
+              </Text>
+              <View style={styles.Vide}></View>
             </View>
-            <View
-              style={styles.subTotalContainer}
-              className="flex-row items-center justify-between w-full pt-[12]"
+            <View className="mx-5 flex-row justify-between items-center">
+              <Text style={styles.titleCategory}>Order Details</Text>
+              {storeCart?.length > 0 && (
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
+                  <PencilSquareIcon size={24} color="#26667E" />
+                </TouchableOpacity>
+              )}
+            </View>
+            <View className="mt-[12]" style={styles.container}>
+              <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
+                {storeCart?.length > 0 ? (
+                  renderProductItems()
+                ) : (
+                  <View style={styles.containerNoAvailable}>
+                    <Text style={styles.noText}>No product is available</Text>
+                  </View>
+                )}
+              </ScrollView>
+            </View>
+            {storeCart?.length > 0 ? (
+              <View
+                className="h-fit max-h-[23%] mx-5 mt-[12] pr-2 pl-2 pt-[12] pb-[12] flex-col space-y-2"
+                style={styles.commandeContainer}
+              >
+                <Text style={styles.sousTitre}>Default Price</Text>
+                <View style={styles.defaultPriceScroll}>
+                  {renderDetailsItems()}
+                </View>
+                <View
+                  style={styles.subTotalContainer}
+                  className="flex-row items-center justify-between w-full pt-[12]"
+                >
+                  <Text style={styles.sousTitre}>Sub total</Text>
+                  <Text style={styles.sousTitre}>DA {total}</Text>
+                </View>
+              </View>
+            ) : (
+              <></>
+            )}
+            <View className="mx-5 flex-col mt-[12]">
+              <Text className="mb-[12]" style={styles.titleCategory}>
+                Order Type
+              </Text>
+              <OrderType 
+                storeId={storeId}
+                storeCart={storeCart}
+                handleChangeType={handleChangeType} 
+                navigation={navigation} 
+              />
+            </View>
+          </ScrollView>
+          <View
+            className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
+            style={styles.navigationClass}
+          >
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={handleSubmitOrder}
             >
-              <Text style={styles.sousTitre}>Sub total</Text>
-              <Text style={styles.sousTitre}>DA {calculateSubTotal()}</Text>
-            </View>
+              <Text style={styles.loginButtonText}>Place Order</Text>
+            </TouchableOpacity>
           </View>
-        ) : (
-          <></>
-        )}
-        <View className="mx-5 flex-col mt-[12]">
-          <Text className="mb-[12]" style={styles.titleCategory}>
-            Order Type
-          </Text>
-          <OrderType navigation={navigation} />
-        </View>
-      </ScrollView>
-      <View
-        className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
-        style={styles.navigationClass}
-      >
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => navigation.navigate("E-Receipt/index")}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.modalView}>
+              <EditCartScreen
+                data={storeCart}
+                storeId={storeId}
+                onClose={() => setModalVisible(false)}
+              />
+            </View>
+          </Modal>
+        </>
+        :
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <Text style={styles.loginButtonText}>Place Order</Text>
-        </TouchableOpacity>
-      </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.modalView}>
-          <EditCartScreen
-            data={storeCart}
-            storeId={storeId}
-            onClose={() => setModalVisible(false)}
-          />
+          <ActivityIndicator size="large" color="#FF033E" />
+          <Text style={styles.loadingText}>
+            Please wait till the request is being processed...
+          </Text>
         </View>
-      </Modal>
+      }
     </SafeAreaView>
   );
 };
@@ -231,6 +303,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(201, 228, 238, 0.4)",
+  },
+  loadingText: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#FF033E",
+    fontWeight: "bold",
   },
 });
 

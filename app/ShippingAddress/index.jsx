@@ -4,58 +4,59 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
 import { StyleSheet } from "react-native";
 import ShippingAddressCard from "../../components/ShippingAddressCard";
-import { useNavigation } from "expo-router";
-
-const COLUMN_COUNT = 1;
-const DATA = [
-  {
-    id: "1",
-    AddressTitle: "Item 1",
-    AddressPlace: "Rue Yousfi Abdelkader, Blida",
-    AddressTime: "25 Minute estimate arrived",
-  },
-  {
-    id: "2",
-    AddressTitle: "Item 2",
-    AddressPlace: "Rue Yousfi Abdelkader, Blida",
-    AddressTime: "25 Minute estimate arrived",
-  },
-];
+import { useNavigation, useRoute } from "@react-navigation/native";
+import useAuthContext from "../hooks/useAuthContext";
 
 const ShippingAddressScreen = () => {
+  const { cart, user, dispatch } = useAuthContext();
+  const route = useRoute();
+  const { storeId } = route.params;
   const navigation = useNavigation();
-
+  // Filter cart items for the current store
+  const storeCart = cart?.filter((item) => item.store == storeId) || [];
   const [selectedIndex, setSelectedIndex] = useState(null);
   const handleSelectItem = (index) => {
-    console.log("Selected index:", index);
-    setSelectedIndex(index === selectedIndex ? null : index);
+    setSelectedIndex(index);
   };
-
-  const renderItems = () => {
-    const items = [];
-
-    for (let i = 0; i < DATA.length; i += COLUMN_COUNT) {
-      const rowItems = DATA.slice(i, i + COLUMN_COUNT).map((item, index) => (
+  
+  const renderItems = () =>
+    user?.info?.storeAddresses?.map((item, index) => (
+      <View key={index} style={[styles.mb4, styles.row]}>
         <ShippingAddressCard
-          key={item.id}
-          index={i + index}
-          AddressTitle={item.AddressTitle}
-          AddressPlace={item.AddressPlace}
-          AddressTime={item.AddressTime}
-          isSelected={i + index === selectedIndex}
+          key={item?._id}
+          index={item?._id}
+          AddressTitle={item?.name}
+          AddressPlace={item?.address}
+          AddressTime={`${25} minutes estimate arrived`}
+          isSelected={item?._id == selectedIndex}
           onSelect={handleSelectItem}
         />
-      ));
-      items.push(
-        <View className="mb-4" key={i} style={styles.row}>
-          {rowItems}
-        </View>
-      );
-    }
-
-    return items;
-  };
-
+      </View>
+    ));
+    const handleApplyPress = () => {
+      if(!storeCart || storeCart?.length <= 0){
+        // Notify the user to select an address
+        alert("Please select some products after you can choose an address")
+        return;
+      }
+      if (selectedIndex == null) {
+        // Notify the user to select an address
+        alert("Please select an address.");
+        return;
+      }
+      // Dispatch the selected address to the cart
+      const selectedAddress = user?.info?.storeAddresses?.find(item => item._id === selectedIndex);
+      if (selectedAddress) {
+        dispatch({ type: "ADD_TO_CART_ADDRESS", payload: {
+          selectedAddress: selectedAddress,
+          storeId: storeId
+        } });
+        setSelectedIndex(null);
+        navigation.goBack(); // Navigate back to the previous screen
+      } else {
+        alert("Selected address not found.");
+      }
+    };
   return (
     <SafeAreaView className="bg-white pt-5 relative h-full">
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
@@ -87,7 +88,7 @@ const ShippingAddressScreen = () => {
       >
         <TouchableOpacity
           style={styles.loginButton}
-          // onPress={() => navigation.navigate("")}
+          onPress={handleApplyPress}
         >
           <Text style={styles.loginButtonText}>Apply</Text>
         </TouchableOpacity>

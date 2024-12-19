@@ -19,7 +19,7 @@ const AuthReducer = (state, action) => {
     case "UPDATE_CART":
       return { 
         ...state, 
-        cart: state.cart.map(item =>
+        cart: (state.cart || []).map(item =>
           item.stock === action.payload.stock && item.store === action.payload.storeId
             ? { ...item, ...action.payload } 
             : item
@@ -28,7 +28,21 @@ const AuthReducer = (state, action) => {
     case "REMOVE_FROM_CART":
       return { 
         ...state, 
-        cart: state.cart.filter(item => !(item.stock === action.payload.stock  && item.store === action.payload.storeId)) 
+        cart: (state.cart || []).filter(item => !(item.stock === action.payload.stock  && item.store === action.payload.storeId)) 
+      };
+    case "REMOVE_ALL_CART":
+      return {
+        ...state,
+        cart: (state.cart || []).filter(item => item.store !== action.payload),
+      };
+    case "ADD_TO_CART_ADDRESS":
+      return {
+        ...state,
+        cart: (state.cart || []).map(item => (
+          item.store === action.payload.storeId 
+          ?{ ...item, shippingAddress: action.payload.selectedAddress }
+          : item
+        )),
       };
     default:
       return state;
