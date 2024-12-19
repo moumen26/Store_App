@@ -19,9 +19,7 @@ const SignInScreen = () => {
   const { dispatch } = useAuthContext();
 
   const handleLogin = async () => {
-    setError("");
-    console.log(Config.API_URL);
-    
+    setError("");    
     try {
       const response = await fetch(`${Config.API_URL}/Auth/signin/client`, {
         method: "POST",

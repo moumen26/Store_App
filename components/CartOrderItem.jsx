@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { ChevronRightIcon } from "react-native-heroicons/outline";
-
+import { orderStatusTextDisplayer, formatDate } from "../app/util/useFullFunctions";
 const CartOrderItem = ({
   OrderStoreName,
   OrderID,
@@ -25,17 +25,19 @@ const CartOrderItem = ({
         <Text style={styles.text}>Order Type</Text>
         <Text style={styles.textDescription}>{OrderType}</Text>
       </View>
-      <View style={styles.cartItem}>
-        <Text style={styles.text}>Delivery Address</Text>
-        <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
-      </View>
+      {OrderDeliveryAddress && 
+        <View style={styles.cartItem}>
+          <Text style={styles.text}>Delivery Address</Text>
+          <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
+        </View>
+      }
       <View style={styles.cartItem}>
         <Text style={styles.text}>Order Date</Text>
-        <Text style={styles.textDescription}>{OrderDate}</Text>
+        <Text style={styles.textDescription}>{formatDate(OrderDate)}</Text>
       </View>
       <View style={styles.cartItem}>
         <Text style={styles.text}>Status</Text>
-        <Text style={styles.textDescription}>{OrderStatus}</Text>
+        <Text style={styles.textDescription}>{orderStatusTextDisplayer(OrderStatus)}</Text>
       </View>
       <View style={styles.cartItem}>
         <Text style={styles.text}>Sub Total</Text>

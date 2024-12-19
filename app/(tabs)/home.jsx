@@ -17,6 +17,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import Config from "../config";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import SpecialForYou from "../loading/SpecialForYou";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 // Axios instance for base URL configuration
@@ -152,19 +153,6 @@ const home = () => {
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   //--------------------------------------------RENDERING--------------------------------------------
-  if (
-    PublicPublicitiesDataLoading ||
-    StoresDataLoading ||
-    CategoriesDataLoading
-  ) {
-    return (
-      <SafeAreaView className="bg-white h-full">
-        <ActivityIndicator size="large" color="#6200EE" />
-        <Text style={styles.loadingText}>Loading data...</Text>
-      </SafeAreaView>
-    );
-  }
-
   if (PublicPublicitiesDataError || StoresDataError || CategoriesDataError) {
     return (
       <SafeAreaView className="bg-white h-full">
@@ -216,15 +204,31 @@ const home = () => {
           </View>
         </View>
 
-        <View className="mx-5" style={styles.specialForYou}>
-          <Text style={styles.titleCategory}>#SpecialForYou</Text>
-          <SliderHome PublicPublicitiesData={PublicPublicitiesData} />
-        </View>
+        {PublicPublicitiesDataLoading ? (
+          <View className="mx-5 mb-[20]">
+            <SpecialForYou />
+          </View>
+        ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
+          <View className="mx-5 mb-[20]">
+            <Text style={styles.titleCategory}>#SpecialForYou</Text>
+            <SliderHome PublicPublicitiesData={PublicPublicitiesData} />
+          </View>
+        ) :
+          <></>
+        }
 
-        <View style={styles.stores} className="mx-5 mt-[10]">
-          <Text style={styles.titleCategory}>Stores</Text>
-          <Store StoresData={StoresData} CategoriesData={CategoriesData} />
-        </View>
+        {CategoriesDataLoading || StoresDataLoading ? (
+          <View className="mx-5 mb-[20]">
+            <SpecialForYou />
+          </View>
+        ) : (CategoriesData && CategoriesData?.length > 0) || (StoresData && StoresData?.length > 0) ? (
+          <View style={styles.stores} className="mx-5 mt-[10]">
+            <Text style={styles.titleCategory}>Stores</Text>
+            <Store StoresData={StoresData} CategoriesData={CategoriesData} />
+          </View>
+        ) :
+          <></>
+        }
       </ScrollView>
     </SafeAreaView>
   );
@@ -280,6 +284,12 @@ const styles = StyleSheet.create({
   titleCategory: {
     fontSize: 18,
     fontFamily: "Montserrat-Regular",
+  },
+  loadingText: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#FF033E",
+    fontWeight: "bold",
   },
 });
 
