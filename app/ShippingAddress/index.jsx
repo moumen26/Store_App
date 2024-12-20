@@ -18,10 +18,10 @@ const ShippingAddressScreen = () => {
   const handleSelectItem = (index) => {
     setSelectedIndex(index);
   };
-  
+
   const renderItems = () =>
     user?.info?.storeAddresses?.map((item, index) => (
-      <View key={index} style={[styles.mb4, styles.row]}>
+      <View key={index} style={styles.row}>
         <ShippingAddressCard
           key={item?._id}
           index={item?._id}
@@ -33,30 +33,35 @@ const ShippingAddressScreen = () => {
         />
       </View>
     ));
-    const handleApplyPress = () => {
-      if(!storeCart || storeCart?.length <= 0){
-        // Notify the user to select an address
-        alert("Please select some products after you can choose an address")
-        return;
-      }
-      if (selectedIndex == null) {
-        // Notify the user to select an address
-        alert("Please select an address.");
-        return;
-      }
-      // Dispatch the selected address to the cart
-      const selectedAddress = user?.info?.storeAddresses?.find(item => item._id === selectedIndex);
-      if (selectedAddress) {
-        dispatch({ type: "ADD_TO_CART_ADDRESS", payload: {
+  const handleApplyPress = () => {
+    if (!storeCart || storeCart?.length <= 0) {
+      // Notify the user to select an address
+      alert("Please select some products after you can choose an address");
+      return;
+    }
+    if (selectedIndex == null) {
+      // Notify the user to select an address
+      alert("Please select an address.");
+      return;
+    }
+    // Dispatch the selected address to the cart
+    const selectedAddress = user?.info?.storeAddresses?.find(
+      (item) => item._id === selectedIndex
+    );
+    if (selectedAddress) {
+      dispatch({
+        type: "ADD_TO_CART_ADDRESS",
+        payload: {
           selectedAddress: selectedAddress,
-          storeId: storeId
-        } });
-        setSelectedIndex(null);
-        navigation.goBack(); // Navigate back to the previous screen
-      } else {
-        alert("Selected address not found.");
-      }
-    };
+          storeId: storeId,
+        },
+      });
+      setSelectedIndex(null);
+      navigation.goBack(); // Navigate back to the previous screen
+    } else {
+      alert("Selected address not found.");
+    }
+  };
   return (
     <SafeAreaView className="bg-white pt-5 relative h-full">
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
@@ -86,10 +91,7 @@ const ShippingAddressScreen = () => {
         className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
         style={styles.navigationClass}
       >
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleApplyPress}
-        >
+        <TouchableOpacity style={styles.loginButton} onPress={handleApplyPress}>
           <Text style={styles.loginButtonText}>Apply</Text>
         </TouchableOpacity>
       </View>
@@ -156,15 +158,18 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     height: "60%",
   },
+
   container: {
     flexGrow: 1,
     flexDirection: "column",
+    gap: 18,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-centre",
     borderBottomWidth: 1,
     borderColor: "#F7F7F7",
+    marginbottom: 5,
   },
 });
 

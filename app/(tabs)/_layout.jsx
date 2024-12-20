@@ -41,7 +41,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="stores"
           options={{
-            title: "Cart",
+            title: "Stores",
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <BuildingStorefrontIcon name="cart" size={24} color={color} />

@@ -14,12 +14,12 @@ import {
 
 const LocationIcon = require("../assets/icons/Location.png");
 
-const OrderType = ({ storeId, storeCart, navigation, handleChangeType}) => {
+const OrderType = ({ storeId, storeCart, navigation, handleChangeType }) => {
   const [activeTab, setActiveTab] = useState("delivery");
   const handleChangeActiveTab = (val) => {
-    setActiveTab(val)
-    handleChangeType(val)
-  }
+    setActiveTab(val);
+    handleChangeType(val);
+  };
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -66,7 +66,7 @@ const OrderType = ({ storeId, storeCart, navigation, handleChangeType}) => {
       storeId: storeId,
     });
   };
-  
+
   return (
     <View>
       <View>
@@ -120,18 +120,18 @@ const OrderType = ({ storeId, storeCart, navigation, handleChangeType}) => {
         >
           {activeTab === "delivery" && (
             <View className="pt-[12]">
-              <View className="flex-row justify-between items-center mt-[12]">
+              <View className="flex-row justify-between items-center">
                 <Text style={styles.titleCategory}>Delivery Address</Text>
-                {!storeCart[0]?.shippingAddress &&
+                {!storeCart[0]?.shippingAddress && (
                   <TouchableOpacity
                     style={styles.changeButton}
                     onPress={handleChangePress}
                   >
                     <Text style={styles.textChange}>add</Text>
                   </TouchableOpacity>
-                }
+                )}
               </View>
-              {storeCart[0]?.shippingAddress &&
+              {storeCart[0]?.shippingAddress && (
                 <View className="flex-row justify-between items-center mt-[12]">
                   <View style={styles.gapRow}>
                     <View style={styles.iconClass}>
@@ -159,7 +159,7 @@ const OrderType = ({ storeId, storeCart, navigation, handleChangeType}) => {
                     <Text style={styles.textChange}>Change</Text>
                   </TouchableOpacity>
                 </View>
-              }
+              )}
             </View>
           )}
           {activeTab === "pickup" && (

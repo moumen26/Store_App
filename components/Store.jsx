@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   noStoresText: {
     fontSize: 13,
     fontFamily: "Montserrat-Regular",
-    color: "#888888"
+    color: "#888888",
   },
   text: {
     fontSize: 13,
