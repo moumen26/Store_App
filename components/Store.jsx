@@ -53,7 +53,7 @@ const Store = ({ StoresData, CategoriesData }) => {
     });
   };
   const filteredStores = StoresData.filter((store) =>
-    store.store.categories.some((category) => category._id === activeTab)
+    store?.store?.categories.some((category) => category._id === activeTab)
   );
 
   return (
