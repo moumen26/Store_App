@@ -35,8 +35,8 @@ const MyCartScreen = () => {
   const [type, setType] = useState("");
   const [submitionLoading, setSubmitionLoading] = useState(false);
   const handleChangeType = (val) => {
-    setType(val)
-  }
+    setType(val);
+  };
   // Filter cart items for the current store
   const storeCart = useMemo(() => {
     return cart?.filter((item) => item.store === storeId) || [];
@@ -66,32 +66,38 @@ const MyCartScreen = () => {
   };
 
   useEffect(() => {
-    const total = storeCart?.reduce((total, item) => total + parseFloat(item?.price || 0), 0).toFixed(2) || '0.00';
+    const total =
+      storeCart
+        ?.reduce((total, item) => total + parseFloat(item?.price || 0), 0)
+        .toFixed(2) || "0.00";
     setTotal(total);
   }, [storeCart]);
-  
-//--------------------------------------------APIs--------------------------------------------
-  const handleSubmitOrder = async () => {   
-    setSubmitionLoading(true); 
+
+  //--------------------------------------------APIs--------------------------------------------
+  const handleSubmitOrder = async () => {
+    setSubmitionLoading(true);
     try {
-      const response = await fetch(`${Config.API_URL}/Receipt/${user?.info?.id}`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.token}`,
-        },
-        body: JSON.stringify({ 
-          store: storeId,
-          type: type,
-          products: storeCart.map((item) => ({
-            stock: item.stock,
-            quantity: item.quantity,
-            price: item.unityPrice,
-          })),
-          total: total,
-          deliveredLocation: storeCart[0]?.shippingAddress,
-        }),
-      });
+      const response = await fetch(
+        `${Config.API_URL}/Receipt/${user?.info?.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify({
+            store: storeId,
+            type: type,
+            products: storeCart.map((item) => ({
+              stock: item.stock,
+              quantity: item.quantity,
+              price: item.unityPrice,
+            })),
+            total: total,
+            deliveredLocation: storeCart[0]?.shippingAddress,
+          }),
+        }
+      );
 
       const json = await response.json();
       if (!response.ok) {
@@ -106,20 +112,19 @@ const MyCartScreen = () => {
         alert(json.message);
       }
     } catch (err) {
-      console.log(err)
-    }finally{
+      console.log(err);
+    } finally {
       setSubmitionLoading(false);
     }
   };
-  
+
   return (
     <SafeAreaView className="bg-white pt-5 relative h-full">
-      {!submitionLoading ?
+      {!submitionLoading ? (
         <>
           <ScrollView
             contentContainerStyle={{
               paddingHorizontal: 0,
-              paddingTop: 10,
               paddingBottom: 95,
             }}
             vertical
@@ -175,11 +180,11 @@ const MyCartScreen = () => {
               <Text className="mb-[12]" style={styles.titleCategory}>
                 Order Type
               </Text>
-              <OrderType 
+              <OrderType
                 storeId={storeId}
                 storeCart={storeCart}
-                handleChangeType={handleChangeType} 
-                navigation={navigation} 
+                handleChangeType={handleChangeType}
+                navigation={navigation}
               />
             </View>
           </ScrollView>
@@ -211,7 +216,7 @@ const MyCartScreen = () => {
             </View>
           </Modal>
         </>
-        :
+      ) : (
         <View
           style={{
             flex: 1,
@@ -224,7 +229,7 @@ const MyCartScreen = () => {
             Please wait till the request is being processed...
           </Text>
         </View>
-      }
+      )}
     </SafeAreaView>
   );
 };

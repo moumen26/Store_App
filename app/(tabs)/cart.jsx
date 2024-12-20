@@ -14,78 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator } from "react-native";
 
 const COLUMN_COUNT = 1;
-const DATA = [
-  {
-    id: "1",
-    OrderStoreName: "Hamza Alimentation",
-    OrderID: "CDR45HGJF",
-    OrderType: "Delivery",
-    OrderDeliveryAddress: "Home (Rue Yousfi ..)",
-    OrderDate: "May 09,2024 | 04:00 PM",
-    OrderStatus: "Delivered",
-    OrderSubTotal: "990.00",
-  },
-  {
-    id: "2",
-    OrderStoreName: "Hichem Detergent",
-    OrderID: "CDR45HGJF",
-    OrderType: "Delivery",
-    OrderDeliveryAddress: "Home (Rue Yousfi ..)",
-    OrderDate: "May 09,2024 | 04:00 PM",
-    OrderStatus: "Preparing your order",
-    OrderSubTotal: "990.00",
-  },
-  {
-    id: "3",
-    OrderStoreName: "Item 3",
-    OrderID: "CDR45HGJF",
-    OrderType: "Delivery",
-    OrderDeliveryAddress: "Home (Rue Yousfi ..)",
-    OrderDate: "May 09,2024 | 04:00 PM",
-    OrderStatus: "Order on the way to address",
-    OrderSubTotal: "990.00",
-  },
-  {
-    id: "4",
-    OrderStoreName: "Item 4",
-    OrderID: "CDR45HGJF",
-    OrderType: "Delivery",
-    OrderDeliveryAddress: "Home (Rue Yousfi ..)",
-    OrderDate: "May 09,2024 | 04:00 PM",
-    OrderStatus: "Delivered",
-    OrderSubTotal: "990.00",
-  },
-  {
-    id: "5",
-    OrderStoreName: "Item 5",
-    OrderID: "CDR45HGJF",
-    OrderType: "Delivery",
-    OrderDeliveryAddress: "Home (Rue Yousfi ..)",
-    OrderDate: "May 09,2024 | 04:00 PM",
-    OrderStatus: "Delivered",
-    OrderSubTotal: "990.00",
-  },
-  {
-    id: "6",
-    OrderStoreName: "Item 6",
-    OrderID: "CDR45HGJF",
-    OrderType: "Delivery",
-    OrderDeliveryAddress: "Home (Rue Yousfi ..)",
-    OrderDate: "May 09,2024 | 04:00 PM",
-    OrderStatus: "Delivered",
-    OrderSubTotal: "990.00",
-  },
-  {
-    id: "7",
-    OrderStoreName: "Item 7",
-    OrderID: "CDR45HGJF",
-    OrderType: "Delivery",
-    OrderDeliveryAddress: "Home (Rue Yousfi ..)",
-    OrderDate: "May 09,2024 | 04:00 PM",
-    OrderStatus: "Delivered",
-    OrderSubTotal: "990.00",
-  },
-];
+
 // Axios instance for base URL configuration
 const api = axios.create({
   baseURL: Config.API_URL,
@@ -137,7 +66,7 @@ const cart = () => {
     enabled: !!user?.token, // Only run the query if user is authenticated
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-//--------------------------------------------Rendering--------------------------------------------
+  //--------------------------------------------Rendering--------------------------------------------
   if (OrdersDataLoading) {
     return (
       <SafeAreaView className="bg-white pt-5 pb-12 relative h-full">
@@ -176,39 +105,43 @@ const cart = () => {
         />
       </View>
       <View style={styles.container}>
-          {OrdersData?.length > 0 ? 
-            <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
-              {OrdersData?.map((item) => (
-                <CartOrderItem
-                  key={item._id}
-                  OrderStoreName={item?.store?.storeName}
-                  OrderID={item._id}
-                  OrderType={item.type}
-                  OrderDeliveryAddress={item?.deliveredLocation?.address}
-                  OrderDate={item?.date}
-                  OrderStatus={item.status}
-                  OrderSubTotal={item.total}
-                />
-              ))}
-            </ScrollView>
-            :
-            <View
+        {OrdersData?.length > 0 ? (
+          <ScrollView
+            className="mx-5"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.containerScroll}
+          >
+            {OrdersData?.map((item) => (
+              <CartOrderItem
+                key={item._id}
+                OrderStoreName={item?.store?.storeName}
+                OrderID={item._id}
+                OrderType={item.type}
+                OrderDeliveryAddress={item?.deliveredLocation?.address}
+                OrderDate={item?.date}
+                OrderStatus={item.status}
+                OrderSubTotal={item.total}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <View
             style={{
               flex: 1,
               justifyContent: "center",
               alignItems: "center",
             }}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: "Montserrat-Regular",
+              }}
             >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontFamily: "Montserrat-Regular",
-                }}
-              >
-                No orders found
-              </Text>
-            </View>
-          }
+              No orders found
+            </Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -217,7 +150,7 @@ const cart = () => {
 const styles = StyleSheet.create({
   container: {
     height: hp(100),
-    paddingBottom: 250,
+    paddingBottom: 280,
   },
   titleCategory: {
     fontSize: 18,
@@ -248,6 +181,10 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
     color: "#FF033E",
     fontWeight: "bold",
+  },
+  containerScroll: {
+    flexDirection: "column",
+    gap: 16,
   },
 });
 

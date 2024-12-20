@@ -18,6 +18,10 @@ import Config from "../config";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import SpecialForYou from "../loading/SpecialForYou";
+import Search from "../loading/Search";
+import TopHomeScreen from "../loading/TopHomeScreen";
+import Stores from "../loading/Stores";
+import Brands from "../loading/Brands";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 // Axios instance for base URL configuration
@@ -169,40 +173,56 @@ const home = () => {
         showsVerticalScrollIndicator={false}
         className="relative h-full"
       >
-        <View className="flex-row items-center mx-5 space-x-3">
-          <View style={styles.topClass}>
-            <Text style={styles.text} className="text-gray-400">
-              Location
-            </Text>
-            <View style={styles.iconText} className="flex-row">
-              <Image source={LocationIconVector} />
-              <Text style={styles.text}>Blida, Algeria</Text>
+        {PublicPublicitiesDataLoading ? (
+          <View className="mx-5 mb-[20]">
+            <TopHomeScreen />
+          </View>
+        ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
+          <View className="flex-row items-center mx-5 space-x-3">
+            <View style={styles.topClass}>
+              <Text style={styles.text} className="text-gray-400">
+                Location
+              </Text>
+              <View style={styles.iconText} className="flex-row">
+                <Image source={LocationIconVector} />
+                <Text style={styles.text}>Blida, Algeria</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.notification}>
+              <BellIcon size={18} color="#26667E" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+
+        {PublicPublicitiesDataLoading ? (
+          <View className="mx-5 mb-[20]">
+            <Search />
+          </View>
+        ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
+          <View
+            className="flex-row items-center space-x-2 mx-5 mb-5"
+            style={styles.searchClass}
+          >
+            <View
+              style={styles.searchButton}
+              className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
+            >
+              <MagnifyingGlassIcon color="#888888" size={20} />
+              <TextInput
+                style={styles.searchButto}
+                placeholder="Search by Store.."
+                placeholderTextColor="#888888"
+                // value={searchQuery}
+                // onChangeText={setSearchQuery}
+              />
+              {/* <Text style={styles.search}>Search by Store..</Text> */}
             </View>
           </View>
-          <TouchableOpacity style={styles.notification}>
-            <BellIcon size={18} color="#26667E" />
-          </TouchableOpacity>
-        </View>
-
-        <View
-          className="flex-row items-center space-x-2 mx-5 mb-5"
-          style={styles.searchClass}
-        >
-          <View
-            style={styles.searchButton}
-            className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
-          >
-            <MagnifyingGlassIcon color="#888888" size={20} />
-            <TextInput
-              style={styles.searchButto}
-              placeholder="Search by Store.."
-              placeholderTextColor="#888888"
-              // value={searchQuery}
-              // onChangeText={setSearchQuery}
-            />
-            {/* <Text style={styles.search}>Search by Store..</Text> */}
-          </View>
-        </View>
+        ) : (
+          <></>
+        )}
 
         {PublicPublicitiesDataLoading ? (
           <View className="mx-5 mb-[20]">
@@ -213,22 +233,24 @@ const home = () => {
             <Text style={styles.titleCategory}>#SpecialForYou</Text>
             <SliderHome PublicPublicitiesData={PublicPublicitiesData} />
           </View>
-        ) :
+        ) : (
           <></>
-        }
+        )}
 
         {CategoriesDataLoading || StoresDataLoading ? (
           <View className="mx-5 mb-[20]">
-            <SpecialForYou />
+            <Brands />
+            <Stores />
           </View>
-        ) : (CategoriesData && CategoriesData?.length > 0) || (StoresData && StoresData?.length > 0) ? (
+        ) : (CategoriesData && CategoriesData?.length > 0) ||
+          (StoresData && StoresData?.length > 0) ? (
           <View style={styles.stores} className="mx-5 mt-[10]">
             <Text style={styles.titleCategory}>Stores</Text>
             <Store StoresData={StoresData} CategoriesData={CategoriesData} />
           </View>
-        ) :
+        ) : (
           <></>
-        }
+        )}
       </ScrollView>
     </SafeAreaView>
   );
