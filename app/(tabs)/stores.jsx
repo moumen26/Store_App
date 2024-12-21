@@ -115,7 +115,7 @@ const stores = () => {
         {AllStoresData?.length > 0 ? 
           <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
             {AllStoresData?.map((item) => (
-              <StorCard
+              <StoreCard
                 key={item._id}
                 title={item?.storeName}
                 sousTitle={`${item?.wilaya}, ${item?.commune}`}

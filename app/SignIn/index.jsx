@@ -19,14 +19,14 @@ const SignInScreen = () => {
   const { dispatch } = useAuthContext();
 
   const handleLogin = async () => {
-    setError("");    
+    setError("");
     try {
       const response = await fetch(`${Config.API_URL}/Auth/signin/client`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          UserName: userName, 
-          Password: password
+        body: JSON.stringify({
+          UserName: userName,
+          Password: password,
         }),
       });
 
@@ -39,16 +39,16 @@ const SignInScreen = () => {
         dispatch({ type: "LOGIN", payload: json });
         // navigation.navigate("(tabs)");
         navigation.reset({
-          index: 0, 
-          routes: [{ name: '(tabs)' }], 
+          index: 0,
+          routes: [{ name: "(tabs)" }],
         });
-        setPassword("")
-        setUserName("")
-        setError("")
+        setPassword("");
+        setUserName("");
+        setError("");
       }
     } catch (err) {
       setError("Something went wrong. Please try again.");
-      console.log(err)
+      console.log(err);
     }
   };
 
@@ -63,7 +63,7 @@ const SignInScreen = () => {
         </Text>
       </View>
       <View className="mt-[36]">
-        <View className="flex-col space-y-[6] mb-[16]">
+        <View styles={styles.column} className="mb-[16]">
           <Text style={styles.textlabel}>Username</Text>
           <TextInput
             style={styles.textInput}
@@ -73,7 +73,7 @@ const SignInScreen = () => {
             onChangeText={setUserName}
           />
         </View>
-        <View className="flex-col space-y-[6]">
+        <View styles={styles.column}>
           <Text style={styles.textlabel}>Password</Text>
           <View
             className="flex-row items-center justify-between"
@@ -104,18 +104,20 @@ const SignInScreen = () => {
             Forgot Password?
           </Text>
         </TouchableOpacity>
-        <Text style={{ 
-          color: "red",
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}>{error}</Text>
+        <Text
+          style={{
+            color: "red",
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {error}
+        </Text>
         <TouchableOpacity
           className="mt-[24]"
           style={styles.loginButton}
-          onPress={() => 
-            handleLogin()
-          }
+          onPress={() => handleLogin()}
         >
           <Text style={styles.loginButtonText}>Sign In</Text>
         </TouchableOpacity>
@@ -178,6 +180,7 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
+    marginTop: 4,
   },
   textInput: {
     width: 340,
@@ -188,6 +191,7 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
+    marginTop: 4,
   },
   textInputPassword: {
     fontSize: 12,
@@ -235,6 +239,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
+  },
+  column: {
+    flexDirection: "column",
+    gap: 20,
   },
 });
 

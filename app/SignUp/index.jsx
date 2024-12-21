@@ -181,6 +181,8 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
+    marginTop: 4,
+
   },
   textInput: {
     width: 340,
@@ -191,6 +193,8 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
+    marginTop: 4,
+
   },
   textInputPassword: {
     fontSize: 12,

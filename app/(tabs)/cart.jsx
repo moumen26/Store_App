@@ -12,6 +12,9 @@ import axios from "axios";
 import Config from "../config";
 import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator } from "react-native";
+import Cart from "../loading/Cart";
+import Search from "../loading/Search";
+import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 
 const COLUMN_COUNT = 1;
 
@@ -70,17 +73,12 @@ const cart = () => {
   if (OrdersDataLoading) {
     return (
       <SafeAreaView className="bg-white pt-5 pb-12 relative h-full">
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ActivityIndicator size="large" color="#FF033E" />
-          <Text style={styles.loadingText}>
-            Please wait till the request is being processed...
-          </Text>
+        <View className="mx-5" style={styles.containerLoading}>
+          <View style={styles.containerLoadingtextScreen}>
+            <ShimmerPlaceholder style={styles.textScreen} />
+          </View>
+          <Search />
+          <Cart />
         </View>
       </SafeAreaView>
     );
@@ -148,6 +146,15 @@ const cart = () => {
 };
 
 const styles = StyleSheet.create({
+  containerLoadingtextScreen: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  containerLoading: {
+    flexDirection: "column",
+    gap: 16,
+  },
   container: {
     height: hp(100),
     paddingBottom: 280,

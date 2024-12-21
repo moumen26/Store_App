@@ -9,8 +9,10 @@ const StoreCard = ({ title, sousTitle, onPress }) => {
       style={styles.StoreItem}
       className="h-[59] w-full flex-row items-center justify-between pr-[17] pl-[17] mb-3"
     >
-      <Text style={styles.text}>{title}</Text>
-      <Text style={styles.subText}>{sousTitle}</Text>
+      <View>
+        <Text style={styles.text}>{title}</Text>
+        <Text style={styles.subText}>{sousTitle}</Text>
+      </View>
       <View style={styles.shopItem}>
         <Text style={styles.textItem}>Shop</Text>
       </View>
