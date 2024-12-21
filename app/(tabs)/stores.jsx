@@ -20,6 +20,13 @@ import axios from "axios";
 import Config from "../config";
 import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator } from "react-native";
+import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import Cart from "../loading/Cart";
+import Search from "../loading/Search";
+import Brands from "../loading/Brands";
+import LoadingStores from "../loading/LoadingStores";
+import Stores from "../../components/Stores";
+
 // Axios instance for base URL configuration
 const api = axios.create({
   baseURL: Config.API_URL,
@@ -73,22 +80,20 @@ const stores = () => {
     enabled: !!user?.token, // Only run the query if user is authenticated
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-  
-//--------------------------------------------Rendering--------------------------------------------
+
+  //--------------------------------------------Rendering--------------------------------------------
   if (AllStoresDataLoading) {
     return (
       <SafeAreaView className="bg-white pt-5 pb-12 relative h-full">
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ActivityIndicator size="large" color="#FF033E" />
-          <Text style={styles.loadingText}>
-            Please wait till the request is being processed...
-          </Text>
+        <View className="mx-5" style={styles.containerLoading}>
+          <View style={styles.containerLoadingtextScreen}>
+            <ShimmerPlaceholder style={styles.textScreen} />
+          </View>
+          <Search />
+          <View style={styles.CategoryStores}>
+            <Brands />
+            <LoadingStores />
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -112,20 +117,19 @@ const stores = () => {
         />
       </View>
       <View style={styles.container}>
-        {AllStoresData?.length > 0 ? 
+        {/* <Stores StoresData={AllStoresData} /> */}
+        {/* {AllStoresData?.length > 0 ? (
           <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
             {AllStoresData?.map((item) => (
               <StoreCard
                 key={item._id}
                 title={item?.storeName}
                 sousTitle={`${item?.wilaya}, ${item?.commune}`}
-                onPress={() =>
-                  alert("Ask for access to the store")
-                }
+                onPress={() => alert("Ask for access to the store")}
               />
             ))}
           </ScrollView>
-          :
+        ) : (
           <View
             style={{
               flex: 1,
@@ -142,7 +146,7 @@ const stores = () => {
               No stores found
             </Text>
           </View>
-        }
+        )} */}
       </View>
     </SafeAreaView>
   );
@@ -182,6 +186,20 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
     color: "#FF033E",
     fontWeight: "bold",
+  },
+  containerLoadingtextScreen: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  containerLoading: {
+    flexDirection: "column",
+    gap: 16,
+  },
+  CategoryStores: {
+    flexDirection: "column",
+    gap: 16,
+    marginTop: 8,
   },
 });
 

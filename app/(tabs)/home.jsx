@@ -20,8 +20,9 @@ import { useQuery } from "@tanstack/react-query";
 import SpecialForYou from "../loading/SpecialForYou";
 import Search from "../loading/Search";
 import TopHomeScreen from "../loading/TopHomeScreen";
-import Stores from "../loading/Stores";
+import LoadingStores from "../loading/LoadingStores";
 import Brands from "../loading/Brands";
+import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 // Axios instance for base URL configuration
@@ -239,12 +240,15 @@ const home = () => {
 
         {CategoriesDataLoading || StoresDataLoading ? (
           <View className="mx-5 mb-[20]">
+            <ShimmerPlaceholder style={styles.textLoading} />
             <Brands />
-            <Stores />
+            <View style={styles.loadingStores}>
+              <LoadingStores />
+            </View>
           </View>
         ) : (CategoriesData && CategoriesData?.length > 0) ||
           (StoresData && StoresData?.length > 0) ? (
-          <View style={styles.stores} className="mx-5 mt-[10]">
+          <View style={styles.stores} className="mx-5">
             <Text style={styles.titleCategory}>Stores</Text>
             <Store StoresData={StoresData} CategoriesData={CategoriesData} />
           </View>
@@ -279,8 +283,8 @@ const styles = StyleSheet.create({
   },
   topClass: {
     flex: 1,
-    gap: 4,
     flexDirection: "column",
+    gap: 4,
   },
   iconText: {
     gap: 4,
@@ -312,6 +316,14 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
     color: "#FF033E",
     fontWeight: "bold",
+  },
+  textLoading: {
+    width: 100,
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  loadingStores: {
+    marginTop: 16,
   },
 });
 

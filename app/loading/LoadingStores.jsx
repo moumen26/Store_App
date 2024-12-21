@@ -3,9 +3,14 @@ import { View, StyleSheet } from "react-native";
 import React from "react";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 
-const Stores = () => {
+const LoadingStores = () => {
   return (
     <View style={styles.column}>
+      <ShimmerPlaceholder style={styles.StoreItem} />;
+      <ShimmerPlaceholder style={styles.StoreItem} />;
+      <ShimmerPlaceholder style={styles.StoreItem} />;
+      <ShimmerPlaceholder style={styles.StoreItem} />;
+      <ShimmerPlaceholder style={styles.StoreItem} />;
       <ShimmerPlaceholder style={styles.StoreItem} />;
       <ShimmerPlaceholder style={styles.StoreItem} />;
       <ShimmerPlaceholder style={styles.StoreItem} />;
@@ -21,8 +26,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 60,
     borderRadius: 15,
-    marginTop: 16,
+    marginBottom: 16,
   },
 });
 
-export default Stores;
+export default LoadingStores;
