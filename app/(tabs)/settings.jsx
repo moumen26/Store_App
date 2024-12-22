@@ -18,7 +18,8 @@ import {
 } from "react-native-heroicons/outline";
 import { useNavigation } from "expo-router";
 import { useLogout } from "../hooks/useLogout";
-import { useAuthContext } from '../hooks/useAuthContext';
+import { useAuthContext } from "../hooks/useAuthContext";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 const settings = () => {
   const navigation = useNavigation();
@@ -29,7 +30,8 @@ const settings = () => {
   const [currentValue, setCurrentValue] = useState("");
   const [newValue, setNewValue] = useState("");
 
-  const [deleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false);
+  const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
+    useState(false);
 
   const [settings, setSettings] = useState(() => [
     {
@@ -91,6 +93,17 @@ const settings = () => {
     closeModal();
   };
 
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+
+  const openConfirmationLogOutModal = () => {
+    setConfirmationModalVisible(true);
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModalVisible(false);
+  };
+
   const confirmDeleteAccount = () => {
     // Implement logic to delete account here
     // For demonstration, let's reset to sign-in screen
@@ -135,7 +148,10 @@ const settings = () => {
       </View>
 
       <View style={styles.buttonVersion} className="mx-5 mt-[140]">
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogOut}>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={openConfirmationLogOutModal}
+        >
           <Text style={styles.textItemRegular}>Log Out</Text>
         </TouchableOpacity>
         <View className="flex-col items-center space-y-[1]">
@@ -200,6 +216,13 @@ const settings = () => {
           </View>
         </View>
       </Modal>
+      <ConfirmationModal
+        visible={confirmationModalVisible}
+        onCancel={closeConfirmationModal}
+        onConfirm={handleLogOut}
+        modalTitle="Confirm Log Out"
+        modalSubTitle="You will be signed out of your account."
+      />
     </SafeAreaView>
   );
 };

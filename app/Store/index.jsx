@@ -415,11 +415,11 @@ const Store = () => {
                       " " +
                       item?.product?.size
                     }
-                    onPress={() =>
-                      navigation.navigate("Product/index", { data: item })
-                    }
+                    // onPress={() =>
+                    //   navigation.navigate("Product/index", { data: item })
+                    // }
 
-                    // onPress={() => handleOpenModel(item)}
+                    onPress={() => handleOpenModel(item)}
                   />
                 )}
               />

@@ -18,11 +18,11 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import EditCartScreen from "../screens/EditCartScreen";
 import useAuthContext from "../hooks/useAuthContext";
 import Config from "../config.jsx";
-
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import ConfirmationModal from "../../components/ConfirmationModal.jsx";
 
 const MyCartScreen = () => {
   const { cart, user, dispatch } = useAuthContext();
@@ -34,6 +34,9 @@ const MyCartScreen = () => {
   const [total, setTotal] = useState(0);
   const [type, setType] = useState("");
   const [submitionLoading, setSubmitionLoading] = useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+
   const handleChangeType = (val) => {
     setType(val);
   };
@@ -118,6 +121,14 @@ const MyCartScreen = () => {
     }
   };
 
+  const openConfirmationModal = () => {
+    setConfirmationModalVisible(true);
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModalVisible(false);
+  };
+
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
       {!submitionLoading ? (
@@ -194,7 +205,7 @@ const MyCartScreen = () => {
           >
             <TouchableOpacity
               style={styles.loginButton}
-              onPress={handleSubmitOrder}
+              onPress={openConfirmationModal}
             >
               <Text style={styles.loginButtonText}>Place Order</Text>
             </TouchableOpacity>
@@ -215,6 +226,14 @@ const MyCartScreen = () => {
               />
             </View>
           </Modal>
+
+          <ConfirmationModal
+            visible={confirmationModalVisible}
+            onCancel={closeConfirmationModal}
+            onConfirm={handleSubmitOrder}
+            modalTitle="Order Confirmation"
+            modalSubTitle="Make sure all information is correct before finalizing"
+          />
         </>
       ) : (
         <View
@@ -307,13 +326,59 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(201, 228, 238, 0.4)",
+    backgroundColor: "rgba(201, 228, 238, 0.7)",
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(201, 228, 238, 0.7)",
+    // backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  confirmationModal: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 10,
+    width: wp(80),
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontFamily: "Montserrat-Bold",
+    marginBottom: 10,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  modalButton: {
+    backgroundColor: "#F7F7F7",
+    borderRadius: 10,
+    padding: 10,
+    width: 120,
+    alignItems: "center",
+  },
+  confirmButton: {
+    backgroundColor: "#26667E",
+  },
+  modalButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  modalButtonTextColor: {
+    color: "#26667E",
+    fontSize: 16,
   },
   loadingText: {
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
     color: "#FF033E",
-    fontWeight: "bold",
   },
 });
 
