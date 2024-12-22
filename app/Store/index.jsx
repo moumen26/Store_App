@@ -41,7 +41,7 @@ const api = axios.create({
 
 const Store = () => {
   const route = useRoute();
-  const { storeId } = route.params;
+  const { storeId, storeName } = route.params;
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -61,7 +61,7 @@ const Store = () => {
   const fetchPrivatePublicitiesData = async () => {
     try {
       const response = await api.get(
-        `/Publicity/fetchAllStorePublicities/${storeId}`,
+        `/Publicity/fetchAllStorePublicities/${storeId}/${user?.info?.id}`,
         {
           headers: {
             Authorization: `Bearer ${user?.token}`,
@@ -95,9 +95,10 @@ const Store = () => {
     isLoading: PrivatePublicitiesDataLoading,
     refetch: PrivatePublicitiesDataRefetch,
   } = useQuery({
-    queryKey: ["PrivatePublicitiesData", user?.token], // Ensure token is part of the query key
+    queryKey: ["PrivatePublicitiesData", user?.token, storeId], // Ensure token is part of the query key
     queryFn: fetchPrivatePublicitiesData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   // Function to fetch brands data
@@ -135,7 +136,7 @@ const Store = () => {
     isLoading: BrandsDataLoading,
     refetch: BrandsDataRefetch,
   } = useQuery({
-    queryKey: ["BrandsData", user?.token], // Ensure token is part of the query key
+    queryKey: ["BrandsData", user?.token, storeId], // Ensure token is part of the query key
     queryFn: fetchBrandsData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
@@ -143,7 +144,7 @@ const Store = () => {
   // Function to fetch brands data
   const fetchPopularProductsData = async () => {
     try {
-      const response = await api.get(`/PopularProduct/${storeId}`, {
+      const response = await api.get(`/PopularProduct/${storeId}/${user?.info?.id}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`,
         },
@@ -175,15 +176,16 @@ const Store = () => {
     isLoading: PopularProductsDataLoading,
     refetch: PopularProductsDataRefetch,
   } = useQuery({
-    queryKey: ["PopularProductsData", user?.token], // Ensure token is part of the query key
+    queryKey: ["PopularProductsData", user?.token, storeId], // Ensure token is part of the query key
     queryFn: fetchPopularProductsData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   // Function to fetch brands data
   const fetchProductsData = async () => {
     try {
-      const response = await api.get(`/Stock/store/${storeId}`, {
+      const response = await api.get(`/Stock/store/${storeId}/${user?.info?.id}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`,
         },
@@ -215,12 +217,13 @@ const Store = () => {
     isLoading: ProductsDataLoading,
     refetch: ProductsDataRefetch,
   } = useQuery({
-    queryKey: ["ProductsData", user?.token], // Ensure token is part of the query key
+    queryKey: ["ProductsData", user?.token, storeId], // Ensure token is part of the query key
     queryFn: fetchProductsData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-
+  //--------------------------------------------RENDERING--------------------------------------------
   return (
     <SafeAreaView className="bg-white pt-3 h-full">
       <ScrollView
@@ -244,7 +247,7 @@ const Store = () => {
                 {/* <MapPinIcon size={20} color="#26667E" /> */}
                 <Image source={StoreIconVector} />
 
-                <Text style={styles.text}>Hamza Alimentation</Text>
+                <Text style={styles.text}>{storeName}</Text>
               </View>
             </View>
             <TouchableOpacity
@@ -388,6 +391,7 @@ const Store = () => {
                   onPress={() =>
                     navigation.navigate("AllProducts/index", {
                       productsData: ProductsData,
+                      storeId: storeId,
                     })
                   }
                   style={styles.seeAll}

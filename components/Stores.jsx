@@ -53,9 +53,9 @@ const Stores = ({ StoresData, CategoriesData }) => {
     });
   };
   const filteredStores = StoresData.filter((store) =>
-    store?.store?.categories.some((category) => category._id === activeTab)
+    store?.categories.some((category) => category === activeTab)
   );
-
+  
   return (
     <View>
       <View>
@@ -110,11 +110,11 @@ const Stores = ({ StoresData, CategoriesData }) => {
                 filteredStores.map((store) => (
                   <StoreCard
                     key={store._id}
-                    title={store.store.storeName}
-                    sousTitle={`${store.store.wilaya}, ${store.store.commune}`}
+                    title={store.storeName}
+                    sousTitle={`${store.wilaya}, ${store.commune}`}
                     onPress={() =>
                       navigation.navigate("Store/index", {
-                        storeId: store.store._id,
+                        storeId: store._id,
                       })
                     }
                   />

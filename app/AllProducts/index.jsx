@@ -10,7 +10,7 @@ import Config from "../config";
 const AllProductsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { productsData } = route.params;
+  const { productsData, storeId } = route.params;
 
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
@@ -35,7 +35,10 @@ const AllProductsScreen = () => {
             imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
               item?.product?.image
             }`}
-            onPress={() => navigation.navigate("Product/index", { data: item })}
+            onPress={() => navigation.navigate("Product/index", { 
+              data: item,
+              storeId: storeId,
+            })}
           />
         ))}
       </ScrollView>

@@ -67,6 +67,7 @@ const cart = () => {
     queryKey: ["OrdersData", user?.token], // Ensure token is part of the query key
     queryFn: fetchOrdersData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   //--------------------------------------------Rendering--------------------------------------------

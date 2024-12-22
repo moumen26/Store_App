@@ -62,7 +62,6 @@ const MyCartScreen = () => {
       />
     ));
   };
-
   const renderDetailsItems = () => {
     return storeCart?.map((item, index) => (
       <CommandeDetailsItem
@@ -86,7 +85,7 @@ const MyCartScreen = () => {
     setSubmitionLoading(true);
     try {
       const response = await fetch(
-        `${Config.API_URL}/Receipt/${user?.info?.id}`,
+        `${Config.API_URL}/Receipt/${user?.info?.id}/${storeId}`,
         {
           method: "POST",
           headers: {

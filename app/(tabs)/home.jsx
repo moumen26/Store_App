@@ -75,6 +75,7 @@ const home = () => {
     queryKey: ["PublicPublicitiesData", user?.token], // Ensure token is part of the query key
     queryFn: fetchPublicPublicitiesData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   // Function to fetch stores data
@@ -115,6 +116,7 @@ const home = () => {
     queryKey: ["StoresData", user?.token], // Ensure token is part of the query key
     queryFn: fetchStoresData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   // Function to fetch stores data
@@ -155,6 +157,7 @@ const home = () => {
     queryKey: ["CategoriesData", user?.token], // Ensure token is part of the query key
     queryFn: fetchCategoriesData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   //--------------------------------------------RENDERING--------------------------------------------

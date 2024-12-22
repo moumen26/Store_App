@@ -7,29 +7,30 @@ import Config from "../config";
 import ProductPer from "../../components/ProductPer";
 import useAuthContext from "../hooks/useAuthContext";
 import BackButton from "../../components/BackButton";
+import Snackbar from "../../components/Snackbar.jsx";
 
 const BoxIcon = require("../../assets/icons/CartDark.png");
 
-const Product = () =>
-  // { data, storeId }
-  {
+const Product = () => {
     const route = useRoute();
-    const { data } = route.params;
+    const navigator = useNavigation();
+    const { data, storeId } = route.params;
     const { dispatch } = useAuthContext();
     const [Product, setProduct] = useState(null);
     const handleProductOnChange = (val) => {
       setProduct(val);
     };
-
+    const [snackbarKey, setSnackbarKey] = useState(0);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
     const handleApplyPress = () => {
       if (data.quantity == 0) {
-        //Toast msg out of stock
-        alert("This product is out of stock.");
+        setSnackbarMessage("This product is out of stock.");
+        setSnackbarKey((prevKey) => prevKey + 1);
         return;
       }
       if (Product == null || Product.quantity == 0) {
-        //Toast msg to select quantity
-        alert("Please select a valid product quantity.");
+        setSnackbarMessage("Please select a valid product quantity.");
+        setSnackbarKey((prevKey) => prevKey + 1);
         return;
       }
       //add stock id to Product
@@ -49,7 +50,7 @@ const Product = () =>
       };
       dispatch({ type: "ADD_TO_CART", payload: updatedProduct });
       setProduct(null);
-      onclose();
+      navigator.goBack();
     };
 
     return (
@@ -57,6 +58,17 @@ const Product = () =>
         style={styles.Container}
         className="bg-white pt-5 relative h-full"
       >
+        {snackbarKey !== 0 && (
+          <Snackbar
+            key={snackbarKey}
+            message={snackbarMessage}
+            duration={2000}
+            actionText="Close"
+            backgroundColor="#FF0000"
+            textColor="white"
+            actionTextColor="yellow"
+          />
+        )}
         <View className="mx-5 flex-row justify-between">
           <BackButton
           //  handleCloseModal={onclose}

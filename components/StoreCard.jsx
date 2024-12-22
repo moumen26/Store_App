@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
 
-const StoreCard = ({ title, sousTitle, onPress }) => {
+const StoreCard = ({ title, sousTitle, buttonText, onPress }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -14,7 +14,7 @@ const StoreCard = ({ title, sousTitle, onPress }) => {
         <Text style={styles.subText}>{sousTitle}</Text>
       </View>
       <View style={styles.shopItem}>
-        <Text style={styles.textItem}>Shop</Text>
+        <Text style={styles.textItem}>{buttonText}</Text>
       </View>
     </TouchableOpacity>
   );

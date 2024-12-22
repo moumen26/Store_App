@@ -11,11 +11,36 @@ const AuthReducer = (state, action) => {
       return { user: action.payload };
     case "LOGOUT":
       return { user: null };
-    case "ADD_TO_CART":
-      return { 
-        ...state, 
-        cart: [...(state.cart || []), action.payload] 
-      };
+      case "ADD_TO_CART": {
+        const existingProducts = (state.cart || []).filter(
+          (item) =>
+            item.stock === action.payload.stock && 
+            item.store === action.payload.store
+        );        
+        if (existingProducts?.length > 0) {
+          // Product exists in cart; update quantity
+          const updatedCart = state.cart?.map((item) =>
+            item.stock === action.payload.stock && 
+            item.store === action.payload.store
+              ? {
+                  ...item,
+                  quantity: item.quantity + action.payload.quantity,
+                  price: item.unityPrice * (item.quantity + action.payload.quantity), // Update price
+                }
+              : item
+          );
+      
+          return {
+            ...state,
+            cart: updatedCart,
+          };
+        }
+        // Product does not exist; add as new entry
+        return {
+          ...state,
+          cart: [...(state.cart || []), action.payload],
+        };
+      }
     case "UPDATE_CART":
       return { 
         ...state, 

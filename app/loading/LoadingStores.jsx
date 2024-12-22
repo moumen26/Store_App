@@ -6,17 +6,17 @@ import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 const LoadingStores = () => {
   return (
     <View style={styles.column}>
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
-      <ShimmerPlaceholder style={styles.StoreItem} />;
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
+      <ShimmerPlaceholder style={styles.StoreItem} />
     </View>
   );
 };

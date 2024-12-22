@@ -10,7 +10,7 @@ import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import { useNavigation } from "expo-router";
 
-const Store = ({ StoresData, CategoriesData }) => {
+const NonLinkedStores = ({ StoresData, CategoriesData }) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
@@ -53,9 +53,9 @@ const Store = ({ StoresData, CategoriesData }) => {
     });
   };
   const filteredStores = StoresData.filter((store) =>
-    store?.store?.categories.some((category) => category._id === activeTab)
+    store?.categories.some((category) => category === activeTab)
   );
-
+  
   return (
     <View>
       <View>
@@ -110,14 +110,11 @@ const Store = ({ StoresData, CategoriesData }) => {
                 filteredStores.map((store) => (
                   <StoreCard
                     key={store._id}
-                    title={store.store.storeName}
-                    sousTitle={`${store.store.wilaya}, ${store.store.commune}`}
-                    buttonText="Shop"
+                    title={store.storeName}
+                    sousTitle={`${store.wilaya}, ${store.commune}`}
+                    buttonText="Request"
                     onPress={() =>
-                      navigation.navigate("Store/index", {
-                        storeId: store.store._id,
-                        storeName: store.store.storeName,
-                      })
+                      alert("Request access to the store : " + store.storeName)
                     }
                   />
                 ))
@@ -164,4 +161,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Store;
+export default NonLinkedStores;
