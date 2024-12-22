@@ -46,7 +46,7 @@ const Snackbar = ({
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    borderRadius: 4,
+    borderRadius: 5,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: 16,
+    width: "90%",
   },
   closeIcon: {
     width: 20,

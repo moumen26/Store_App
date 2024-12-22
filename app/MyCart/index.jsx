@@ -23,6 +23,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import ConfirmationModal from "../../components/ConfirmationModal.jsx";
+import Snackbar from "../../components/Snackbar.jsx";
 
 const MyCartScreen = () => {
   const { cart, user, dispatch } = useAuthContext();
@@ -30,6 +31,10 @@ const MyCartScreen = () => {
   const { storeId } = route.params;
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [snackbarKey, setSnackbarKey] = useState(0);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
   //form
   const [total, setTotal] = useState(0);
   const [type, setType] = useState("");
@@ -105,19 +110,23 @@ const MyCartScreen = () => {
       const json = await response.json();
       if (!response.ok) {
         setSubmitionLoading(false);
-        alert(json.message);
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        return;
       } else {
         dispatch({
           type: "REMOVE_ALL_CART",
           payload: storeId,
         });
         setSubmitionLoading(false);
-        alert(json.message);
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
       }
     } catch (err) {
       console.log(err);
     } finally {
       setSubmitionLoading(false);
+      setConfirmationModalVisible(false);
     }
   };
 
@@ -131,6 +140,17 @@ const MyCartScreen = () => {
 
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
+      {snackbarKey !== 0 && (
+        <Snackbar
+          key={snackbarKey}
+          message={snackbarMessage}
+          duration={2000}
+          actionText="Close"
+          backgroundColor="#FF0000"
+          textColor="white"
+          actionTextColor="yellow"
+        />
+      )}
       {!submitionLoading ? (
         <>
           <ScrollView

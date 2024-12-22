@@ -6,6 +6,7 @@ import { StyleSheet } from "react-native";
 import ShippingAddressCard from "../../components/ShippingAddressCard";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import useAuthContext from "../hooks/useAuthContext";
+import Snackbar from "../../components/Snackbar";
 
 const ShippingAddressScreen = () => {
   const { cart, user, dispatch } = useAuthContext();
@@ -18,6 +19,9 @@ const ShippingAddressScreen = () => {
   const handleSelectItem = (index) => {
     setSelectedIndex(index);
   };
+
+  const [snackbarKey, setSnackbarKey] = useState(0);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const renderItems = () =>
     user?.info?.storeAddresses?.map((item, index) => (
@@ -36,12 +40,17 @@ const ShippingAddressScreen = () => {
   const handleApplyPress = () => {
     if (!storeCart || storeCart?.length <= 0) {
       // Notify the user to select an address
-      alert("Please select some products after you can choose an address");
+      setSnackbarMessage(
+        "Please select some products after you can choose an address."
+      );
+      setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
     if (selectedIndex == null) {
       // Notify the user to select an address
-      alert("Please select an address.");
+      setSnackbarMessage("Please select an address.");
+      setSnackbarKey((prevKey) => prevKey + 1);
+
       return;
     }
     // Dispatch the selected address to the cart
@@ -64,6 +73,17 @@ const ShippingAddressScreen = () => {
   };
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
+      {snackbarKey !== 0 && (
+        <Snackbar
+          key={snackbarKey}
+          message={snackbarMessage}
+          duration={2000}
+          actionText="Close"
+          backgroundColor="#FF0000"
+          textColor="white"
+          actionTextColor="yellow"
+        />
+      )}
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <BackButton />
         <Text className="text-center" style={styles.titleScreen}>
