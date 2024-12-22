@@ -13,8 +13,7 @@ import ProductPer from "../../components/ProductPer";
 import Config from "../config";
 import useAuthContext from "../hooks/useAuthContext";
 import BackButtonCloseModal from "../../components/BackButtonCloseModal";
-
-const LaveSol = require("../../assets/images/LaveSol.png");
+import Snackbar from "../../components/Snackbar";
 const BoxIcon = require("../../assets/icons/CartDark.png");
 
 const ProductScreen = ({ data, storeId, onclose }) => {
@@ -24,37 +23,28 @@ const ProductScreen = ({ data, storeId, onclose }) => {
     setProduct(val);
   };
 
-  const [isCheckedUnit, setIsCheckedUnit] = useState(false);
-  const toggleCheckboxUnit = () => {
-    setIsCheckedUnit((previousState) => !previousState);
-  };
-
-  const [isCheckedBox, setIsCheckedBox] = useState(false);
-  const toggleCheckboxBox = () => {
-    setIsCheckedBox((previousState) => !previousState);
-  };
+  const [snackbarKey, setSnackbarKey] = useState(0);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const handleApplyPress = () => {
     if (data.quantity == 0) {
-      //Toast msg out of stock
-      alert("This product is out of stock.");
+      setSnackbarMessage("This product is out of stock.");
+      setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
     if (Product == null || Product.quantity == 0) {
-      //Toast msg to select quantity
-      alert("Please select a valid product quantity.");
+      setSnackbarMessage("Please select a valid product quantity.");
+      setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
-    //add stock id to Product
+
     const updatedProduct = {
       store: storeId,
       ...Product,
       stock: data?._id,
       product: {
-        image: `${
-          `${Config.API_URL.replace("/api", "")}/files/${
-            data?.product?.image
-          }` || ""
+        image: `${Config.API_URL.replace("/api", "")}/files/${
+          data?.product?.image || ""
         }`,
         name: data?.product?.name + " " + data?.product?.size,
         brand: data?.product?.brand?.name,
@@ -64,9 +54,21 @@ const ProductScreen = ({ data, storeId, onclose }) => {
     setProduct(null);
     onclose();
   };
-  
+
   return (
     <Animated.View style={styles.modalView}>
+      {snackbarKey !== 0 && (
+        <Snackbar
+          key={snackbarKey}
+          message={snackbarMessage}
+          duration={2000}
+          actionText="Close"
+          backgroundColor="#FF0000"
+          textColor="white"
+          actionTextColor="yellow"
+        />
+      )}
+
       <View className="mx-5 flex-row justify-between">
         <BackButtonCloseModal handleCloseModal={onclose} />
         <FavoriteButton />
@@ -75,10 +77,8 @@ const ProductScreen = ({ data, storeId, onclose }) => {
         <Image
           style={styles.image}
           source={{
-            uri: `${
-              `${Config.API_URL.replace("/api", "")}/files/${
-                data?.product?.image
-              }` || ""
+            uri: `${Config.API_URL.replace("/api", "")}/files/${
+              data?.product?.image || ""
             }`,
           }}
         />
@@ -212,8 +212,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     height: Dimensions.get("screen").height * 0.9,
-
-    // height: "80%",
   },
 });
 
