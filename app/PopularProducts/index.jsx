@@ -45,7 +45,7 @@ const PopularProductScreen = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white pt-5 relative h-full">
+    <SafeAreaView className="bg-white pt-3 relative h-full">
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <BackButton />
         <Text className="text-center" style={styles.titleScreen}>

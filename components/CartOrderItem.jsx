@@ -1,7 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { ChevronRightIcon } from "react-native-heroicons/outline";
-import { orderStatusTextDisplayer, formatDate } from "../app/util/useFullFunctions";
+import {
+  orderStatusTextDisplayer,
+  formatDate,
+} from "../app/util/useFullFunctions";
 const CartOrderItem = ({
   OrderStoreName,
   OrderID,
@@ -11,6 +14,13 @@ const CartOrderItem = ({
   OrderStatus,
   OrderSubTotal,
 }) => {
+  function capitalizeFirstLetters(text) {
+    if (!text) return "";
+    return text
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  }
   return (
     <View style={styles.cartOrderItem}>
       <View style={styles.cartItem}>
@@ -23,21 +33,25 @@ const CartOrderItem = ({
       </View>
       <View style={styles.cartItem}>
         <Text style={styles.text}>Order Type</Text>
-        <Text style={styles.textDescription}>{OrderType}</Text>
+        <Text style={styles.textDescription}>
+          {capitalizeFirstLetters(OrderType)}
+        </Text>
       </View>
-      {OrderDeliveryAddress && 
+      {OrderDeliveryAddress && (
         <View style={styles.cartItem}>
           <Text style={styles.text}>Delivery Address</Text>
           <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
         </View>
-      }
+      )}
       <View style={styles.cartItem}>
         <Text style={styles.text}>Order Date</Text>
         <Text style={styles.textDescription}>{formatDate(OrderDate)}</Text>
       </View>
       <View style={styles.cartItem}>
         <Text style={styles.text}>Status</Text>
-        <Text style={styles.textDescription}>{orderStatusTextDisplayer(OrderStatus)}</Text>
+        <Text style={styles.textDescription}>
+          {orderStatusTextDisplayer(OrderStatus)}
+        </Text>
       </View>
       <View style={styles.cartItem}>
         <Text style={styles.text}>Sub Total</Text>

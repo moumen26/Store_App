@@ -84,7 +84,7 @@ const stores = () => {
   //--------------------------------------------Rendering--------------------------------------------
   if (AllStoresDataLoading) {
     return (
-      <SafeAreaView className="bg-white pt-5 pb-12 relative h-full">
+      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
         <View className="mx-5" style={styles.containerLoading}>
           <View style={styles.containerLoadingtextScreen}>
             <ShimmerPlaceholder style={styles.textScreen} />
@@ -99,7 +99,7 @@ const stores = () => {
     );
   }
   return (
-    <SafeAreaView className="bg-white pt-5 pb-12 relative h-full">
+    <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
       <Text className="text-center mb-[20]" style={styles.titleScreen}>
         My Stores
       </Text>

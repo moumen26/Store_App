@@ -101,7 +101,7 @@ const settings = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white pt-5 pb-1 relative h-full">
+    <SafeAreaView className="bg-white pt-3 pb-1 relative h-full">
       <Text className="text-center mb-[20]" style={styles.titleScreen}>
         Settings
       </Text>

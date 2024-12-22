@@ -169,7 +169,7 @@ const ProductPer = ({
                 >
                   <MinusIcon
                     size={20}
-                    // color={items.length > 0 ? "#000" : "#888888"}
+                    color={itemQuantity > 0 ? "#3E9CB9" : "#888888"}
                   />
                 </TouchableOpacity>
                 <Text style={styles.textQuantity}>{itemQuantity}</Text>

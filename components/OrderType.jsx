@@ -127,7 +127,7 @@ const OrderType = ({ storeId, storeCart, navigation, handleChangeType }) => {
                     style={styles.changeButton}
                     onPress={handleChangePress}
                   >
-                    <Text style={styles.textChange}>add</Text>
+                    <Text style={styles.textChange}>Add</Text>
                   </TouchableOpacity>
                 )}
               </View>

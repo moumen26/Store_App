@@ -30,7 +30,7 @@ import Brands from "../loading/Brands";
 import AllProducts from "../loading/AllProducts";
 import Search from "../loading/Search";
 import TopHomeScreen from "../loading/TopHomeScreen";
-import COMING_SOON from '../../assets/images/comingSoon.jpg'
+import COMING_SOON from "../../assets/images/comingSoon.jpg";
 const StoreIconVector = require("../../assets/icons/Store.png");
 const api = axios.create({
   baseURL: Config.API_URL,
@@ -222,7 +222,7 @@ const Store = () => {
   });
 
   return (
-    <SafeAreaView className="bg-white pt-5 h-full">
+    <SafeAreaView className="bg-white pt-3 h-full">
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="relative h-full"
@@ -248,9 +248,11 @@ const Store = () => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => navigation.navigate("MyCart/index", {
-                storeId: storeId,
-              })}
+              onPress={() =>
+                navigation.navigate("MyCart/index", {
+                  storeId: storeId,
+                })
+              }
               style={styles.notification}
             >
               <ShoppingCartIcon size={18} color="#26667E" />
@@ -413,7 +415,11 @@ const Store = () => {
                       " " +
                       item?.product?.size
                     }
-                    onPress={() => handleOpenModel(item)}
+                    onPress={() =>
+                      navigation.navigate("Product/index", { data: item })
+                    }
+
+                    // onPress={() => handleOpenModel(item)}
                   />
                 )}
               />
@@ -423,16 +429,13 @@ const Store = () => {
           <></>
         )}
 
-        {(!ProductsData || ProductsData?.length <= 0) &&
-          <SafeAreaView className="bg-white pt-5 h-full">
+        {(!ProductsData || ProductsData?.length <= 0) && (
+          <SafeAreaView className="bg-white pt-3 h-full">
             <View style={styles.imageContainer}>
-              <Image
-                style={styles.image}
-                source={COMING_SOON}
-              />
-            </View>        
+              <Image style={styles.image} source={COMING_SOON} />
+            </View>
           </SafeAreaView>
-        }
+        )}
       </ScrollView>
       <Modal
         animationType="slide"
@@ -441,7 +444,11 @@ const Store = () => {
         onRequestClose={handleCloseModel}
       >
         <View style={styles.modalView}>
-          <ProductScreen data={selectedProduct} storeId={storeId} onclose={handleCloseModel} />
+          <ProductScreen
+            data={selectedProduct}
+            storeId={storeId}
+            onclose={handleCloseModel}
+          />
         </View>
       </Modal>
     </SafeAreaView>

@@ -119,7 +119,7 @@ const MyCartScreen = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white pt-5 relative h-full">
+    <SafeAreaView className="bg-white pt-3 relative h-full">
       {!submitionLoading ? (
         <>
           <ScrollView

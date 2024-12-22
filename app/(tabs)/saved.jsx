@@ -108,7 +108,7 @@ const saved = () => {
     return items;
   };
   return (
-    <SafeAreaView className="bg-white pt-5 pb-12 relative h-full">
+    <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
       <Text className="text-center mb-[20]" style={styles.titleScreen}>
         Stores
       </Text>

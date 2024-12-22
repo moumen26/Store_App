@@ -169,7 +169,7 @@ const home = () => {
   }
 
   return (
-    <SafeAreaView className="bg-white pt-5 pb-10 h-full">
+    <SafeAreaView className="bg-white pt-3 pb-10 h-full">
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="relative h-full"

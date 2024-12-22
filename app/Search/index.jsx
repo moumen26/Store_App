@@ -114,7 +114,7 @@ const SearchScreen = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white pt-5 relative h-full">
+    <SafeAreaView className="bg-white pt-3 relative h-full">
       <View className="flex-row items-center mx-5 justify-between mb-[20]">
         <BackButton />
         <SearchItem placeholder="Search by Product.." />

@@ -11,7 +11,7 @@ import BackButton from "../../components/BackButton";
 
 const VerifyCodeScreen = () => {
   return (
-    <SafeAreaView className="bg-white pt-5 h-full">
+    <SafeAreaView className="bg-white pt-3 h-full">
       <View className="mx-5">
         <BackButton />
       </View>
