@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
+import ConfirmationModal from "./ConfirmationModal";
 import { useNavigation } from "expo-router";
 
 const NonLinkedStores = ({ StoresData, CategoriesData }) => {
@@ -15,6 +16,17 @@ const NonLinkedStores = ({ StoresData, CategoriesData }) => {
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+
+  const openRequestModal = () => {
+    setConfirmationModalVisible(true);
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModalVisible(false);
+  };
 
   useEffect(() => {
     Animated.parallel([
@@ -108,15 +120,25 @@ const NonLinkedStores = ({ StoresData, CategoriesData }) => {
             >
               {filteredStores.length > 0 ? (
                 filteredStores.map((store) => (
-                  <StoreCard
-                    key={store._id}
-                    title={store.storeName}
-                    sousTitle={`${store.wilaya}, ${store.commune}`}
-                    buttonText="Request"
-                    onPress={() =>
-                      alert("Request access to the store : " + store.storeName)
-                    }
-                  />
+                  <>
+                    <StoreCard
+                      key={store._id}
+                      title={store.storeName}
+                      sousTitle={`${store.wilaya}, ${store.commune}`}
+                      buttonText="Request"
+                      onPress={openRequestModal}
+                      // onPress={() =>
+                      //   alert("Request access to the store : " + store.storeName)
+                      // }
+                    />
+                    <ConfirmationModal
+                      visible={confirmationModalVisible}
+                      onCancel={closeConfirmationModal}
+                      // onConfirm={}
+                      modalTitle="Access Store Permission"
+                      modalSubTitle={`Your request will be sent to the administrator of ${store.storeName}`}
+                    />
+                  </>
                 ))
               ) : (
                 <Text style={styles.noStoresText}>
