@@ -55,9 +55,9 @@ const NonLinkedStores = ({ StoresData, CategoriesData }) => {
   const filteredStores = StoresData.filter((store) =>
     store?.categories.some((category) => category === activeTab)
   );
-  
+
   return (
-    <View>
+    <View className="mx-5">
       <View>
         <View style={[styles.allTransparent]}>
           <ScrollView

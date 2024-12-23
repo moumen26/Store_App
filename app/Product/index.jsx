@@ -12,128 +12,121 @@ import Snackbar from "../../components/Snackbar.jsx";
 const BoxIcon = require("../../assets/icons/CartDark.png");
 
 const Product = () => {
-    const route = useRoute();
-    const navigator = useNavigation();
-    const { data, storeId } = route.params;
-    const { dispatch } = useAuthContext();
-    const [Product, setProduct] = useState(null);
-    const handleProductOnChange = (val) => {
-      setProduct(val);
+  const route = useRoute();
+  const navigator = useNavigation();
+  const { data, storeId } = route.params;
+  const { dispatch } = useAuthContext();
+  const [Product, setProduct] = useState(null);
+  const handleProductOnChange = (val) => {
+    setProduct(val);
+  };
+  const [snackbarKey, setSnackbarKey] = useState(0);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const handleApplyPress = () => {
+    if (data.quantity == 0) {
+      setSnackbarMessage("This product is out of stock.");
+      setSnackbarKey((prevKey) => prevKey + 1);
+      return;
+    }
+    if (Product == null || Product.quantity == 0) {
+      setSnackbarMessage("Please select a valid product quantity.");
+      setSnackbarKey((prevKey) => prevKey + 1);
+      return;
+    }
+    //add stock id to Product
+    const updatedProduct = {
+      store: storeId,
+      ...Product,
+      stock: data?._id,
+      product: {
+        image: `${
+          `${Config.API_URL.replace("/api", "")}/files/${
+            data?.product?.image
+          }` || ""
+        }`,
+        name: data?.product?.name + " " + data?.product?.size,
+        brand: data?.product?.brand?.name,
+      },
     };
-    const [snackbarKey, setSnackbarKey] = useState(0);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-    const handleApplyPress = () => {
-      if (data.quantity == 0) {
-        setSnackbarMessage("This product is out of stock.");
-        setSnackbarKey((prevKey) => prevKey + 1);
-        return;
-      }
-      if (Product == null || Product.quantity == 0) {
-        setSnackbarMessage("Please select a valid product quantity.");
-        setSnackbarKey((prevKey) => prevKey + 1);
-        return;
-      }
-      //add stock id to Product
-      const updatedProduct = {
-        store: storeId,
-        ...Product,
-        stock: data?._id,
-        product: {
-          image: `${
-            `${Config.API_URL.replace("/api", "")}/files/${
-              data?.product?.image
-            }` || ""
-          }`,
-          name: data?.product?.name + " " + data?.product?.size,
-          brand: data?.product?.brand?.name,
-        },
-      };
-      dispatch({ type: "ADD_TO_CART", payload: updatedProduct });
-      setProduct(null);
-      navigator.goBack();
-    };
+    dispatch({ type: "ADD_TO_CART", payload: updatedProduct });
+    setProduct(null);
+    navigator.goBack();
+  };
 
-    return (
-      <SafeAreaView
-        style={styles.Container}
-        className="bg-white pt-5 relative h-full"
-      >
-        {snackbarKey !== 0 && (
-          <Snackbar
-            key={snackbarKey}
-            message={snackbarMessage}
-            duration={2000}
-            actionText="Close"
-            backgroundColor="#FF0000"
-            textColor="white"
-            actionTextColor="yellow"
-          />
-        )}
-        <View className="mx-5 flex-row justify-between">
-          <BackButton
-          //  handleCloseModal={onclose}
-          />
-          <FavoriteButton />
-        </View>
-        <View className="w-full mb-[20] items-center h-[35%]">
-          <Image
-            style={styles.image}
-            source={{
-              uri: `${
-                `${Config.API_URL.replace("/api", "")}/files/${
-                  data?.product?.image
-                }` || ""
-              }`,
-            }}
-          />
-        </View>
-        <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
-          <Text style={styles.ProductNameText}>
-            {data?.product?.brand?.name +
-              " " +
-              data?.product?.name +
-              " " +
-              data?.product?.size}
-          </Text>
-          <Text style={styles.PriceText}>
-            Price per unit: DA {data?.selling}
-          </Text>
-          <Text style={styles.PriceText}>
-            Price per box: DA {data?.selling * data?.product?.boxItems}
-          </Text>
+  return (
+    <SafeAreaView
+      style={styles.Container}
+      className="bg-white pt-5 relative h-full"
+    >
+      {snackbarKey !== 0 && (
+        <Snackbar
+          key={snackbarKey}
+          message={snackbarMessage}
+          duration={2000}
+          actionText="Close"
+          backgroundColor="#FF0000"
+          textColor="white"
+          actionTextColor="yellow"
+        />
+      )}
+      <View className="mx-5 flex-row justify-between">
+        <BackButton />
+        <FavoriteButton />
+      </View>
+      <View className="w-full mb-[20] items-center h-[35%]">
+        <Image
+          style={styles.image}
+          source={{
+            uri: `${
+              `${Config.API_URL.replace("/api", "")}/files/${
+                data?.product?.image
+              }` || ""
+            }`,
+          }}
+        />
+      </View>
+      <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
+        <Text style={styles.ProductNameText}>
+          {data?.product?.brand?.name +
+            " " +
+            data?.product?.name +
+            " " +
+            data?.product?.size}
+        </Text>
+        <Text style={styles.PriceText}>Price per unit: DA {data?.selling}</Text>
+        <Text style={styles.PriceText}>
+          Price per box: DA {data?.selling * data?.product?.boxItems}
+        </Text>
+        <View
+          style={styles.boxClass}
+          className="flex-row space-x-2 items-center"
+        >
           <View
             style={styles.boxClass}
-            className="flex-row space-x-2 items-center"
+            className="w-fit h-[20] flex-row items-center justify-center bg-[#EDEDED] rounded-xl pl-3 pr-3"
           >
-            <View
-              style={styles.boxClass}
-              className="w-fit h-[20] flex-row items-center justify-center bg-[#EDEDED] rounded-xl pl-3 pr-3"
-            >
-              <Text style={styles.BoxText}>{data?.product?.boxItems}</Text>
-              <Text style={styles.BoxText}>/</Text>
-              <Image style={styles.boxIcon} source={BoxIcon} />
-            </View>
+            <Text style={styles.BoxText}>{data?.product?.boxItems}</Text>
+            <Text style={styles.BoxText}>/</Text>
+            <Image style={styles.boxIcon} source={BoxIcon} />
           </View>
         </View>
-        <ProductPer
-          selling={data?.selling}
-          quantity={data?.quantity}
-          buyingMathode={data?.buyingMathode}
-          boxItems={data?.product?.boxItems}
-          quantityLimit={data?.quantityLimit}
-          handleProductOnChange={handleProductOnChange}
-        />
-        <View className="w-full absolute bottom-8 flex-row justify-center mt-[20]">
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleApplyPress}
-          >
-            <Text style={styles.loginButtonText}>Apply</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
-  };
+      </View>
+      <ProductPer
+        selling={data?.selling}
+        quantity={data?.quantity}
+        buyingMathode={data?.buyingMathode}
+        boxItems={data?.product?.boxItems}
+        quantityLimit={data?.quantityLimit}
+        handleProductOnChange={handleProductOnChange}
+      />
+      <View className="w-full absolute bottom-8 flex-row justify-center mt-[20]">
+        <TouchableOpacity style={styles.loginButton} onPress={handleApplyPress}>
+          <Text style={styles.loginButtonText}>Apply</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

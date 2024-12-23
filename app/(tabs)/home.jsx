@@ -23,6 +23,7 @@ import TopHomeScreen from "../loading/TopHomeScreen";
 import LoadingStores from "../loading/LoadingStores";
 import Brands from "../loading/Brands";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import { MapPinIcon } from "react-native-heroicons/solid";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 // Axios instance for base URL configuration
@@ -188,7 +189,7 @@ const home = () => {
                 Location
               </Text>
               <View style={styles.iconText} className="flex-row">
-                <Image source={LocationIconVector} />
+                <MapPinIcon size={18} color="#26667E" />
                 <Text style={styles.text}>Blida, Algeria</Text>
               </View>
             </View>
@@ -290,6 +291,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   iconText: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   text: {

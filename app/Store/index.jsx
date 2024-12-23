@@ -31,6 +31,7 @@ import AllProducts from "../loading/AllProducts";
 import Search from "../loading/Search";
 import TopHomeScreen from "../loading/TopHomeScreen";
 import COMING_SOON from "../../assets/images/comingSoon.jpg";
+import { BuildingStorefrontIcon } from "react-native-heroicons/solid";
 const StoreIconVector = require("../../assets/icons/Store.png");
 const api = axios.create({
   baseURL: Config.API_URL,
@@ -144,11 +145,14 @@ const Store = () => {
   // Function to fetch brands data
   const fetchPopularProductsData = async () => {
     try {
-      const response = await api.get(`/PopularProduct/${storeId}/${user?.info?.id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
+      const response = await api.get(
+        `/PopularProduct/${storeId}/${user?.info?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
 
       // Check if the response is valid
       if (response.status !== 200) {
@@ -185,11 +189,14 @@ const Store = () => {
   // Function to fetch brands data
   const fetchProductsData = async () => {
     try {
-      const response = await api.get(`/Stock/store/${storeId}/${user?.info?.id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
+      const response = await api.get(
+        `/Stock/store/${storeId}/${user?.info?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
 
       // Check if the response is valid
       if (response.status !== 200) {
@@ -240,13 +247,8 @@ const Store = () => {
               <Text style={styles.text} className="text-gray-400">
                 Store
               </Text>
-              <View
-                style={styles.iconText}
-                className="flex-row items-center space-x-1"
-              >
-                {/* <MapPinIcon size={20} color="#26667E" /> */}
-                <Image source={StoreIconVector} />
-
+              <View style={styles.iconText}>
+                <BuildingStorefrontIcon name="cart" size={18} color="#26667E" />
                 <Text style={styles.text}>{storeName}</Text>
               </View>
             </View>
@@ -419,11 +421,14 @@ const Store = () => {
                       " " +
                       item?.product?.size
                     }
-                    // onPress={() =>
-                    //   navigation.navigate("Product/index", { data: item })
-                    // }
+                    onPress={() =>
+                      navigation.navigate("Product/index", {
+                        data: item,
+                        storeId: storeId,
+                      })
+                    }
 
-                    onPress={() => handleOpenModel(item)}
+                    // onPress={() => handleOpenModel(item)}
                   />
                 )}
               />
@@ -461,6 +466,8 @@ const Store = () => {
 
 const styles = StyleSheet.create({
   iconText: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   text: {

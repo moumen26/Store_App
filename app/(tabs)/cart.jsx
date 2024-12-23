@@ -2,7 +2,10 @@ import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CartOrderItem from "../../components/CartOrderItem";
-import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
+import {
+  DocumentMagnifyingGlassIcon,
+  MagnifyingGlassIcon,
+} from "react-native-heroicons/outline";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -15,6 +18,7 @@ import { ActivityIndicator } from "react-native";
 import Cart from "../loading/Cart";
 import Search from "../loading/Search";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import ArchiveButton from "../../components/ArchiveButton";
 
 const COLUMN_COUNT = 1;
 
@@ -87,9 +91,14 @@ const cart = () => {
 
   return (
     <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-      <Text className="text-center mb-[20]" style={styles.titleScreen}>
-        My Orders
-      </Text>
+      <View className="mx-5 mb-[20] flex-row items-center justify-between">
+        <View style={styles.Vide}></View>
+        <Text className="text-center" style={styles.titleScreen}>
+          My Orders
+        </Text>
+        <ArchiveButton />
+        {/* <DocumentMagnifyingGlassIcon size={24} color="#26667E" /> */}
+      </View>
       <View
         style={styles.searchBar}
         className="flex-row mx-5 items-center space-x-2 mb-[20] rounded-3xl"
@@ -97,7 +106,7 @@ const cart = () => {
         <MagnifyingGlassIcon size={20} color="#26667E" />
         <TextInput
           style={styles.searchBarItem}
-          placeholder="Search your store.."
+          placeholder="Search your order.."
           placeholderTextColor="#888888"
           // value={searchQuery}
           // onChangeText={setSearchQuery}
@@ -193,6 +202,10 @@ const styles = StyleSheet.create({
   containerScroll: {
     flexDirection: "column",
     gap: 16,
+  },
+  Vide: {
+    width: 40,
+    height: 40,
   },
 });
 

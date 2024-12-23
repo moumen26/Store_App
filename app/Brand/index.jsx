@@ -52,8 +52,8 @@ const BrandScreen = () => {
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
       <View style={styles.ligne} className="relative mb-[20]">
-        <View className="mx-5 h-[200]">
-          <Image source={{uri: brandIMG}} style={styles.imageBrand} />
+        <View style={styles.imageClass} className="relative mx-5">
+          <Image source={{ uri: brandIMG }} style={styles.imageBrand} />
           <View className="flex-row items-center justify-between">
             <BackButton />
           </View>
@@ -76,11 +76,13 @@ const BrandScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  imageClass: {
+    height: 200,
+  },
   imageBrand: {
     width: "100%",
-    height: "100%",
+    height: "90%",
     position: "absolute",
-    top: 0,
     left: 0,
     resizeMode: "contain",
   },

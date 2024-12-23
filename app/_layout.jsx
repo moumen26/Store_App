@@ -81,6 +81,13 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="ArchiveOrders/index"
+            options={{
+              headerShown: false,
+              presentation: "containedModal",
+            }}
+          />
+          <Stack.Screen
             name="MyWishList/index"
             options={{
               headerShown: false,

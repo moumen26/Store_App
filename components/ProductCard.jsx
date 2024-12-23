@@ -10,11 +10,8 @@ const ProductCard = ({
   onPress,
 }) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      className="h-[90] flex-row items-center space-x-1 mb-1"
-    >
-      <Image source={{uri: `${imgUrl || ''}`}} style={styles.image} />
+    <TouchableOpacity onPress={onPress} style={styles.row}>
+      <Image source={{ uri: `${imgUrl || ""}` }} style={styles.image} />
       <View>
         <Text style={styles.textName}>{ProductName}</Text>
         <Text style={styles.textBrand}>{ProductBrand}</Text>
@@ -25,9 +22,18 @@ const ProductCard = ({
 };
 
 const styles = StyleSheet.create({
+  row: {
+    height: 100,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    marginBottom: 4,
+  },
   image: {
     width: 80,
     height: 80,
+    // objectFit: "contain",
+    resizeMode: "contain",
   },
   textName: {
     fontSize: 13,

@@ -147,7 +147,7 @@ const stores = () => {
       </Text>
       <View
         style={styles.searchBar}
-        className="flex-row mx-5 items-center space-x-2 mb-[20]"
+        className="flex-row mx-5 items-center space-x-2 mb-[10]"
       >
         <MagnifyingGlassIcon size={20} color="#26667E" />
         <TextInput
@@ -159,9 +159,9 @@ const stores = () => {
         />
       </View>
       <View style={styles.container}>
-        <NonLinkedStores 
-          StoresData={AllStoresData} 
-          CategoriesData={CategoriesData}  
+        <NonLinkedStores
+          StoresData={AllStoresData}
+          CategoriesData={CategoriesData}
         />
       </View>
     </SafeAreaView>
