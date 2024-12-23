@@ -24,6 +24,7 @@ import LoadingStores from "../loading/LoadingStores";
 import Brands from "../loading/Brands";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 import { MapPinIcon } from "react-native-heroicons/solid";
+import { useNavigation } from "expo-router";
 
 const LocationIconVector = require("../../assets/icons/Location.png");
 // Axios instance for base URL configuration
@@ -36,6 +37,7 @@ const api = axios.create({
 
 const home = () => {
   const { user } = useAuthContext();
+  const navigation = useNavigation();
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -193,7 +195,10 @@ const home = () => {
                 <Text style={styles.text}>Blida, Algeria</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.notification}>
+            <TouchableOpacity
+              style={styles.notification}
+              onPress={() => navigation.navigate("E-Receipt/index")}
+            >
               <BellIcon size={18} color="#26667E" />
             </TouchableOpacity>
           </View>

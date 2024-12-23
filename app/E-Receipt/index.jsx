@@ -15,6 +15,11 @@ import EReceiptDetails from "../../components/EReceiptDetails";
 const Elio = require("../../assets/images/Elio.png");
 const CodeBare = require("../../assets/images/CodeBare.png");
 
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
 const COLUMN_COUNT = 1;
 const DATA = [
   {
@@ -98,24 +103,25 @@ const EReceiptScreen = () => {
 
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
-      <View className="mx-5 mb-[20] flex-row items-center justify-between">
-        <BackButton />
-        <Text style={styles.titleScreen}>E-Receipt</Text>
-        <View style={styles.Vide}></View>
-      </View>
-      <View className="flex items-center">
-        <Image source={CodeBare} />
-      </View>
-      <View className="h-[45%] mt-[20]">
-        <ScrollView
-          className="mx-5"
-          contentContainerStyle={styles.container}
-          showsVerticalScrollIndicator={false}
-        >
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: 0,
+          paddingBottom: 55,
+        }}
+        vertical
+        showsHorizontalScrollIndicator={false}
+      >
+        <View className="mx-5 mb-[20] flex-row items-center justify-between">
+          <BackButton />
+          <Text style={styles.titleScreen}>E-Receipt</Text>
+          <View style={styles.Vide}></View>
+        </View>
+        <View className="flex items-center">
+          <Image source={CodeBare} />
+        </View>
+        <View className="mx-5 mt-[12]" style={styles.container}>
           {renderProductItems()}
-        </ScrollView>
-      </View>
-      <View className="h-fit pb-3 absolute bottom-[80]">
+        </View>
         <EReceiptDetails
           OrderStoreName={DATACOMMANDEDETAILS.OrderStoreName}
           OrderID={DATACOMMANDEDETAILS.OrderID}
@@ -127,7 +133,7 @@ const EReceiptScreen = () => {
           OrderDeliveryCharge={DATACOMMANDEDETAILS.OrderDeliveryCharge}
           OrderDiscount={DATACOMMANDEDETAILS.OrderDiscount}
         />
-      </View>
+      </ScrollView>
       <View
         className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
         style={styles.navigationClass}
@@ -162,8 +168,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    justifyContent: "space-between",
     flexDirection: "column",
+    minHeight: hp(32),
+    height: "fit-content",
   },
   row: {
     flexDirection: "row",

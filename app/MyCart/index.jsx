@@ -120,6 +120,7 @@ const MyCartScreen = () => {
         setSubmitionLoading(false);
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
+        navigation.navigate("E-Receipt/index");
       }
     } catch (err) {
       console.log(err);
