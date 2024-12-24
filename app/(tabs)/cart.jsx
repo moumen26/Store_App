@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, FlatList } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CartOrderItem from "../../components/CartOrderItem";
@@ -19,8 +19,6 @@ import Cart from "../loading/Cart";
 import Search from "../loading/Search";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 import ArchiveButton from "../../components/ArchiveButton";
-
-const COLUMN_COUNT = 1;
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -74,6 +72,7 @@ const cart = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
   //--------------------------------------------Rendering--------------------------------------------
   if (OrdersDataLoading) {
     return (
@@ -97,7 +96,6 @@ const cart = () => {
           My Orders
         </Text>
         <ArchiveButton />
-        {/* <DocumentMagnifyingGlassIcon size={24} color="#26667E" /> */}
       </View>
       <View
         style={styles.searchBar}
@@ -114,12 +112,10 @@ const cart = () => {
       </View>
       <View style={styles.container}>
         {OrdersData?.length > 0 ? (
-          <ScrollView
-            className="mx-5"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.containerScroll}
-          >
-            {OrdersData?.map((item) => (
+          <FlatList
+            data={OrdersData}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
               <CartOrderItem
                 key={item._id}
                 OrderStoreName={item?.store?.storeName}
@@ -130,8 +126,10 @@ const cart = () => {
                 OrderStatus={item.status}
                 OrderSubTotal={item.total}
               />
-            ))}
-          </ScrollView>
+            )}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.containerScroll}
+          />
         ) : (
           <View
             style={{
@@ -166,8 +164,10 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   container: {
-    height: hp(100),
-    paddingBottom: 280,
+    flex: 1,
+    paddingBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   titleCategory: {
     fontSize: 18,

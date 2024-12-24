@@ -168,8 +168,8 @@ const stores = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: hp(100),
-    paddingBottom: 250,
+    flex: 1,
+    paddingBottom: 30,
   },
   titleCategory: {
     fontSize: 18,

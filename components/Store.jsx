@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Animated,
-} from "react-native";
+import { View, Text, TouchableOpacity, Animated, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import { useNavigation } from "expo-router";
@@ -52,83 +46,77 @@ const Store = ({ StoresData, CategoriesData }) => {
       ]).start();
     });
   };
+
   const filteredStores = StoresData.filter((store) =>
     store?.store?.categories.some((category) => category._id === activeTab)
   );
 
+  const renderStoreCard = ({ item }) => (
+    <StoreCard
+      key={item._id}
+      title={item.store.storeName}
+      sousTitle={`${item.store.wilaya}, ${item.store.commune}`}
+      buttonText="Shop"
+      onPress={() =>
+        navigation.navigate("Store/index", {
+          storeId: item.store._id,
+          storeName: item.store.storeName,
+        })
+      }
+    />
+  );
+
+  const renderNoStores = () => (
+    <Text style={styles.noStoresText}>
+      Aucun magasin disponible pour cette catégorie.
+    </Text>
+  );
+
   return (
     <View>
-      <View>
-        <View style={[styles.allTransparent]}>
-          <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
+      <FlatList
+        data={CategoriesData}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(category) => category._id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[
+              styles.buttonStore,
+              activeTab === item._id && styles.storeToggle,
+            ]}
+            onPress={() => handleMenuClick(item._id)}
           >
-            {CategoriesData.map((category) => (
-              <TouchableOpacity
-                key={category._id}
-                style={[
-                  styles.buttonStore,
-                  activeTab === category._id && styles.storeToggle,
-                ]}
-                onPress={() => handleMenuClick(category._id)}
-              >
-                <Text
-                  style={[
-                    styles.text,
-                    activeTab === category._id && styles.storeToggle,
-                  ]}
-                >
-                  {category.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      </View>
+            <Text
+              style={[
+                styles.text,
+                activeTab === item._id && styles.storeToggle,
+              ]}
+            >
+              {item.name}
+            </Text>
+          </TouchableOpacity>
+        )}
+        contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
+      />
       <Animated.View
         style={[
           {
-            height: "70%",
             opacity: opacityAnim,
             transform: [{ scale: scaleAnim }],
           },
         ]}
       >
-        {CategoriesData.map((category) => (
-          <View
-            key={category._id}
-            style={{ display: activeTab === category._id ? "flex" : "none" }}
-          >
-            <ScrollView
-              contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 15 }}
-              vertical
-              showsVerticalScrollIndicator={false}
-            >
-              {filteredStores.length > 0 ? (
-                filteredStores.map((store) => (
-                  <StoreCard
-                    key={store._id}
-                    title={store.store.storeName}
-                    sousTitle={`${store.store.wilaya}, ${store.store.commune}`}
-                    buttonText="Shop"
-                    onPress={() =>
-                      navigation.navigate("Store/index", {
-                        storeId: store.store._id,
-                        storeName: store.store.storeName,
-                      })
-                    }
-                  />
-                ))
-              ) : (
-                <Text style={styles.noStoresText}>
-                  Aucun magasin disponible pour cette catégorie.
-                </Text>
-              )}
-            </ScrollView>
-          </View>
-        ))}
+        <FlatList
+          data={filteredStores}
+          renderItem={renderStoreCard}
+          keyExtractor={(store) => store._id}
+          contentContainerStyle={{
+            paddingHorizontal: 0,
+            paddingTop: 15,
+          }}
+          ListEmptyComponent={renderNoStores}
+        />
       </Animated.View>
     </View>
   );
@@ -154,9 +142,6 @@ const styles = StyleSheet.create({
     borderColor: "#C9E4EE",
     borderWidth: 0.5,
     marginRight: 4,
-  },
-  allTransparent: {
-    backgroundColor: "transparent",
   },
   storeToggle: {
     backgroundColor: "#C9E4EE",

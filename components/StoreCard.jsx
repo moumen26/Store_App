@@ -7,7 +7,7 @@ const StoreCard = ({ title, sousTitle, buttonText, onPress }) => {
     <TouchableOpacity
       onPress={onPress}
       style={styles.StoreItem}
-      className="h-[59] w-full flex-row items-center justify-between pr-[17] pl-[17] mb-3"
+      className="h-[60] w-full flex-row items-center justify-between pr-[20] pl-[20]"
     >
       <View>
         <Text style={styles.text}>{title}</Text>
@@ -36,12 +36,12 @@ const styles = StyleSheet.create({
   },
   StoreItem: {
     padding: 15,
-    marginBottom: 10,
     height: 60,
     borderRadius: 15,
     backgroundColor: "#fff",
     borderColor: "#C9E4EE",
     borderWidth: 1,
+    marginBottom: 15,
   },
   shopItem: {
     width: 70,

@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Animated,
-} from "react-native";
+import { View, Text, TouchableOpacity, Animated, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import ConfirmationModal from "./ConfirmationModal";
@@ -64,41 +58,54 @@ const NonLinkedStores = ({ StoresData, CategoriesData }) => {
       ]).start();
     });
   };
+
   const filteredStores = StoresData.filter((store) =>
     store?.categories.some((category) => category === activeTab)
   );
 
+  const renderCategory = ({ item }) => (
+    <TouchableOpacity
+      key={item._id}
+      style={[styles.buttonStore, activeTab === item._id && styles.storeToggle]}
+      onPress={() => handleMenuClick(item._id)}
+    >
+      <Text style={[styles.text, activeTab === item._id && styles.storeToggle]}>
+        {item.name}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const renderStoreCard = ({ item }) => (
+    <>
+      <StoreCard
+        key={item._id}
+        title={item.storeName}
+        sousTitle={`${item.wilaya}, ${item.commune}`}
+        buttonText="Request"
+        onPress={openRequestModal}
+      />
+      <ConfirmationModal
+        visible={confirmationModalVisible}
+        onCancel={closeConfirmationModal}
+        modalTitle="Access Store Permission"
+        modalSubTitle={`Your request will be sent to the administrator of ${item.storeName}`}
+      />
+    </>
+  );
+
   return (
     <View className="mx-5">
-      <View>
-        <View style={[styles.allTransparent]}>
-          <ScrollView
-            contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            {CategoriesData.map((category) => (
-              <TouchableOpacity
-                key={category._id}
-                style={[
-                  styles.buttonStore,
-                  activeTab === category._id && styles.storeToggle,
-                ]}
-                onPress={() => handleMenuClick(category._id)}
-              >
-                <Text
-                  style={[
-                    styles.text,
-                    activeTab === category._id && styles.storeToggle,
-                  ]}
-                >
-                  {category.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+      <View style={[styles.allTransparent]}>
+        <FlatList
+          data={CategoriesData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={renderCategory}
+          keyExtractor={(category) => category._id}
+          contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
+        />
       </View>
+
       <Animated.View
         style={[
           {
@@ -108,46 +115,20 @@ const NonLinkedStores = ({ StoresData, CategoriesData }) => {
           },
         ]}
       >
-        {CategoriesData.map((category) => (
-          <View
-            key={category._id}
-            style={{ display: activeTab === category._id ? "flex" : "none" }}
-          >
-            <ScrollView
-              contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 15 }}
-              vertical
-              showsVerticalScrollIndicator={false}
-            >
-              {filteredStores.length > 0 ? (
-                filteredStores.map((store) => (
-                  <>
-                    <StoreCard
-                      key={store._id}
-                      title={store.storeName}
-                      sousTitle={`${store.wilaya}, ${store.commune}`}
-                      buttonText="Request"
-                      onPress={openRequestModal}
-                      // onPress={() =>
-                      //   alert("Request access to the store : " + store.storeName)
-                      // }
-                    />
-                    <ConfirmationModal
-                      visible={confirmationModalVisible}
-                      onCancel={closeConfirmationModal}
-                      // onConfirm={}
-                      modalTitle="Access Store Permission"
-                      modalSubTitle={`Your request will be sent to the administrator of ${store.storeName}`}
-                    />
-                  </>
-                ))
-              ) : (
-                <Text style={styles.noStoresText}>
-                  Aucun magasin disponible pour cette catégorie.
-                </Text>
-              )}
-            </ScrollView>
-          </View>
-        ))}
+        <FlatList
+          data={filteredStores}
+          renderItem={renderStoreCard}
+          keyExtractor={(store) => store._id}
+          contentContainerStyle={{
+            paddingHorizontal: 0,
+            paddingTop: 15,
+          }}
+          ListEmptyComponent={
+            <Text style={styles.noStoresText}>
+              Aucun magasin disponible pour cette catégorie.
+            </Text>
+          }
+        />
       </Animated.View>
     </View>
   );
