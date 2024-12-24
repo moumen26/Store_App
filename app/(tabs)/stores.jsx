@@ -141,7 +141,7 @@ const stores = () => {
   return (
     <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
       <Text className="text-center mb-[20]" style={styles.titleScreen}>
-        My Stores
+        Stores
       </Text>
       <View
         style={styles.searchBar}

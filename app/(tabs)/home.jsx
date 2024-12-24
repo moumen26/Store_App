@@ -258,7 +258,7 @@ const home = () => {
         ) : (CategoriesData && CategoriesData?.length > 0) ||
           (StoresData && StoresData?.length > 0) ? (
           <View style={styles.stores} className="mx-5">
-            <Text style={styles.titleCategory}>Stores</Text>
+            <Text style={styles.titleCategory}>My Stores</Text>
             <Store StoresData={StoresData} CategoriesData={CategoriesData} />
           </View>
         ) : (

@@ -44,7 +44,7 @@ const TabLayout = () => {
             title: "Stores",
             headerShown: false,
             tabBarIcon: ({ color }) => (
-              <BuildingStorefrontIcon name="cart" size={24} color={color} />
+              <BuildingStorefrontIcon name="stores" size={24} color={color} />
             ),
           }}
         />
@@ -61,10 +61,10 @@ const TabLayout = () => {
         <Tabs.Screen
           name="cart"
           options={{
-            title: "Cart",
+            title: "Orders",
             headerShown: false,
             tabBarIcon: ({ color }) => (
-              <ShoppingCartIcon name="cart" size={24} color={color} />
+              <ShoppingCartIcon name="orders" size={24} color={color} />
             ),
           }}
         />

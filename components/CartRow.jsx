@@ -12,10 +12,7 @@ const CartRow = ({
     <>
       <TouchableOpacity className="flex-row items-center justify-between w-full h-[90]">
         <View className="flex-row items-center">
-          <Image
-            style={styles.Image}
-            source={{uri: ProductImage}}
-          />
+          <Image style={styles.Image} source={{ uri: ProductImage }} />
 
           <View className="flex-col space-y-[1.5]">
             <Text style={styles.textProductName}>{ProductName}</Text>
@@ -33,6 +30,7 @@ const styles = StyleSheet.create({
   Image: {
     width: 80,
     height: 80,
+    objectFit: "contain",
   },
   touchPlus: {
     width: 25,
