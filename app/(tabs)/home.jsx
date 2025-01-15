@@ -26,7 +26,6 @@ import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 import { MapPinIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "expo-router";
 
-const LocationIconVector = require("../../assets/icons/Location.png");
 // Axios instance for base URL configuration
 const api = axios.create({
   baseURL: Config.API_URL,
@@ -160,7 +159,7 @@ const home = () => {
     queryKey: ["CategoriesData", user?.token], // Ensure token is part of the query key
     queryFn: fetchCategoriesData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchInterval: 10000, // Refetch every 10 seconds
+    refetchInterval: 100, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   //--------------------------------------------RENDERING--------------------------------------------
@@ -176,10 +175,6 @@ const home = () => {
 
   return (
     <SafeAreaView className="bg-white pt-3 pb-10 h-full">
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        className="relative h-full"
-      >
         {PublicPublicitiesDataLoading ? (
           <View className="mx-5 mb-[20]">
             <TopHomeScreen />
@@ -264,7 +259,6 @@ const home = () => {
         ) : (
           <></>
         )}
-      </ScrollView>
     </SafeAreaView>
   );
 };

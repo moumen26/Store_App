@@ -1,5 +1,9 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
+import {
+  orderStatusTextDisplayer,
+  formatDate,
+} from '../app/util/useFullFunctions';
 
 const EReceiptDetails = ({
   OrderStoreName,
@@ -9,6 +13,7 @@ const EReceiptDetails = ({
   OrderDate,
   OrderSubTotal,
   OrderDeliveryCharge,
+  OrderStatus,
   OrderDiscount,
 }) => {
   return (
@@ -26,13 +31,19 @@ const EReceiptDetails = ({
           <Text style={styles.text}>Order Type</Text>
           <Text style={styles.textDescription}>{OrderType}</Text>
         </View>
-        <View className="flex-row items-center justify-between w-full">
-          <Text style={styles.text}>Delivery Address</Text>
-          <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
-        </View>
+        {OrderDeliveryAddress &&
+          <View className="flex-row items-center justify-between w-full">
+            <Text style={styles.text}>Delivery Address</Text>
+            <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
+          </View>
+        }
         <View className="flex-row items-center justify-between w-full">
           <Text style={styles.text}>Order Date</Text>
-          <Text style={styles.textDescription}>{OrderDate}</Text>
+          <Text style={styles.textDescription}>{formatDate(OrderDate)}</Text>
+        </View>
+        <View className="flex-row items-center justify-between w-full">
+          <Text style={styles.text}>Order Status</Text>
+          <Text style={styles.textDescription}>{orderStatusTextDisplayer(OrderStatus)}</Text>
         </View>
       </View>
       <View style={styles.commandeContainer}>
@@ -44,10 +55,10 @@ const EReceiptDetails = ({
           <Text style={styles.text}>Delivery Charge</Text>
           <Text style={styles.textDescription}>+ DA {OrderDeliveryCharge}</Text>
         </View>
-        <View className="flex-row items-center justify-between w-full">
+        {/* <View className="flex-row items-center justify-between w-full">
           <Text style={styles.text}>Discount</Text>
           <Text style={styles.textDescription}>- DA {OrderDiscount}</Text>
-        </View>
+        </View> */}
       </View>
     </View>
   );

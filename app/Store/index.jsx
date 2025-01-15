@@ -190,7 +190,7 @@ const Store = () => {
   const fetchProductsData = async () => {
     try {
       const response = await api.get(
-        `/Stock/store/${storeId}/${user?.info?.id}`,
+        `/Stock/store/${user?.info?.id}/${storeId}`,
         {
           headers: {
             Authorization: `Bearer ${user?.token}`,
@@ -229,7 +229,7 @@ const Store = () => {
     enabled: !!user?.token, // Only run the query if user is authenticated
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
-  });
+  });  
   //--------------------------------------------RENDERING--------------------------------------------
   return (
     <SafeAreaView className="bg-white pt-3 h-full">
@@ -361,7 +361,7 @@ const Store = () => {
               <FlatList
                 data={PopularProductsData}
                 horizontal
-                keyExtractor={(item) => item._id.toString()}
+                keyExtractor={(item) => item?._id?.toString()}
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <PopularProductCard
@@ -406,7 +406,7 @@ const Store = () => {
               <FlatList
                 data={ProductsData}
                 horizontal
-                keyExtractor={(item) => item._id.toString()}
+                keyExtractor={(item) => item?._id?.toString()}
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <PopularProductCard
@@ -435,16 +435,13 @@ const Store = () => {
             </View>
           </View>
         ) : (
-          <></>
-        )}
-
-        {(!ProductsData || ProductsData?.length <= 0) && (
           <SafeAreaView className="bg-white pt-3 h-full">
             <View style={styles.imageContainer}>
               <Image style={styles.image} source={COMING_SOON} />
             </View>
           </SafeAreaView>
         )}
+
       </ScrollView>
       <Modal
         animationType="slide"

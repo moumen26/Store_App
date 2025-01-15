@@ -34,6 +34,7 @@ const MyCartScreen = () => {
 
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState("#FF0000");
 
   //form
   const [total, setTotal] = useState(0);
@@ -109,6 +110,7 @@ const MyCartScreen = () => {
       const json = await response.json();
       if (!response.ok) {
         setSubmitionLoading(false);
+        setSnackbarColor("#FF0000");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         return;
@@ -118,9 +120,10 @@ const MyCartScreen = () => {
           payload: storeId,
         });
         setSubmitionLoading(false);
-        setSnackbarMessage(json.message);
-        setSnackbarKey((prevKey) => prevKey + 1);
-        navigation.navigate("E-Receipt/index");
+        // setSnackbarColor("#00FF00");
+        // setSnackbarMessage(json.message);
+        // setSnackbarKey((prevKey) => prevKey + 1);
+        navigation.navigate("E-Receipt/index", { OrderID: json?.OrderID });
       }
     } catch (err) {
       console.log(err);
@@ -146,7 +149,7 @@ const MyCartScreen = () => {
           message={snackbarMessage}
           duration={2000}
           actionText="Close"
-          backgroundColor="#FF0000"
+          backgroundColor={snackbarColor}
           textColor="white"
           actionTextColor="yellow"
         />
@@ -336,6 +339,10 @@ const styles = StyleSheet.create({
     height: "fit-content",
   },
   containerNoAvailable: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
     height: hp(45),
   },
   row: {

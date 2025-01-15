@@ -8,7 +8,7 @@ const formatDate = (dateString) => {
   return moment.utc(dateString, inputFormat, true).format('D MMMM YYYY [at] HH:mm:ss');
 };
 const orderStatusTextDisplayer = (status) => {
-    switch (status.toString()) {
+    switch (status?.toString()) {
       case "-1":
         return "till he sell everything";
       case "0":

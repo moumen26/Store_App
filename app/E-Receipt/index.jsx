@@ -11,96 +11,107 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
 import CartRow from "../../components/CartRow";
 import EReceiptDetails from "../../components/EReceiptDetails";
-
-const Elio = require("../../assets/images/Elio.png");
-const CodeBare = require("../../assets/images/CodeBare.png");
-
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import useAuthContext from "../hooks/useAuthContext";
+import axios from "axios";
+import Config from "../config";
+import { useQuery } from "@tanstack/react-query";
+import Cart from "../loading/Cart";
+import Search from "../loading/Search";
+import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 
-const COLUMN_COUNT = 1;
-const DATA = [
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-  {
-    id: "1",
-    ProductName: "Item 1",
-    ProductBrand: "Cevital",
-    ProductQuantity: "02",
-    ProductPriceTotal: "900",
-  },
-];
+const CodeBare = require("../../assets/images/CodeBare.png");
 
-const DATACOMMANDEDETAILS = [
-  {
-    OrderStoreName: "Hamza Alimentaiton",
-    OrderID: "CDR45HGJF",
-    OrderType: "Delivery",
-    OrderDeliveryAddress: "Home (Rue Yousfi ..)",
-    OrderDate: "May 09, 2024",
-    OrderSubTotal: "990",
-    OrderDeliveryCharge: "00.00",
-    OrderDiscount: "25.00",
+// Axios instance for base URL configuration
+const api = axios.create({
+  baseURL: Config.API_URL,
+  headers: {
+    "Content-Type": "application/json",
   },
-];
+});
 
 const EReceiptScreen = () => {
-  const renderProductItems = () => {
-    const items = [];
-    for (let i = 0; i < DATA.length; i += COLUMN_COUNT) {
-      const rowItems = DATA.slice(i, i + COLUMN_COUNT).map((item) => (
-        <CartRow
-          key={item.id}
-          ProductName={item.ProductName}
-          ProductBrand={item.ProductBrand}
-          ProductQuantity={item.ProductQuantity}
-          ProductImage={Elio}
-        />
-      ));
-      items.push(
-        <View className="mb-4" key={i} style={styles.row}>
-          {rowItems}
-        </View>
-      );
-    }
-    return items;
-  };
+  const { user } = useAuthContext();
+  const route = useRoute();
+  const navigator = useNavigation();
+  const { OrderID } = route.params;
 
+  //--------------------------------------------APIs--------------------------------------------
+  // Function to fetch public publicities data
+  const fetchOrderData = async () => {
+    try {
+      const response = await api.get(`/Receipt/client/${user?.info?.id}/${OrderID}`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+
+      // Return the data from the response
+      return await response.data || [];
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const {
+    data: OrderData,
+    error: OrderDataError,
+    isLoading: OrderDataLoading,
+    refetch: OrderDataRefetch,
+  } = useQuery({
+    queryKey: ["OrderData", user?.token], // Ensure token is part of the query key
+    queryFn: fetchOrderData, // Pass token to the fetch function
+    enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchInterval: 100, // Refetch every 10 seconds
+    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
+  });
+
+  // Function to generate and download the PDF
+  const downloadPDF = async () => {
+    const htmlContent = `
+      <html>
+        <body>
+          <h1>E-Receipt</h1>
+          <p><strong>Order ID:</strong> ${OrderData?.reciept?._id}</p>
+          <p><strong>Store Name:</strong> ${OrderData?.reciept?.store?.storeName}</p>
+          <p><strong>Order Date:</strong> ${OrderData?.reciept?.date}</p>
+          <p><strong>Order Status:</strong> ${OrderData?.reciept?.status}</p>
+          <p><strong>Total:</strong> ${OrderData?.reciept?.total}</p>
+          <h2>Products</h2>
+          <ul>
+            ${OrderData?.recieptStatus?.products
+              .map(
+                (product) => `
+                  <li>${product?.product?.name} - ${product?.quantity} x ${product?.product?.brand?.name}</li>`
+              )
+              .join("")}
+          </ul>
+        </body>
+      </html>
+    `;
+  };
+  
+  //--------------------------------------------Rendering--------------------------------------------
+  if (OrderDataLoading) {
+    return (
+      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
+        <View className="mx-5" style={styles.containerLoading}>
+          <View style={styles.containerLoadingtextScreen}>
+            <ShimmerPlaceholder style={styles.textScreen} />
+          </View>
+          <Search />
+          <Cart />
+        </View>
+      </SafeAreaView>
+    );
+  }
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
       <ScrollView
@@ -116,22 +127,43 @@ const EReceiptScreen = () => {
           <Text style={styles.titleScreen}>E-Receipt</Text>
           <View style={styles.Vide}></View>
         </View>
-        <View className="flex items-center">
-          <Image source={CodeBare} />
-        </View>
+        {OrderData?.reciept?.status != 10 &&
+          <View className="flex items-center">
+            <Image source={CodeBare} />
+          </View>
+        }
         <View className="mx-5 mt-[12]" style={styles.container}>
-          {renderProductItems()}
+          {OrderData?.recieptStatus?.products?.length > 0 ? 
+            OrderData?.recieptStatus?.products?.map((item, index) => (
+              <CartRow
+                key={item?.stock}
+                ProductQuantity={item?.quantity}
+                ProductName={item?.product?.name}
+                ProductBrand={item?.product?.brand?.name}
+                ProductImage={`${
+                  `${Config.API_URL.replace("/api", "")}/files/${
+                    item?.product?.image
+                  }` || ""
+                }`}
+                BoxItems={item?.product?.boxItems}
+              />
+            ))
+          : (
+            <View style={styles.containerNoAvailable}>
+              <Text style={styles.noText}>No product is available</Text>
+            </View>
+          )}
         </View>
         <EReceiptDetails
-          OrderStoreName={DATACOMMANDEDETAILS.OrderStoreName}
-          OrderID={DATACOMMANDEDETAILS.OrderID}
-          OrderType={DATACOMMANDEDETAILS.OrderType}
-          OrderDeliveryAddress={DATACOMMANDEDETAILS.OrderDeliveryAddress}
-          OrderDate={DATACOMMANDEDETAILS.OrderDate}
-          OrderStatus={DATACOMMANDEDETAILS.OrderStatus}
-          OrderSubTotal={DATACOMMANDEDETAILS.OrderSubTotal}
-          OrderDeliveryCharge={DATACOMMANDEDETAILS.OrderDeliveryCharge}
-          OrderDiscount={DATACOMMANDEDETAILS.OrderDiscount}
+          OrderStoreName={OrderData?.reciept?.store?.storeName}
+          OrderID={OrderData?.reciept?._id}
+          OrderType={OrderData?.reciept?.type}
+          OrderDeliveryAddress={OrderData?.reciept?.deliveredLocation?.address || null}
+          OrderDate={OrderData?.reciept?.date}
+          OrderStatus={OrderData?.reciept?.status}
+          OrderSubTotal={OrderData?.reciept?.total}
+          OrderDeliveryCharge={OrderData?.deliveryCost}
+          OrderDiscount={""}
         />
       </ScrollView>
       <View
@@ -140,7 +172,7 @@ const EReceiptScreen = () => {
       >
         <TouchableOpacity
           style={styles.loginButton}
-          // onPress={() => navigation.navigate("")}
+          onPress={downloadPDF}
         >
           <Text style={styles.loginButtonText}>Download E-Receipt</Text>
         </TouchableOpacity>
@@ -150,6 +182,15 @@ const EReceiptScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  containerLoadingtextScreen: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  containerLoading: {
+    flexDirection: "column",
+    gap: 16,
+  },
   Vide: {
     width: 40,
     height: 40,
@@ -199,6 +240,18 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontFamily: "Montserrat-Regular",
+  },
+  containerNoAvailable: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: hp(45),
+  },
+  noText: {
+    fontSize: 13,
+    fontFamily: "Montserrat-Regular",
+    color: "#888888",
   },
 });
 

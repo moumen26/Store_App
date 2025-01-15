@@ -5,6 +5,8 @@ import {
   orderStatusTextDisplayer,
   formatDate,
 } from "../app/util/useFullFunctions";
+import { useNavigation } from "expo-router";
+
 const CartOrderItem = ({
   OrderStoreName,
   OrderID,
@@ -14,6 +16,8 @@ const CartOrderItem = ({
   OrderStatus,
   OrderSubTotal,
 }) => {
+  const navigation = useNavigation();
+
   function capitalizeFirstLetters(text) {
     if (!text) return "";
     return text
@@ -61,7 +65,10 @@ const CartOrderItem = ({
         style={styles.cartItemMoreDetails}
         className="flex-row justify-end pr-[15] w-full"
       >
-        <TouchableOpacity className="flex-row items-center space-x-1 mt-2">
+        <TouchableOpacity 
+          className="flex-row items-center space-x-1 mt-2"
+          onPress={() => navigation.navigate("E-Receipt/index", { OrderID })}
+        >
           <Text style={styles.text}>More Detail</Text>
           <ChevronRightIcon size={11} color="#888888" />
         </TouchableOpacity>

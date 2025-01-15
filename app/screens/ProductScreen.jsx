@@ -17,7 +17,7 @@ import Snackbar from "../../components/Snackbar";
 const BoxIcon = require("../../assets/icons/CartDark.png");
 
 const ProductScreen = ({ data, storeId, onclose }) => {
-  const { dispatch } = useAuthContext();
+  const { user, dispatch } = useAuthContext();
   const [Product, setProduct] = useState(null);
   const handleProductOnChange = (val) => {
     setProduct(val);
@@ -54,7 +54,6 @@ const ProductScreen = ({ data, storeId, onclose }) => {
     setProduct(null);
     onclose();
   };
-
   return (
     <Animated.View style={styles.modalView}>
       {snackbarKey !== 0 && (
@@ -71,7 +70,12 @@ const ProductScreen = ({ data, storeId, onclose }) => {
 
       <View className="mx-5 flex-row justify-between">
         <BackButtonCloseModal handleCloseModal={onclose} />
-        <FavoriteButton />
+        <FavoriteButton 
+          user={user}
+          storeId={storeId}
+          productId={data?.product?._id}
+          isFavorite={true}
+        />
       </View>
       <View style={styles.imageContainer}>
         <Image

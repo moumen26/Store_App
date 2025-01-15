@@ -1,24 +1,127 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { HeartIcon as OutlineHeartIcon } from "react-native-heroicons/outline";
 import { HeartIcon as SolidHeartIcon } from "react-native-heroicons/solid";
+import Config from "../app/config";
 
-const FavoriteButton = () => {
-  const [favorited, setFavorited] = useState(false);
+const FavoriteButton = ({
+  user,
+  storeId,
+  productId, 
+  isFavorite,
+  setSnackbarKey,
+  setSnackbarMessage,
+  setSnackbarColor,
+}) => {
+  const [submitionLoading, setSubmitionLoading] = useState(false);
+  const [favorite, setFavorite] = useState(isFavorite);
+  
+  const submitFavorite = async () => {
+    setSubmitionLoading(true);
+    try {
+      const response = await fetch(
+        `${Config.API_URL}/Favorite/${user?.info?.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify({
+            store: storeId,
+            product: productId,
+          }),
+        }
+      );
 
-  const toggleFavorite = () => {
-    setFavorited(!favorited);
+      const json = await response.json();
+      if (!response.ok) {
+        setSubmitionLoading(false);
+        setSnackbarColor("#FF0000");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        return;
+      } else {
+        setSubmitionLoading(false);
+        setSnackbarColor("#00FF00");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        setFavorite(true);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSubmitionLoading(false);
+    }
   };
+  const submitUnFavorite = async () => {
+    setSubmitionLoading(true);
+    try {
+      const response = await fetch(
+        `${Config.API_URL}/Favorite/${user?.info?.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify({
+            store: storeId,
+            product: productId,
+          }),
+        }
+      );
 
+      const json = await response.json();
+      if (!response.ok) {
+        setSubmitionLoading(false);
+        setSnackbarColor("#FF0000");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        return;
+      } else {
+        setSubmitionLoading(false);
+        setSnackbarColor("#00FF00");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        setFavorite(false);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSubmitionLoading(false);
+    }
+  };
+  
   return (
-    <TouchableOpacity style={styles.BackButton} onPress={toggleFavorite}>
-      {favorited ? (
-        <SolidHeartIcon color="#26667E" size={18} />
-      ) : (
-        <OutlineHeartIcon color="#26667E" size={18} />
-      )}
-    </TouchableOpacity>
+    <>
+      {!submitionLoading ?
+        <TouchableOpacity 
+          style={styles.BackButton} 
+          onPress={
+            favorite ? submitUnFavorite : submitFavorite
+          }
+        >
+          {favorite ? (
+            <SolidHeartIcon color="#26667E" size={18} />
+          ) : (
+            <OutlineHeartIcon color="#26667E" size={18} />
+          )}
+        </TouchableOpacity>
+      : 
+        <TouchableOpacity 
+          style={styles.BackButton} 
+          disabled={true}
+        >
+          {favorite ? (
+            <SolidHeartIcon color="#26667E" size={18} />
+          ) : (
+            <OutlineHeartIcon color="#26667E" size={18} />
+          )}
+        </TouchableOpacity>
+      }
+    </>
   );
 };
 

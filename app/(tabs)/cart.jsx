@@ -3,18 +3,12 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CartOrderItem from "../../components/CartOrderItem";
 import {
-  DocumentMagnifyingGlassIcon,
   MagnifyingGlassIcon,
 } from "react-native-heroicons/outline";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
 import Config from "../config";
 import { useQuery } from "@tanstack/react-query";
-import { ActivityIndicator } from "react-native";
 import Cart from "../loading/Cart";
 import Search from "../loading/Search";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
@@ -113,7 +107,7 @@ const cart = () => {
       <View style={styles.container}>
         {OrdersData?.length > 0 ? (
           <FlatList
-            data={OrdersData}
+            data={OrdersData.reverse()}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <CartOrderItem
@@ -144,7 +138,7 @@ const cart = () => {
                 fontFamily: "Montserrat-Regular",
               }}
             >
-              No orders found
+              No order found
             </Text>
           </View>
         )}
