@@ -23,6 +23,10 @@ import { useQuery } from "@tanstack/react-query";
 import Cart from "../loading/Cart";
 import Search from "../loading/Search";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import CodeBar from "../loading/CodeBar";
+import ArticleItem from "../loading/ArticleItem";
+import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
+import ScanButton from "../../components/ScanButton";
 
 const CodeBare = require("../../assets/images/CodeBare.png");
 
@@ -44,14 +48,17 @@ const EReceiptScreen = () => {
   // Function to fetch public publicities data
   const fetchOrderData = async () => {
     try {
-      const response = await api.get(`/Receipt/client/${user?.info?.id}/${OrderID}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
+      const response = await api.get(
+        `/Receipt/client/${user?.info?.id}/${OrderID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
 
       // Return the data from the response
-      return await response.data || [];
+      return (await response.data) || [];
     } catch (error) {
       // Handle if the request fails with status code 401 or 404
       if (error?.response?.status === 401 || error?.response?.status === 404) {
@@ -80,7 +87,9 @@ const EReceiptScreen = () => {
         <body>
           <h1>E-Receipt</h1>
           <p><strong>Order ID:</strong> ${OrderData?.reciept?._id}</p>
-          <p><strong>Store Name:</strong> ${OrderData?.reciept?.store?.storeName}</p>
+          <p><strong>Store Name:</strong> ${
+            OrderData?.reciept?.store?.storeName
+          }</p>
           <p><strong>Order Date:</strong> ${OrderData?.reciept?.date}</p>
           <p><strong>Order Status:</strong> ${OrderData?.reciept?.status}</p>
           <p><strong>Total:</strong> ${OrderData?.reciept?.total}</p>
@@ -97,7 +106,7 @@ const EReceiptScreen = () => {
       </html>
     `;
   };
-  
+
   //--------------------------------------------Rendering--------------------------------------------
   if (OrderDataLoading) {
     return (
@@ -106,8 +115,12 @@ const EReceiptScreen = () => {
           <View style={styles.containerLoadingtextScreen}>
             <ShimmerPlaceholder style={styles.textScreen} />
           </View>
-          <Search />
-          <Cart />
+          <CodeBar />
+          <ArticleItem />
+          <ArticleItem />
+          <ArticleItem />
+          <ArticleItem />
+          <EReceiptDetailsShimmer />
         </View>
       </SafeAreaView>
     );
@@ -125,15 +138,15 @@ const EReceiptScreen = () => {
         <View className="mx-5 mb-[20] flex-row items-center justify-between">
           <BackButton />
           <Text style={styles.titleScreen}>E-Receipt</Text>
-          <View style={styles.Vide}></View>
+          <ScanButton />
         </View>
-        {OrderData?.reciept?.status != 10 &&
+        {OrderData?.reciept?.status != 10 && (
           <View className="flex items-center">
             <Image source={CodeBare} />
           </View>
-        }
+        )}
         <View className="mx-5 mt-[12]" style={styles.container}>
-          {OrderData?.recieptStatus?.products?.length > 0 ? 
+          {OrderData?.recieptStatus?.products?.length > 0 ? (
             OrderData?.recieptStatus?.products?.map((item, index) => (
               <CartRow
                 key={item?.stock}
@@ -148,7 +161,7 @@ const EReceiptScreen = () => {
                 BoxItems={item?.product?.boxItems}
               />
             ))
-          : (
+          ) : (
             <View style={styles.containerNoAvailable}>
               <Text style={styles.noText}>No product is available</Text>
             </View>
@@ -158,7 +171,9 @@ const EReceiptScreen = () => {
           OrderStoreName={OrderData?.reciept?.store?.storeName}
           OrderID={OrderData?.reciept?._id}
           OrderType={OrderData?.reciept?.type}
-          OrderDeliveryAddress={OrderData?.reciept?.deliveredLocation?.address || null}
+          OrderDeliveryAddress={
+            OrderData?.reciept?.deliveredLocation?.address || null
+          }
           OrderDate={OrderData?.reciept?.date}
           OrderStatus={OrderData?.reciept?.status}
           OrderSubTotal={OrderData?.reciept?.total}
@@ -170,10 +185,7 @@ const EReceiptScreen = () => {
         className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
         style={styles.navigationClass}
       >
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={downloadPDF}
-        >
+        <TouchableOpacity style={styles.loginButton} onPress={downloadPDF}>
           <Text style={styles.loginButtonText}>Download E-Receipt</Text>
         </TouchableOpacity>
       </View>

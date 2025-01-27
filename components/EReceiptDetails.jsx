@@ -55,10 +55,6 @@ const EReceiptDetails = ({
           <Text style={styles.text}>Delivery Charge</Text>
           <Text style={styles.textDescription}>+ DA {OrderDeliveryCharge}</Text>
         </View>
-        {/* <View className="flex-row items-center justify-between w-full">
-          <Text style={styles.text}>Discount</Text>
-          <Text style={styles.textDescription}>- DA {OrderDiscount}</Text>
-        </View> */}
       </View>
     </View>
   );

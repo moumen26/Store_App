@@ -106,7 +106,7 @@ const MyWishListScreen = () => {
               fontFamily: "Montserrat-Regular",
             }}
           >
-            No product found
+            No Product found
           </Text>
         </View>
       )}
@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
   },
   gridView: {
     flex: 1,
+    marginInline: 10
   },
 });
 

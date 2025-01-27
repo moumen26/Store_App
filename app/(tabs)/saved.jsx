@@ -9,8 +9,8 @@ import axios from "axios";
 import Config from "../config";
 import { useQuery } from "@tanstack/react-query";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
-import Cart from "../loading/Cart";
 import Search from "../loading/Search";
+import StoreCart from "../loading/StoreCart";
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -65,7 +65,7 @@ const Saved = () => {
     refetchInterval: 10000, // Refetch every 1 minutes
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-  
+
   //--------------------------------------------Rendering--------------------------------------------
   if (FavoriteDataLoading) {
     return (
@@ -75,12 +75,12 @@ const Saved = () => {
             <ShimmerPlaceholder style={styles.textScreen} />
           </View>
           <Search />
-          <Cart />
+          <StoreCart />
         </View>
       </SafeAreaView>
     );
   }
-  
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <Text style={styles.titleScreen}>Stores</Text>
@@ -102,9 +102,13 @@ const Saved = () => {
               <SavedStoreItem
                 key={item._id}
                 StoreName={item?.store?.storeName}
-                onPress={() => navigation.navigate("MyWishList/index",
-                  { storeId: item?.store?._id ,favoriteId: item?._id, storeName: item?.store?.storeName }
-                )}
+                onPress={() =>
+                  navigation.navigate("MyWishList/index", {
+                    storeId: item?.store?._id,
+                    favoriteId: item?._id,
+                    storeName: item?.store?.storeName,
+                  })
+                }
               />
             )}
             showsVerticalScrollIndicator={false}
@@ -124,7 +128,7 @@ const Saved = () => {
                 fontFamily: "Montserrat-Regular",
               }}
             >
-              No orders found
+              No Stores found
             </Text>
           </View>
         )}

@@ -2,9 +2,7 @@ import { View, Text, StyleSheet, TextInput, FlatList } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CartOrderItem from "../../components/CartOrderItem";
-import {
-  MagnifyingGlassIcon,
-} from "react-native-heroicons/outline";
+import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
 import Config from "../config";
