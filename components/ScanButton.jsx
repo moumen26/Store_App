@@ -3,13 +3,15 @@ import { StyleSheet } from "react-native";
 
 import { TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "expo-router";
 
 const ScanButton = () => {
+  const navigation = useNavigation();
 
   return (
-    <TouchableOpacity style={styles.ScanButton} 
-    // sonPress={}
-    
+    <TouchableOpacity
+      style={styles.ScanButton}
+      onPress={() => navigation.navigate("ScanBarCode/index")}
     >
       <AntDesign name="scan1" color="#26667E" size={20} />
     </TouchableOpacity>
