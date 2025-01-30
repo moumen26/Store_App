@@ -4,9 +4,17 @@ import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import ConfirmationModal from "./ConfirmationModal";
 import { useNavigation } from "expo-router";
+import Snackbar from "./Snackbar";
+import useAuthContext from "../app/hooks/useAuthContext";
+import Config from "../app/config";
 
 const NonLinkedStores = ({ StoresData, CategoriesData }) => {
   const navigation = useNavigation();
+  const { user } = useAuthContext();
+  const [snackbarKey, setSnackbarKey] = useState(0);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState("#FF0000");
+  const [submitionLoading, setSubmitionLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -87,11 +95,51 @@ const NonLinkedStores = ({ StoresData, CategoriesData }) => {
       <ConfirmationModal
         visible={confirmationModalVisible}
         onCancel={closeConfirmationModal}
+        onConfirm={() => handleSubmitStoreAccess(item._id)}
+        isloading={submitionLoading}
         modalTitle="Access Store Permission"
         modalSubTitle={`Your request will be sent to the administrator of ${item.storeName}`}
       />
     </>
   );
+
+  const handleSubmitStoreAccess = async (storeId) => {
+    setSubmitionLoading(true);
+    try {
+      const response = await fetch(
+        `${Config.API_URL}/MyStores/${user?.info?.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify({
+            store: storeId,
+          }),
+        }
+      );
+
+      const json = await response.json();
+      if (!response.ok) {
+        setSubmitionLoading(false);
+        setSnackbarColor("#FF0000");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        return;
+      } else {
+        setSubmitionLoading(false);
+        setSnackbarColor("#00FF00");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        AllStoresDataRefetch();
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSubmitionLoading(false);
+    }
+  };
 
   return (
     <View className="mx-5">
@@ -130,6 +178,17 @@ const NonLinkedStores = ({ StoresData, CategoriesData }) => {
           }
         />
       </Animated.View>
+      {snackbarKey !== 0 && (
+        <Snackbar
+          key={snackbarKey}
+          message={snackbarMessage}
+          duration={2000}
+          actionText="Close"
+          backgroundColor={snackbarColor}
+          textColor="white"
+          actionTextColor="yellow"
+        />
+      )}
     </View>
   );
 };

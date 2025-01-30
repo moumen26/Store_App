@@ -6,7 +6,7 @@ import {
   TextInput,
   Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
@@ -36,7 +36,7 @@ const api = axios.create({
 const stores = () => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
-
+  
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchAllStoresData = async () => {

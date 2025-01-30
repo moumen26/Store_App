@@ -17,7 +17,7 @@ const AllProductsScreen = () => {
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <BackButton />
         <Text className="text-center" style={styles.titleScreen}>
-          All Product
+          All Products
         </Text>
         <View style={styles.Vide}></View>
       </View>

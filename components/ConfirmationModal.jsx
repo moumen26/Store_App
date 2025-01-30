@@ -1,6 +1,6 @@
 // components/ConfirmationModal.js
 import React from "react";
-import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Modal, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 const ConfirmationModal = ({
@@ -9,6 +9,7 @@ const ConfirmationModal = ({
   onConfirm,
   modalTitle,
   modalSubTitle,
+  isloading = false,
 }) => {
   return (
     <Modal
@@ -18,21 +19,29 @@ const ConfirmationModal = ({
       onRequestClose={onCancel}
     >
       <View style={styles.modalBackground}>
-        <View style={styles.confirmationModal}>
-          <Text style={styles.modalTitle}>{modalTitle}</Text>
-          <Text style={styles.modalSubtitle}>{modalSubTitle}</Text>
-          <View style={styles.modalButtons}>
-            <TouchableOpacity style={styles.modalButton} onPress={onCancel}>
-              <Text style={styles.modalButtonTextColor}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.confirmButton]}
-              onPress={onConfirm}
-            >
-              <Text style={styles.modalButtonText}>Confirm</Text>
-            </TouchableOpacity>
+        {!isloading ? 
+          <View style={styles.confirmationModal}>
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalSubtitle}>{modalSubTitle}</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalButton} onPress={onCancel}>
+                <Text style={styles.modalButtonTextColor}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={onConfirm}
+              >
+                <Text style={styles.modalButtonText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+          :
+          <View style={styles.confirmationModal}>
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalSubtitle}>{modalSubTitle}</Text>
+            <ActivityIndicator size="large" color="#26667E" />
+          </View>
+        }
       </View>
     </Modal>
   );

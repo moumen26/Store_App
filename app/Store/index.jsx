@@ -32,6 +32,7 @@ import Search from "../loading/Search";
 import TopHomeScreen from "../loading/TopHomeScreen";
 import COMING_SOON from "../../assets/images/comingSoon.jpg";
 import { BuildingStorefrontIcon } from "react-native-heroicons/solid";
+import { store } from "expo-router/build/global-state/router-store";
 const StoreIconVector = require("../../assets/icons/Store.png");
 const api = axios.create({
   baseURL: Config.API_URL,
@@ -146,7 +147,7 @@ const Store = () => {
   const fetchPopularProductsData = async () => {
     try {
       const response = await api.get(
-        `/PopularProduct/${storeId}/${user?.info?.id}`,
+        `/PopularProduct/client/${storeId}/${user?.info?.id}`,
         {
           headers: {
             Authorization: `Bearer ${user?.token}`,
@@ -326,6 +327,8 @@ const Store = () => {
                       brandIMG: `${Config.API_URL.replace("/api", "")}/files/${
                         brand?.image
                       }`,
+                      ProductsData: ProductsData,
+                      storeId: storeId,
                     })
                   }
                 />
@@ -349,6 +352,7 @@ const Store = () => {
                   onPress={() =>
                     navigation.navigate("PopularProducts/index", {
                       popularProductsData: PopularProductsData,
+                      storeId: storeId,
                     })
                   }
                   style={styles.seeAll}
@@ -367,10 +371,15 @@ const Store = () => {
                   <PopularProductCard
                     key={item?._id}
                     imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
-                      item?.image
+                      item?.stock?.product?.image
                     }`}
-                    ProductName={item?.name}
-                    onPress={() => handleOpenModel(item)}
+                    ProductName={item?.stock?.product?.name}
+                    onPress={() => 
+                      navigation.navigate("Product/index", {
+                        data: item?.stock,
+                        storeId: storeId,
+                      })
+                    }
                   />
                 )}
               />

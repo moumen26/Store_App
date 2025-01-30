@@ -5,49 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
 import ProductCard from "../../components/ProductCard";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
-const imgUrl = require("../../assets/images/Cavital.webp");
-const Elio = require("../../assets/images/Elio.png");
-
-const COLUMN_COUNT = 1;
-const DATA = [
-  { id: "1", ProductName: "Item 1" },
-  { id: "2", ProductName: "Item 2" },
-  { id: "3", ProductName: "Item 3" },
-  { id: "4", ProductName: "Item 4" },
-  { id: "5", ProductName: "Item 5" },
-  { id: "6", ProductName: "Item 6" },
-  { id: "7", ProductName: "Item 7" },
-];
+import Config from "../config";
 
 const BrandScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { brandId, brandIMG } = route.params;
-
-  const renderGridItems = () => {
-    const items = [];
-
-    for (let i = 0; i < DATA.length; i += COLUMN_COUNT) {
-      const rowItems = DATA.slice(i, i + COLUMN_COUNT).map((item) => (
-        <ProductCard
-          key={item.id}
-          ProductName={item.ProductName}
-          ProductBrand="Cevital"
-          ProductPrice="120.00"
-          imgUrl={Elio}
-          //   onPress={() => navigation.navigate("ProductScreen")}
-        />
-      ));
-      items.push(
-        <View className="mb-4" key={i} style={styles.row}>
-          {rowItems}
-        </View>
-      );
-    }
-
-    return items;
-  };
+  const { brandId, brandIMG, ProductsData, storeId } = route.params;
 
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
@@ -69,7 +32,23 @@ const BrandScreen = () => {
         showsVerticalScrollIndicator={false}
         className="mx-5"
       >
-        {renderGridItems()}
+        {ProductsData.filter((item) => {
+          return item?.product?.brand?._id === brandId;
+        }).map((item) => (
+          <ProductCard
+            key={item._id}
+            ProductName={item?.product?.name + " " + item?.product?.size}
+            ProductBrand={item?.product?.brand?.name}
+            ProductPrice={item.selling}
+            imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+              item?.product?.image
+            }`}
+            onPress={() => navigation.navigate("Product/index", { 
+              data: item,
+              storeId: storeId,
+            })}
+          />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );

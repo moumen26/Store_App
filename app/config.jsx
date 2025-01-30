@@ -1,5 +1,5 @@
 const Config = {
-  API_URL: "http://192.168.25.129:8000/api",
+  API_URL: "http://192.168.198.153:8000/api",
 };
 
 export default Config;
