@@ -5,9 +5,14 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Swipeable } from "react-native-gesture-handler";
 import BackButton from "../../components/BackButton";
+import { TrashIcon } from "react-native-heroicons/outline";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 // Function to format the date (today, yesterday, or specific dates)
 const formatDate = (date) => {
@@ -34,6 +39,11 @@ const formatTime = (date) => {
 
 const NotificationScreen = () => {
   const [notifications, setNotifications] = useState([]);
+  const [
+    confirmationNotificationModalVisible,
+    setConfirmationNotificationModalVisible,
+  ] = useState(false);
+  const [notificationToDelete, setNotificationToDelete] = useState(null);
 
   // Simulate fetching data from the database
   useEffect(() => {
@@ -62,7 +72,6 @@ const NotificationScreen = () => {
           id: "4",
           message:
             "Your request to access [Store Name] has been approved. You can now browse their store.",
-          isRead: true,
           date: "2025-01-31T11:20:00Z",
         },
         {
@@ -95,24 +104,54 @@ const NotificationScreen = () => {
   }));
 
   // Render each notification group
-  const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => console.log(`Marked as read: ${item.id}`)}>
-      <View
-        style={{
-          padding: 10,
-          //   backgroundColor: item.isRead ? "#f0f0f0" : "#fff",
-          marginTop: 12,
-          padding: 14,
-          borderWidth: 0.5,
-          borderColor: "#C9E4EE",
-          borderRadius: 15,
-        }}
-      >
-        <Text style={styles.message}>{item.message}</Text>
-        <Text style={styles.time}>{formatTime(item.date)}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }) => {
+    // Function to render swipeable component
+    const renderRightActions = () => {
+      return (
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => openConfirmationModal(item)}
+        >
+          <TrashIcon size={24} color="white" />
+        </TouchableOpacity>
+      );
+    };
+
+    return (
+      <Swipeable renderRightActions={renderRightActions}>
+        <TouchableOpacity
+          onPress={() => console.log(`Marked as read: ${item.id}`)}
+        >
+          <View style={styles.notificationItem}>
+            <Text style={styles.message}>{item.message}</Text>
+            <Text style={styles.time}>{formatTime(item.date)}</Text>
+          </View>
+        </TouchableOpacity>
+      </Swipeable>
+    );
+  };
+
+  // Function to open the confirmation modal and set the notification to be deleted
+  const openConfirmationModal = (item) => {
+    setNotificationToDelete(item);
+    setConfirmationNotificationModalVisible(true);
+  };
+
+  // Close the confirmation modal
+  const closeConfirmationModal = () => {
+    setConfirmationNotificationModalVisible(false);
+    setNotificationToDelete(null);
+  };
+
+  // Handle the actual deletion of the notification
+  const handleDeleteNotification = () => {
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter(
+        (notification) => notification.id !== notificationToDelete.id
+      )
+    );
+    closeConfirmationModal();
+  };
 
   // Render the section headers (date)
   const renderSectionHeader = ({ section: { title } }) => (
@@ -120,34 +159,45 @@ const NotificationScreen = () => {
   );
 
   return (
-    <SafeAreaView className="bg-white pt-3 pb-10 h-full">
-      <View className="mx-5 flex-row items-center justify-between">
-        <BackButton />
-        <Text className="text-center" style={styles.titleScreen}>
-          Notifications
-        </Text>
-        <View style={styles.Vide}></View>
-      </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView className="bg-white pt-3 pb-10 h-full">
+        <View className="mx-5 flex-row items-center justify-between">
+          <BackButton />
+          <Text className="text-center" style={styles.titleScreen}>
+            Notifications
+          </Text>
+          <View style={styles.Vide}></View>
+        </View>
 
-      <View className="mx-5">
-        <FlatList
-          data={sections}
-          renderItem={({ item }) => (
-            <View>
-              {renderSectionHeader({ section: item })}
-              <FlatList
-                data={item.data}
-                renderItem={renderItem}
-                keyExtractor={(notification) => notification.id}
-                scrollEnabled={false}
-              />
-            </View>
-          )}
-          keyExtractor={(section) => section.title}
-          ListFooterComponent={<View style={{ marginBottom: 30 }} />}
-        />
-      </View>
-    </SafeAreaView>
+        <View className="mx-5">
+          <FlatList
+            data={sections}
+            renderItem={({ item }) => (
+              <View>
+                {renderSectionHeader({ section: item })}
+                <FlatList
+                  data={item.data}
+                  renderItem={renderItem}
+                  keyExtractor={(notification) => notification.id}
+                  scrollEnabled={false}
+                />
+              </View>
+            )}
+            keyExtractor={(section) => section.title}
+            ListFooterComponent={<View style={{ marginBottom: 30 }} />}
+          />
+        </View>
+      </SafeAreaView>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        visible={confirmationNotificationModalVisible}
+        onCancel={closeConfirmationModal}
+        onConfirm={handleDeleteNotification}
+        modalTitle="Delete Notification"
+        modalSubTitle="Are you sure you want to delete this notification?"
+      />
+    </GestureHandlerRootView>
   );
 };
 
@@ -161,6 +211,7 @@ const styles = StyleSheet.create({
   message: {
     fontFamily: "Montserrat-Regular",
     fontSize: 12,
+    flex: 1,
   },
   time: {
     fontFamily: "Montserrat-Regular",
@@ -190,6 +241,24 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-centre",
+  },
+  notificationItem: {
+    height: 80,
+    padding: 14,
+    marginTop: 12,
+    borderWidth: 0.5,
+    borderColor: "#C9E4EE",
+    borderRadius: 15,
+  },
+  deleteButton: {
+    backgroundColor: "#ff6b6b",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+    height: 80,
+    marginTop: 12,
+
+    borderRadius: 15,
   },
 });
 
