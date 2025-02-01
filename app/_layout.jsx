@@ -88,6 +88,13 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="RequestStores/index"
+            options={{
+              headerShown: false,
+              presentation: "containedModal",
+            }}
+          />
+          <Stack.Screen
             name="ScanBarCode/index"
             options={{
               headerShown: false,

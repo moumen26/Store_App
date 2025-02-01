@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
 import CartRow from "../../components/CartRow";
@@ -27,6 +27,11 @@ import CodeBar from "../loading/CodeBar";
 import ArticleItem from "../loading/ArticleItem";
 import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
 import ScanButton from "../../components/ScanButton";
+
+import { formatDate, orderStatusTextDisplayer } from "../util/useFullFunctions";
+
+import { printToFileAsync } from "expo-print";
+import { shareAsync } from "expo-sharing";
 
 const CodeBare = require("../../assets/images/CodeBare.png");
 
@@ -80,31 +85,119 @@ const EReceiptScreen = () => {
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
 
-  // Function to generate and download the PDF
-  const downloadPDF = async () => {
-    const htmlContent = `
-      <html>
-        <body>
-          <h1>E-Receipt</h1>
-          <p><strong>Order ID:</strong> ${OrderData?.reciept?._id}</p>
-          <p><strong>Store Name:</strong> ${
-            OrderData?.reciept?.store?.storeName
-          }</p>
-          <p><strong>Order Date:</strong> ${OrderData?.reciept?.date}</p>
-          <p><strong>Order Status:</strong> ${OrderData?.reciept?.status}</p>
-          <p><strong>Total:</strong> ${OrderData?.reciept?.total}</p>
-          <h2>Products</h2>
-          <ul>
-            ${OrderData?.recieptStatus?.products
-              .map(
-                (product) => `
-                  <li>${product?.product?.name} - ${product?.quantity} x ${product?.product?.brand?.name}</li>`
-              )
-              .join("")}
-          </ul>
-        </body>
-      </html>
-    `;
+  const html = `
+  <html>
+    <head>
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+      <style>
+        body {
+          font-family: Montserrat, sans-serif;
+          text-align: center;
+          margin: 12px 24px;
+        }
+        .barcode {
+          width: 100%;
+          text-align: center;
+          margin-bottom: 10px;
+        }
+        .barcode img{
+          width: 80%;
+        }
+        .product-container {
+          display: flex;
+          flex-direction: row; 
+          align-items: center;
+          width: 100%;
+          margin-bottom: 10px;
+        }
+        .product-image {
+          width: 100px;
+          height: 100px;
+          object-fit: contain;
+        }
+       .product-details {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px; 
+        }
+
+        .product-details p {
+          margin: 0; 
+        }
+
+        .order-details {
+          text-align: left;
+          margin-top: 20px;
+          border-top: 1px solid #ccc;
+          padding-top: 10px;
+        }
+        .order-details p {
+          margin: 5px 0;
+        }
+        h1{
+          font-size: 28px;
+        }
+        h2{
+          font-size: 22px;
+          text-align: left;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>E-Receipt</h1>
+      
+      <div class="barcode">
+        <img src="https://barcode.tec-it.com/barcode.ashx?data=${
+          OrderData?.reciept?._id
+        }&code=Code128&dpi=300" />
+      </div>
+
+      <h2>Order Details</h2>
+
+      <!-- Product List -->
+      ${OrderData?.recieptStatus?.products
+        .map(
+          (product) => `
+        <div class="product-container">
+          <img class="product-image" src="${Config.API_URL.replace(
+            "/api",
+            ""
+          )}/files/${product?.product?.image}" />
+          <div class="product-details">
+            <p><strong>${product?.product?.name}</strong></p>
+            <p>${product?.product?.brand?.name} | Qty: ${product?.quantity}</p>
+          </div>
+        </div>
+      `
+        )
+        .join("")}
+  
+      <!-- Order Details -->
+      <div class="order-details">
+        <p><strong>Store:</strong> ${OrderData?.reciept?.store?.storeName}</p>
+        <p><strong>Order ID:</strong> ${OrderData?.reciept?._id}</p>
+        <p><strong>Order Type:</strong> ${OrderData?.reciept?.type}</p>
+        <p><strong>Order Date:</strong> ${OrderData?.reciept?.date}</p>
+        <p><strong>Sub Total:</strong> DA ${OrderData?.reciept?.total}</p>
+        ${
+          OrderData?.reciept?.type === "delivery"
+            ? `<p><strong>Delivery Charge:</strong> + DA</p>`
+            : ""
+        }
+      </div>
+  
+    </body>
+  </html>
+`;
+
+  let generatePDF = async () => {
+    const file = await printToFileAsync({
+      html: html,
+      base64: false,
+    });
+
+    await shareAsync(file.uri);
   };
 
   //--------------------------------------------Rendering--------------------------------------------
@@ -130,7 +223,7 @@ const EReceiptScreen = () => {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 0,
-          paddingBottom: 55,
+          paddingBottom: 50,
         }}
         vertical
         showsHorizontalScrollIndicator={false}
@@ -185,7 +278,7 @@ const EReceiptScreen = () => {
         className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
         style={styles.navigationClass}
       >
-        <TouchableOpacity style={styles.loginButton} onPress={downloadPDF}>
+        <TouchableOpacity style={styles.loginButton} onPress={generatePDF}>
           <Text style={styles.loginButtonText}>Download E-Receipt</Text>
         </TouchableOpacity>
       </View>

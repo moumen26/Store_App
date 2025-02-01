@@ -24,7 +24,7 @@ const TabLayout = () => {
             borderTopRightRadius: 30,
             position: "absolute",
             overflow: "hidden",
-            height: 80,
+            height: 70,
           },
         }}
       >

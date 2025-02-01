@@ -230,7 +230,7 @@ const Store = () => {
     enabled: !!user?.token, // Only run the query if user is authenticated
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
-  });  
+  });
   //--------------------------------------------RENDERING--------------------------------------------
   return (
     <SafeAreaView className="bg-white pt-3 h-full">
@@ -339,56 +339,6 @@ const Store = () => {
           <></>
         )}
 
-        {PopularProductsDataLoading ? (
-          <View className="mx-5 mb-[20]">
-            <AllProducts />
-          </View>
-        ) : PopularProductsData && PopularProductsData?.length > 0 ? (
-          <View className="mx-5 mb-[20]">
-            <View className="flex-row items-center justify-between">
-              <Text style={styles.titleCategory}>Popular Products</Text>
-              <TouchableOpacity>
-                <Text
-                  onPress={() =>
-                    navigation.navigate("PopularProducts/index", {
-                      popularProductsData: PopularProductsData,
-                      storeId: storeId,
-                    })
-                  }
-                  style={styles.seeAll}
-                >
-                  See All
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View className="flex-row items-center justify-around mt-4">
-              <FlatList
-                data={PopularProductsData}
-                horizontal
-                keyExtractor={(item) => item?._id?.toString()}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <PopularProductCard
-                    key={item?._id}
-                    imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
-                      item?.stock?.product?.image
-                    }`}
-                    ProductName={item?.stock?.product?.name}
-                    onPress={() => 
-                      navigation.navigate("Product/index", {
-                        data: item?.stock,
-                        storeId: storeId,
-                      })
-                    }
-                  />
-                )}
-              />
-            </View>
-          </View>
-        ) : (
-          <></>
-        )}
-
         {ProductsDataLoading ? (
           <View className="mx-5 mb-3">
             <AllProducts />
@@ -451,6 +401,55 @@ const Store = () => {
           </SafeAreaView>
         )}
 
+        {PopularProductsDataLoading ? (
+          <View className="mx-5 mb-[20]">
+            <AllProducts />
+          </View>
+        ) : PopularProductsData && PopularProductsData?.length > 0 ? (
+          <View className="mx-5 mb-[20]">
+            <View className="flex-row items-center justify-between">
+              <Text style={styles.titleCategory}>Popular Products</Text>
+              <TouchableOpacity>
+                <Text
+                  onPress={() =>
+                    navigation.navigate("PopularProducts/index", {
+                      popularProductsData: PopularProductsData,
+                      storeId: storeId,
+                    })
+                  }
+                  style={styles.seeAll}
+                >
+                  See All
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View className="flex-row items-center justify-around mt-4">
+              <FlatList
+                data={PopularProductsData}
+                horizontal
+                keyExtractor={(item) => item?._id?.toString()}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <PopularProductCard
+                    key={item?._id}
+                    imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+                      item?.stock?.product?.image
+                    }`}
+                    ProductName={item?.stock?.product?.name}
+                    onPress={() =>
+                      navigation.navigate("Product/index", {
+                        data: item?.stock,
+                        storeId: storeId,
+                      })
+                    }
+                  />
+                )}
+              />
+            </View>
+          </View>
+        ) : (
+          <></>
+        )}
       </ScrollView>
       <Modal
         animationType="slide"

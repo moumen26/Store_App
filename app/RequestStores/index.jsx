@@ -14,6 +14,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import StoreCard from "../../components/StoreCard";
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
 import Config from "../config";
@@ -23,7 +24,7 @@ import Search from "../loading/Search";
 import Brands from "../loading/Brands";
 import LoadingStores from "../loading/LoadingStores";
 import NonLinkedStores from "../../components/NonLinkedStores";
-import RequestButton from "../../components/RequestButton";
+import BackButton from "../../components/BackButton";
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -33,7 +34,7 @@ const api = axios.create({
   },
 });
 
-const stores = () => {
+const RequestStores = () => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
 
@@ -141,11 +142,9 @@ const stores = () => {
   return (
     <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
+        <BackButton />
+        <Text style={styles.titleScreen}>Stores</Text>
         <View style={styles.Vide}></View>
-        <Text className="text-center" style={styles.titleScreen}>
-          Stores
-        </Text>
-        <RequestButton />
       </View>
       <View
         style={styles.searchBar}
@@ -225,4 +224,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default stores;
+export default RequestStores;
