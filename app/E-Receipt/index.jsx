@@ -3,6 +3,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  FlatList,
   Image,
   TouchableOpacity,
 } from "react-native";
@@ -20,15 +21,11 @@ import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
 import Config from "../config";
 import { useQuery } from "@tanstack/react-query";
-import Cart from "../loading/Cart";
-import Search from "../loading/Search";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 import CodeBar from "../loading/CodeBar";
 import ArticleItem from "../loading/ArticleItem";
 import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
 import ScanButton from "../../components/ScanButton";
-
-import { formatDate, orderStatusTextDisplayer } from "../util/useFullFunctions";
 
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
@@ -121,11 +118,9 @@ const EReceiptScreen = () => {
           align-items: flex-start;
           gap: 4px; 
         }
-
         .product-details p {
           margin: 0; 
         }
-
         .order-details {
           text-align: left;
           margin-top: 20px;
@@ -220,60 +215,60 @@ const EReceiptScreen = () => {
   }
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 0,
-          paddingBottom: 50,
-        }}
-        vertical
-        showsHorizontalScrollIndicator={false}
-      >
-        <View className="mx-5 mb-[20] flex-row items-center justify-between">
-          <BackButton />
-          <Text style={styles.titleScreen}>E-Receipt</Text>
-          <ScanButton />
-        </View>
-        {OrderData?.reciept?.status != 10 && (
-          <View className="flex items-center">
-            <Image source={CodeBare} />
-          </View>
-        )}
-        <View className="mx-5 mt-[12]" style={styles.container}>
-          {OrderData?.recieptStatus?.products?.length > 0 ? (
-            OrderData?.recieptStatus?.products?.map((item, index) => (
-              <CartRow
-                key={item?.stock}
-                ProductQuantity={item?.quantity}
-                ProductName={item?.product?.name}
-                ProductBrand={item?.product?.brand?.name}
-                ProductImage={`${
-                  `${Config.API_URL.replace("/api", "")}/files/${
-                    item?.product?.image
-                  }` || ""
-                }`}
-                BoxItems={item?.product?.boxItems}
-              />
-            ))
-          ) : (
+      <View style={styles.FlatList}>
+        <FlatList
+          data={OrderData?.recieptStatus?.products || []}
+          keyExtractor={(item) => item?.stock?.toString()}
+          ListHeaderComponent={
+            <>
+              <View className="mx-5 mb-[20] flex-row items-center justify-between">
+                <BackButton />
+                <Text style={styles.titleScreen}>E-Receipt</Text>
+                <ScanButton />
+              </View>
+              {OrderData?.reciept?.status !== 10 && (
+                <View className="flex items-center">
+                  <Image source={CodeBare} />
+                </View>
+              )}
+            </>
+          }
+          renderItem={({ item }) => (
+            <CartRow
+              ProductQuantity={item?.quantity}
+              ProductName={item?.product?.name}
+              ProductBrand={item?.product?.brand?.name}
+              ProductImage={`${
+                `${Config.API_URL.replace("/api", "")}/files/${
+                  item?.product?.image
+                }` || ""
+              }`}
+              BoxItems={item?.product?.boxItems}
+            />
+          )}
+          ListEmptyComponent={
             <View style={styles.containerNoAvailable}>
               <Text style={styles.noText}>No product is available</Text>
             </View>
-          )}
-        </View>
-        <EReceiptDetails
-          OrderStoreName={OrderData?.reciept?.store?.storeName}
-          OrderID={OrderData?.reciept?._id}
-          OrderType={OrderData?.reciept?.type}
-          OrderDeliveryAddress={
-            OrderData?.reciept?.deliveredLocation?.address || null
           }
-          OrderDate={OrderData?.reciept?.date}
-          OrderStatus={OrderData?.reciept?.status}
-          OrderSubTotal={OrderData?.reciept?.total}
-          OrderDeliveryCharge={OrderData?.deliveryCost}
-          OrderDiscount={""}
+          ListFooterComponent={
+            <EReceiptDetails
+              OrderStoreName={OrderData?.reciept?.store?.storeName}
+              OrderID={OrderData?.reciept?._id}
+              OrderType={OrderData?.reciept?.type}
+              OrderDeliveryAddress={
+                OrderData?.reciept?.deliveredLocation?.address || null
+              }
+              OrderDate={OrderData?.reciept?.date}
+              OrderStatus={OrderData?.reciept?.status}
+              OrderSubTotal={OrderData?.reciept?.total}
+              OrderDeliveryCharge={OrderData?.deliveryCost}
+              OrderDiscount={""}
+            />
+          }
         />
-      </ScrollView>
+      </View>
+
       <View
         className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
         style={styles.navigationClass}
@@ -287,6 +282,10 @@ const EReceiptScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  FlatList: {
+    paddingBottom: 55,
+    flex: 1,
+  },
   containerLoadingtextScreen: {
     flexDirection: "row",
     justifyContent: "center",

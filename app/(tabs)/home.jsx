@@ -175,90 +175,90 @@ const home = () => {
 
   return (
     <SafeAreaView className="bg-white pt-3 pb-10 h-full">
-        {PublicPublicitiesDataLoading ? (
-          <View className="mx-5 mb-[20]">
-            <TopHomeScreen />
-          </View>
-        ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
-          <View className="flex-row items-center mx-5 space-x-3">
-            <View style={styles.topClass}>
-              <Text style={styles.text} className="text-gray-400">
-                Location
-              </Text>
-              <View style={styles.iconText} className="flex-row">
-                <MapPinIcon size={18} color="#26667E" />
-                <Text style={styles.text}>Blida, Algeria</Text>
-              </View>
+      {PublicPublicitiesDataLoading ? (
+        <View className="mx-5 mb-[20]">
+          <TopHomeScreen />
+        </View>
+      ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
+        <View className="flex-row items-center mx-5 space-x-3">
+          <View style={styles.topClass}>
+            <Text style={styles.text} className="text-gray-400">
+              Location
+            </Text>
+            <View style={styles.iconText} className="flex-row">
+              <MapPinIcon size={18} color="#26667E" />
+              <Text style={styles.text}>Blida, Algeria</Text>
             </View>
-            <TouchableOpacity
-              style={styles.notification}
-              onPress={() => navigation.navigate("E-Receipt/index")}
-            >
-              <BellIcon size={18} color="#26667E" />
-            </TouchableOpacity>
           </View>
-        ) : (
-          <></>
-        )}
-
-        {PublicPublicitiesDataLoading ? (
-          <View className="mx-5 mb-[20]">
-            <Search />
-          </View>
-        ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
-          <View
-            className="flex-row items-center space-x-2 mx-5 mb-5"
-            style={styles.searchClass}
+          <TouchableOpacity
+            style={styles.notification}
+            onPress={() => navigation.navigate("Notifications/index")}
           >
-            <View
-              style={styles.searchButton}
-              className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
-            >
-              <MagnifyingGlassIcon color="#888888" size={20} />
-              <TextInput
-                style={styles.searchButto}
-                placeholder="Search by Store.."
-                placeholderTextColor="#888888"
-                // value={searchQuery}
-                // onChangeText={setSearchQuery}
-              />
-              {/* <Text style={styles.search}>Search by Store..</Text> */}
-            </View>
-          </View>
-        ) : (
-          <></>
-        )}
+            <BellIcon size={18} color="#26667E" />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <></>
+      )}
 
-        {PublicPublicitiesDataLoading ? (
-          <View className="mx-5 mb-[20]">
-            <SpecialForYou />
+      {PublicPublicitiesDataLoading ? (
+        <View className="mx-5 mb-[20]">
+          <Search />
+        </View>
+      ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
+        <View
+          className="flex-row items-center space-x-2 mx-5 mb-5"
+          style={styles.searchClass}
+        >
+          <View
+            style={styles.searchButton}
+            className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
+          >
+            <MagnifyingGlassIcon color="#888888" size={20} />
+            <TextInput
+              style={styles.searchButto}
+              placeholder="Search by Store.."
+              placeholderTextColor="#888888"
+              // value={searchQuery}
+              // onChangeText={setSearchQuery}
+            />
+            {/* <Text style={styles.search}>Search by Store..</Text> */}
           </View>
-        ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
-          <View className="mx-5 mb-[20]">
-            <Text style={styles.titleCategory}>#SpecialForYou</Text>
-            <SliderHome PublicPublicitiesData={PublicPublicitiesData} />
-          </View>
-        ) : (
-          <></>
-        )}
+        </View>
+      ) : (
+        <></>
+      )}
 
-        {CategoriesDataLoading || StoresDataLoading ? (
-          <View className="mx-5 mb-[20]">
-            <ShimmerPlaceholder style={styles.textLoading} />
-            <Brands />
-            <View style={styles.loadingStores}>
-              <LoadingStores />
-            </View>
+      {PublicPublicitiesDataLoading ? (
+        <View className="mx-5 mb-[20]">
+          <SpecialForYou />
+        </View>
+      ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
+        <View className="mx-5 mb-[20]">
+          <Text style={styles.titleCategory}>#SpecialForYou</Text>
+          <SliderHome PublicPublicitiesData={PublicPublicitiesData} />
+        </View>
+      ) : (
+        <></>
+      )}
+
+      {CategoriesDataLoading || StoresDataLoading ? (
+        <View className="mx-5 mb-[20]">
+          <ShimmerPlaceholder style={styles.textLoading} />
+          <Brands />
+          <View style={styles.loadingStores}>
+            <LoadingStores />
           </View>
-        ) : (CategoriesData && CategoriesData?.length > 0) ||
-          (StoresData && StoresData?.length > 0) ? (
-          <View style={styles.stores} className="mx-5">
-            <Text style={styles.titleCategory}>My Stores</Text>
-            <Store StoresData={StoresData} CategoriesData={CategoriesData} />
-          </View>
-        ) : (
-          <></>
-        )}
+        </View>
+      ) : (CategoriesData && CategoriesData?.length > 0) ||
+        (StoresData && StoresData?.length > 0) ? (
+        <View style={styles.stores} className="mx-5">
+          <Text style={styles.titleCategory}>My Stores</Text>
+          <Store StoresData={StoresData} CategoriesData={CategoriesData} />
+        </View>
+      ) : (
+        <></>
+      )}
     </SafeAreaView>
   );
 };
