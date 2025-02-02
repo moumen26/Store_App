@@ -81,6 +81,12 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="TrackOrder/index"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name="Notifications/index"
             options={{
               headerShown: false,

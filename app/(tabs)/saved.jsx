@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 import Search from "../loading/Search";
 import StoreCart from "../loading/StoreCart";
+import BackButton from "../../components/BackButton";
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -82,8 +83,14 @@ const Saved = () => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <Text style={styles.titleScreen}>Stores</Text>
+    <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
+      <View className="mx-5 mb-[20] flex-row items-center justify-between">
+        <View style={styles.Vide}></View>
+        <Text className="text-center" style={styles.titleScreen}>
+          Saved Stores
+        </Text>
+        <View style={styles.Vide}></View>
+      </View>
 
       <View style={styles.searchBar}>
         <MagnifyingGlassIcon size={20} color="#26667E" />
@@ -138,6 +145,10 @@ const Saved = () => {
 };
 
 const styles = StyleSheet.create({
+  Vide: {
+    width: 40,
+    height: 40,
+  },
   containerLoadingtextScreen: {
     flexDirection: "row",
     justifyContent: "center",
@@ -156,8 +167,6 @@ const styles = StyleSheet.create({
   titleScreen: {
     fontSize: 20,
     fontFamily: "Montserrat-Regular",
-    textAlign: "center",
-    marginBottom: 20,
   },
   searchBar: {
     height: 50,

@@ -17,9 +17,9 @@ const TopHomeScreen = () => {
 
 const styles = StyleSheet.create({
   notification: {
-    width: 35,
-    height: 35,
-    borderRadius: 17.5,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   text: {
     width: 170,

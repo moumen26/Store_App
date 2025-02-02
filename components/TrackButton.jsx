@@ -1,18 +1,18 @@
 import { TouchableOpacity } from "react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { ClipboardDocumentIcon } from "react-native-heroicons/outline";
+import { TruckIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "expo-router";
 
-const RequestButton = () => {
+const TrackButton = () => {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       style={styles.BackButton}
-      onPress={() => navigation.navigate("RequestStores/index")}
+      onPress={() => navigation.navigate("TrackOrder/index")}
     >
-      <ClipboardDocumentIcon size={20} color="#26667E" />
+      <TruckIcon size={20} color="#26667E" />
     </TouchableOpacity>
   );
 };
@@ -29,4 +29,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RequestButton;
+export default TrackButton;

@@ -16,7 +16,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
+
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
 import Config from "../config";
@@ -25,10 +27,11 @@ import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 import CodeBar from "../loading/CodeBar";
 import ArticleItem from "../loading/ArticleItem";
 import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
-import ScanButton from "../../components/ScanButton";
 
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
+
+import TrackButton from "../../components/TrackButton";
 
 const CodeBare = require("../../assets/images/CodeBare.png");
 
@@ -43,7 +46,7 @@ const api = axios.create({
 const EReceiptScreen = () => {
   const { user } = useAuthContext();
   const route = useRoute();
-  const navigator = useNavigation();
+  const navigation = useNavigation();
   const { OrderID } = route.params;
 
   //--------------------------------------------APIs--------------------------------------------
@@ -224,7 +227,7 @@ const EReceiptScreen = () => {
               <View className="mx-5 mb-[20] flex-row items-center justify-between">
                 <BackButton />
                 <Text style={styles.titleScreen}>E-Receipt</Text>
-                <ScanButton />
+                <TrackButton />
               </View>
               {OrderData?.reciept?.status !== 10 && (
                 <View className="flex items-center">
@@ -282,6 +285,16 @@ const EReceiptScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  notification: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: "#26667E",
+    borderWidth: 1,
+  },
   FlatList: {
     paddingBottom: 55,
     flex: 1,

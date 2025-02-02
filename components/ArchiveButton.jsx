@@ -22,9 +22,9 @@ const ArchiveButton = () => {
 
 const styles = StyleSheet.create({
   BackButton: {
-    width: 35,
-    height: 35,
-    borderRadius: 17.5,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderColor: "#3E9CB9",
     borderWidth: 1,
     justifyContent: "center",
