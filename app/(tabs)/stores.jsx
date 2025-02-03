@@ -120,7 +120,7 @@ const stores = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-
+  
   //--------------------------------------------Rendering--------------------------------------------
   if (AllStoresDataLoading || CategoriesDataLoading) {
     return (
@@ -164,6 +164,7 @@ const stores = () => {
         <NonLinkedStores
           StoresData={AllStoresData}
           CategoriesData={CategoriesData}
+          AllStoresDataRefetch={AllStoresDataRefetch}
         />
       </View>
     </SafeAreaView>

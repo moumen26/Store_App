@@ -64,7 +64,6 @@ const cart = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-
   //--------------------------------------------Rendering--------------------------------------------
   if (OrdersDataLoading) {
     return (

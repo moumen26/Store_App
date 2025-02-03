@@ -17,7 +17,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useRoute } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
 
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
@@ -46,7 +45,6 @@ const api = axios.create({
 const EReceiptScreen = () => {
   const { user } = useAuthContext();
   const route = useRoute();
-  const navigation = useNavigation();
   const { OrderID } = route.params;
 
   //--------------------------------------------APIs--------------------------------------------
@@ -187,7 +185,7 @@ const EReceiptScreen = () => {
   
     </body>
   </html>
-`;
+  `;
 
   let generatePDF = async () => {
     const file = await printToFileAsync({
@@ -227,7 +225,9 @@ const EReceiptScreen = () => {
               <View className="mx-5 mb-[20] flex-row items-center justify-between">
                 <BackButton />
                 <Text style={styles.titleScreen}>E-Receipt</Text>
-                <TrackButton />
+                <TrackButton 
+                  data={OrderData}
+                />
               </View>
               {OrderData?.reciept?.status !== 10 && (
                 <View className="flex items-center">

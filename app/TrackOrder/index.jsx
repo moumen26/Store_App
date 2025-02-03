@@ -11,6 +11,7 @@ import CartRow from "../../components/CartRow";
 import ScanButton from "../../components/ScanButton";
 import BackButton from "../../components/BackButton";
 import OrderStatus from "../../components/OrderStatus";
+import { useRoute } from "@react-navigation/native";
 
 const orderData = {
   receiptStatus: {
@@ -40,10 +41,9 @@ const orderData = {
 };
 
 const TrackOrder = () => {
-  const orderDetails = {
-    status: 3,
-    type: "delivery",
-  };
+  const route = useRoute();
+  const { data } = route.params;
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
@@ -56,40 +56,36 @@ const TrackOrder = () => {
             <ScanButton />
           </View>
         }
-        renderItem={({ item }) => (
-          <CartRow
-            ProductQuantity={item.quantity}
-            ProductName={item.product.name}
-            ProductBrand={item.product.brand.name}
-            ProductImage={`https://your-api-endpoint.com/files/${item.product.image}`}
-            BoxItems={item.product.boxItems}
-          />
-        )}
-        ListEmptyComponent={
-          <View style={styles.containerNoAvailable}>
-            <Text style={styles.noText}>No product is available</Text>
-          </View>
-        }
+
         ListFooterComponent={
           <View className="mx-5">
             <View style={styles.commandeContainer}>
               <Text style={styles.titleCategory}>Order Details</Text>
               <View className="flex-row items-center justify-between w-full">
                 <Text style={styles.text}>Expected Delivery Date</Text>
-                <Text style={styles.textDescription}>
-                  May 09, 2024 | 06:00 PM
-                </Text>
+                {data?.reciept?.expextedDeliveryDate ?
+                  <Text style={styles.textDescription}>
+                    {data?.reciept?.expextedDeliveryDate}
+                  </Text>
+                  :
+                  <Text style={styles.textDescription}>
+                    not available yet
+                  </Text>
+                }
               </View>
               <View className="flex-row items-center justify-between w-full">
                 <Text style={styles.text}>Order Id</Text>
                 <Text style={styles.textDescription}>
-                  {orderData.receipt._id}
+                  {data?.reciept?._id}
                 </Text>
               </View>
             </View>
             <View style={styles.OrderStatus}>
               <Text style={styles.titleCategory}>Order Status</Text>
-              <OrderStatus orderDetails={orderDetails} />
+              <OrderStatus 
+                type={data?.reciept?.type}
+                status={data?.reciept?.status} 
+              />
             </View>
           </View>
         }

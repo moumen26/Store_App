@@ -4,13 +4,15 @@ import { StyleSheet } from "react-native";
 import { TruckIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "expo-router";
 
-const TrackButton = () => {
+const TrackButton = ({data}) => {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       style={styles.BackButton}
-      onPress={() => navigation.navigate("TrackOrder/index")}
+      onPress={() => navigation.navigate("TrackOrder/index",
+        {data: data}
+      )}
     >
       <TruckIcon size={20} color="#26667E" />
     </TouchableOpacity>

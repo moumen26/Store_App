@@ -8,7 +8,7 @@ import Snackbar from "./Snackbar";
 import useAuthContext from "../app/hooks/useAuthContext";
 import Config from "../app/config";
 
-const NonLinkedStores = ({ StoresData, CategoriesData }) => {
+const NonLinkedStores = ({ StoresData, CategoriesData, AllStoresDataRefetch }) => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
   const [snackbarKey, setSnackbarKey] = useState(0);
@@ -68,7 +68,7 @@ const NonLinkedStores = ({ StoresData, CategoriesData }) => {
   };
 
   const filteredStores = StoresData.filter((store) =>
-    store?.categories.some((category) => category === activeTab)
+    store?.categories?.some((category) => category === activeTab)
   );
 
   const renderCategory = ({ item }) => (

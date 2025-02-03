@@ -23,7 +23,7 @@ import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 import Search from "../loading/Search";
 import Brands from "../loading/Brands";
 import LoadingStores from "../loading/LoadingStores";
-import NonLinkedStores from "../../components/NonLinkedStores";
+import RequestStoresCard from "../../components/RequestStoresCard";
 import BackButton from "../../components/BackButton";
 
 // Axios instance for base URL configuration
@@ -40,9 +40,9 @@ const RequestStores = () => {
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
-  const fetchAllStoresData = async () => {
+  const fetchAllNonActiveStoresData = async () => {
     try {
-      const response = await api.get(`/Store/all/active/${user?.info?.id}`, {
+      const response = await api.get(`/MyStores/nonActive/${user?.info?.id}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`,
         },
@@ -69,13 +69,13 @@ const RequestStores = () => {
     }
   };
   const {
-    data: AllStoresData,
-    error: AllStoresDataError,
-    isLoading: AllStoresDataLoading,
-    refetch: AllStoresDataRefetch,
+    data: AllNonActiveStoresData,
+    error: AllNonActiveStoresDataError,
+    isLoading: AllNonActiveStoresDataLoading,
+    refetch: AllNonActiveStoresDataRefetch,
   } = useQuery({
-    queryKey: ["AllStoresData", user?.token], // Ensure token is part of the query key
-    queryFn: fetchAllStoresData, // Pass token to the fetch function
+    queryKey: ["AllNonActiveStoresData", user?.token], // Ensure token is part of the query key
+    queryFn: fetchAllNonActiveStoresData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
@@ -121,9 +121,9 @@ const RequestStores = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-
+  
   //--------------------------------------------Rendering--------------------------------------------
-  if (AllStoresDataLoading || CategoriesDataLoading) {
+  if (AllNonActiveStoresDataLoading || CategoriesDataLoading) {
     return (
       <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
         <View className="mx-5" style={styles.containerLoading}>
@@ -160,8 +160,8 @@ const RequestStores = () => {
         />
       </View>
       <View style={styles.container}>
-        <NonLinkedStores
-          StoresData={AllStoresData}
+        <RequestStoresCard
+          StoresData={AllNonActiveStoresData}
           CategoriesData={CategoriesData}
         />
       </View>

@@ -1,21 +1,31 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { CheckIcon } from "react-native-heroicons/outline";
+import { CheckIcon, XMarkIcon } from "react-native-heroicons/outline";
 import StepIndicator from "react-native-step-indicator";
+import { orderStatusTextDisplayer } from "../app/util/useFullFunctions";
 
-const OrderScreen = ({ type }) => {
-  const [currentPage, setCurrentPage] = useState(0);
+const OrderScreen = ({ type, status }) => {
+  // Map the status values to the correct step indices
+  const statusToStepIndex = {
+    0: 0,
+    1: 1,
+    2: type === "pickup" ? 1 : 2,
+    3: 3,
+    10: 10, 
+  };
 
+  const [currentPage, setCurrentPage] = useState(statusToStepIndex[Number(status)]);
   const deliverySteps = [
-    { title: "Order Placed", date: "May 09, 2024 | 02:00 PM" },
-    { title: "Preparing your order", date: "May 09, 2024 | 03:00 PM" },
-    { title: "Order on the way to address", date: "May 09, 2024 | 04:00 PM" },
-    { title: "Delivered", date: "May 09, 2024 | 05:00 PM" },
+    { title: "Order Placed" },
+    { title: "Preparing your order" },
+    { title: "Order on the way to address" },
+    { title: "Delivered" },
+    { title: "Fully paid" },
   ];
-
   const pickupSteps = [
-    { title: "Order Placed", date: "May 09, 2024 | 02:00 PM" },
-    { title: "Ready for Pickup", date: "May 09, 2024 | 03:00 PM" },
+    { title: "Order Placed" },
+    { title: "Ready for Pickup" },
+    { title: "Fully paid" },
   ];
 
   const steps = type === "pickup" ? pickupSteps : deliverySteps;
@@ -42,27 +52,26 @@ const OrderScreen = ({ type }) => {
   };
 
   const renderStepIndicator = ({ position, stepStatus }) => {
-    return (
-      <CheckIcon
-        size={18}
-        color={stepStatus === "finished" ? "#FFF" : "#E7F2F7"}
-      />
-    );
+    let iconColor;
+    if (stepStatus === "finished") {
+      iconColor = "#FFFFFF";
+    } else if (stepStatus === "current") {
+      iconColor = "#3E9CB9";
+    } else {
+      iconColor = "#E7F2F7";
+      return <XMarkIcon size={18} color={iconColor} />;
+    }
+    
+    return <CheckIcon size={18} color={iconColor} />;
   };
 
   const renderPage = ({ item }) => (
     <View style={styles.rowItem}>
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.date}>{item.date}</Text>
     </View>
   );
 
-  const onViewableItemsChanged = ({ viewableItems }) => {
-    const visibleItemsCount = viewableItems.length;
-    if (visibleItemsCount !== 0) {
-      setCurrentPage(viewableItems[visibleItemsCount - 1].index);
-    }
-  };
+
 
   return (
     <View style={styles.container}>
@@ -79,7 +88,6 @@ const OrderScreen = ({ type }) => {
         style={{ flexGrow: 1 }}
         data={steps}
         renderItem={renderPage}
-        onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{ itemVisiblePercentThreshold: 40 }}
       />
     </View>
