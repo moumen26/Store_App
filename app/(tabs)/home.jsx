@@ -77,8 +77,10 @@ const home = () => {
     queryKey: ["PublicPublicitiesData", user?.token], // Ensure token is part of the query key
     queryFn: fetchPublicPublicitiesData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
+    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minutes
+    retry: 2,
+    retryDelay: 1000,
   });
   // Function to fetch stores data
   const fetchStoresData = async () => {
@@ -118,8 +120,10 @@ const home = () => {
     queryKey: ["StoresData", user?.token], // Ensure token is part of the query key
     queryFn: fetchStoresData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
+    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minutes
+    retry: 2,
+    retryDelay: 1000,
   });
   // Function to fetch stores data
   const fetchCategoriesData = async () => {
@@ -159,8 +163,53 @@ const home = () => {
     queryKey: ["CategoriesData", user?.token], // Ensure token is part of the query key
     queryFn: fetchCategoriesData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchInterval: 100, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
+    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minutes
+    retry: 2,
+    retryDelay: 1000,
+  });
+  // Function to fetch public publicities data
+  const fetchNotificationData = async () => {
+    try {
+      const response = await api.get(`/Notification/client/nonRead/${user?.info?.id}`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+
+      // Check if the response is valid
+      if (response.status !== 200) {
+        const errorData = await response.data;
+        if (errorData.error.statusCode == 404) {
+          return []; // Return an empty array for 404 errors
+        } else {
+          throw new Error("Error receiving notification data");
+        }
+      }
+
+      // Return the data from the response
+      return await response.data;
+    } catch (error) {
+      // Handle if the request fails with status code 401 or 404
+      if (error?.response?.status === 401 || error?.response?.status === 404) {
+        return []; // Return an empty array for 401 and 404 errors
+      }
+      throw new Error(error?.message || "Network error");
+    }
+  };
+  const {
+    data: NotificationData,
+    error: NotificationDataError,
+    isLoading: NotificationDataLoading,
+    refetch: NotificationDataRefetch,
+  } = useQuery({
+    queryKey: ["NotificationData", user?.token], // Ensure token is part of the query key
+    queryFn: fetchNotificationData, // Pass token to the fetch function
+    enabled: !!user?.token, // Only run the query if user is authenticated
+    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
+    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minutes
+    retry: 2,
+    retryDelay: 1000,
   });
   //--------------------------------------------RENDERING--------------------------------------------
   if (PublicPublicitiesDataError || StoresDataError || CategoriesDataError) {
@@ -190,12 +239,19 @@ const home = () => {
               <Text style={styles.text}>Blida, Algeria</Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={styles.notification}
-            onPress={() => navigation.navigate("Notifications/index")}
-          >
-            <BellIcon size={20} color="#26667E" />
-          </TouchableOpacity>
+          {!NotificationDataError && 
+            <TouchableOpacity
+              style={styles.notification}
+              onPress={() => navigation.navigate("Notifications/index",{
+                NotificationData: NotificationData,
+                NotificationDataRefetch: NotificationDataRefetch,
+                NotificationDataLoading: NotificationDataLoading,
+                user: user
+              })}
+            >
+              <BellIcon size={20} color="#26667E" />
+            </TouchableOpacity>
+          }
         </View>
       ) : (
         <></>

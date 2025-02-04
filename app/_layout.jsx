@@ -93,6 +93,12 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="NotificationReaded/index"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name="ArchiveOrders/index"
             options={{
               headerShown: false,

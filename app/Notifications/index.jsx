@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Text,
   View,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Swipeable } from "react-native-gesture-handler";
 import BackButton from "../../components/BackButton";
-import { TrashIcon } from "react-native-heroicons/outline";
+import { EyeIcon } from "react-native-heroicons/outline";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import { useRoute } from "@react-navigation/native";
+import Snackbar from "../../components/Snackbar";
+import Config from "../config";
+import ReadedNotificationButton from "../../components/ReadedNotificationButton";
+
 
 // Function to format the date (today, yesterday, or specific dates)
 const formatDate = (date) => {
@@ -37,103 +41,79 @@ const formatTime = (date) => {
   return new Date(date).toLocaleTimeString(undefined, options);
 };
 
+// Component to render each notification item
+const NotificationItem = React.memo(({ item, onPress, onDelete }) => {
+  const renderRightActions = () => (
+    <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(item._id)}>
+      <EyeIcon size={24} color="white" />
+    </TouchableOpacity>
+  );
+
+  return (
+    <Swipeable renderRightActions={renderRightActions}>
+      <TouchableOpacity onPress={() => onPress(item._id)}>
+        <View style={styles.notificationItem}>
+          <Text style={styles.message}>{item.message}</Text>
+          <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
+        </View>
+      </TouchableOpacity>
+    </Swipeable>
+  );
+});
+
+// Component to render section headers (date)
+const SectionHeader = React.memo(({ title }) => (
+  <Text style={styles.dateText}>{title}</Text>
+));
+
 const NotificationScreen = () => {
+  const route = useRoute();
+  const {
+    user,
+    NotificationData,
+    NotificationDataLoading,
+    NotificationDataRefetch,
+  } = route.params;
+
   const [notifications, setNotifications] = useState([]);
-  const [
-    confirmationNotificationModalVisible,
-    setConfirmationNotificationModalVisible,
-  ] = useState(false);
   const [notificationToDelete, setNotificationToDelete] = useState(null);
+  const [confirmationNotificationModalVisible, setConfirmationNotificationModalVisible] = useState(false);
 
-  // Simulate fetching data from the database
+  const [snackbarKey, setSnackbarKey] = useState(0);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarColor, setSnackbarColor] = useState("#FF0000");
+  const [submitionLoading, setSubmitionLoading] = useState(false);
+
+  // Initialize notifications with NotificationData when the component mounts
   useEffect(() => {
-    const fetchNotifications = async () => {
-      // Simulate some notifications from your database
-      const data = [
-        {
-          id: "1",
-          message:
-            "Your request to access [Store Name] has been approved. You can now browse their store.",
-          date: "2025-02-01T14:30:00Z",
-        },
-        {
-          id: "2",
-          message:
-            "Your request to access [Store Name] has been approved. You can now browse their store.",
-          date: "2025-01-31T09:00:00Z",
-        },
-        {
-          id: "3",
-          message:
-            "Your request to access [Store Name] has been approved. You can now browse their store.",
-          date: "2025-01-30T16:45:00Z",
-        },
-        {
-          id: "4",
-          message:
-            "Your request to access [Store Name] has been approved. You can now browse their store.",
-          date: "2025-01-31T11:20:00Z",
-        },
-        {
-          id: "5",
-          message:
-            "Your request to access [Store Name] has been approved. You can now browse their store.",
-          date: "2025-02-01T10:10:00Z",
-        },
-      ];
-      setNotifications(data);
-    };
-
-    fetchNotifications();
-  }, []);
+    if (NotificationData) {
+      setNotifications(NotificationData);
+    }
+  }, [NotificationData]);
 
   // Group notifications by formatted date
-  const groupedNotifications = notifications.reduce((acc, notification) => {
-    const formattedDate = formatDate(notification.date);
-    if (!acc[formattedDate]) {
-      acc[formattedDate] = [];
-    }
-    acc[formattedDate].push(notification);
-    return acc;
-  }, {});
+  const groupedNotifications = useMemo(() => {
+    return notifications.reduce((acc, notification) => {
+      const formattedDate = formatDate(notification?.createdAt);
+      if (!acc[formattedDate]) {
+        acc[formattedDate] = [];
+      }
+      acc[formattedDate].push(notification);
+      return acc;
+    }, {});
+  }, [notifications]);
 
   // Map grouped notifications into a format that FlatList can use
-  const sections = Object.keys(groupedNotifications).map((date) => ({
-    title: date,
-    data: groupedNotifications[date],
-  }));
-
-  // Render each notification group
-  const renderItem = ({ item }) => {
-    // Function to render swipeable component
-    const renderRightActions = () => {
-      return (
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => openConfirmationModal(item)}
-        >
-          <TrashIcon size={24} color="white" />
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <Swipeable renderRightActions={renderRightActions}>
-        <TouchableOpacity
-          onPress={() => console.log(`Marked as read: ${item.id}`)}
-        >
-          <View style={styles.notificationItem}>
-            <Text style={styles.message}>{item.message}</Text>
-            <Text style={styles.time}>{formatTime(item.date)}</Text>
-          </View>
-        </TouchableOpacity>
-      </Swipeable>
-    );
-  };
+  const sections = useMemo(() => {
+    return Object.keys(groupedNotifications).map((date) => ({
+      title: date,
+      data: groupedNotifications[date],
+    }));
+  }, [groupedNotifications]);
 
   // Function to open the confirmation modal and set the notification to be deleted
-  const openConfirmationModal = (item) => {
-    setNotificationToDelete(item);
+  const openConfirmationModal = (id) => {
+    setNotificationToDelete(id);
     setConfirmationNotificationModalVisible(true);
   };
 
@@ -144,20 +124,68 @@ const NotificationScreen = () => {
   };
 
   // Handle the actual deletion of the notification
-  const handleDeleteNotification = () => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.filter(
-        (notification) => notification.id !== notificationToDelete.id
-      )
-    );
-    closeConfirmationModal();
+  const handleMarkAsReadNotification = () => {
+    if (notificationToDelete) {
+      handleSubmitMarkNotificationAsRead(notificationToDelete);
+    } else {
+      setSubmitionLoading(false);
+      setSnackbarColor("#FF0000");
+      setSnackbarMessage("You have to select a notification to mark as read");
+      setSnackbarKey((prevKey) => prevKey + 1);
+    }
   };
 
-  // Render the section headers (date)
-  const renderSectionHeader = ({ section: { title } }) => (
-    <Text style={styles.dateText}>{title}</Text>
-  );
+  // Handle marking a notification as read
+  const handleSubmitMarkNotificationAsRead = async (val) => {
+    setSubmitionLoading(true);
+    try {
+      const response = await fetch(
+        `${Config.API_URL}/Notification/asRead/${val}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
 
+      const json = await response.json();
+      if (!response.ok) {
+        setSubmitionLoading(false);
+        setSnackbarColor("#FF0000");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        return;
+      } else {
+        NotificationDataRefetch();
+        setNotifications((prevNotifications) =>
+          prevNotifications.filter((notification) => notification._id !== val)
+        );
+        setSubmitionLoading(false);
+        setSnackbarColor("#00FF00");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        closeConfirmationModal();
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSubmitionLoading(false);
+      setNotificationToDelete(null);
+    }
+  };
+
+  // Render loading state
+  if (NotificationDataLoading) {
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
+
+  // Render the main content
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView className="bg-white pt-3 pb-10 h-full">
@@ -166,7 +194,7 @@ const NotificationScreen = () => {
           <Text className="text-center" style={styles.titleScreen}>
             Notifications
           </Text>
-          <View style={styles.Vide}></View>
+          <ReadedNotificationButton />
         </View>
 
         <View className="mx-5">
@@ -174,11 +202,17 @@ const NotificationScreen = () => {
             data={sections}
             renderItem={({ item }) => (
               <View>
-                {renderSectionHeader({ section: item })}
+                <SectionHeader title={item.title} />
                 <FlatList
                   data={item.data}
-                  renderItem={renderItem}
-                  keyExtractor={(notification) => notification.id}
+                  renderItem={({ item }) => (
+                    <NotificationItem
+                      item={item}
+                      onPress={(id) => console.log(`Marked as read: ${id}`)}
+                      onDelete={openConfirmationModal}
+                    />
+                  )}
+                  keyExtractor={(notification) => notification._id}
                   scrollEnabled={false}
                 />
               </View>
@@ -193,10 +227,21 @@ const NotificationScreen = () => {
       <ConfirmationModal
         visible={confirmationNotificationModalVisible}
         onCancel={closeConfirmationModal}
-        onConfirm={handleDeleteNotification}
-        modalTitle="Delete Notification"
-        modalSubTitle="Are you sure you want to delete this notification?"
+        onConfirm={handleMarkAsReadNotification}
+        modalTitle="Mark notification as read"
+        modalSubTitle="Are you sure you want to mark this notification as read?"
       />
+      {snackbarKey !== 0 && (
+        <Snackbar
+          key={snackbarKey}
+          message={snackbarMessage}
+          duration={2000}
+          actionText="Close"
+          backgroundColor={snackbarColor}
+          textColor="white"
+          actionTextColor="yellow"
+        />
+      )}
     </GestureHandlerRootView>
   );
 };
@@ -257,7 +302,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginTop: 12,
-
     borderRadius: 15,
   },
 });
