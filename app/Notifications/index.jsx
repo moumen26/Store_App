@@ -16,7 +16,9 @@ import { useRoute } from "@react-navigation/native";
 import Snackbar from "../../components/Snackbar";
 import Config from "../config";
 import ReadedNotificationButton from "../../components/ReadedNotificationButton";
-
+import { ActivityIndicator } from "react-native-web";
+import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import NotificationsLoading from "../loading/NotificationsLoading";
 
 // Function to format the date (today, yesterday, or specific dates)
 const formatDate = (date) => {
@@ -44,7 +46,10 @@ const formatTime = (date) => {
 // Component to render each notification item
 const NotificationItem = React.memo(({ item, onPress, onDelete }) => {
   const renderRightActions = () => (
-    <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(item._id)}>
+    <TouchableOpacity
+      style={styles.deleteButton}
+      onPress={() => onDelete(item._id)}
+    >
       <EyeIcon size={24} color="white" />
     </TouchableOpacity>
   );
@@ -77,7 +82,10 @@ const NotificationScreen = () => {
 
   const [notifications, setNotifications] = useState([]);
   const [notificationToDelete, setNotificationToDelete] = useState(null);
-  const [confirmationNotificationModalVisible, setConfirmationNotificationModalVisible] = useState(false);
+  const [
+    confirmationNotificationModalVisible,
+    setConfirmationNotificationModalVisible,
+  ] = useState(false);
 
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -179,8 +187,13 @@ const NotificationScreen = () => {
   // Render loading state
   if (NotificationDataLoading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
+        <View className="mx-5" style={styles.containerLoading}>
+          <View style={styles.containerLoadingtextScreen}>
+            <ShimmerPlaceholder style={styles.textScreen} />
+          </View>
+          <NotificationsLoading />
+        </View>
       </SafeAreaView>
     );
   }
@@ -213,7 +226,7 @@ const NotificationScreen = () => {
                     />
                   )}
                   keyExtractor={(notification) => notification._id}
-                  scrollEnabled={false}
+                  showsVerticalScrollIndicator={false}
                 />
               </View>
             )}
@@ -223,7 +236,6 @@ const NotificationScreen = () => {
         </View>
       </SafeAreaView>
 
-      {/* Confirmation Modal */}
       <ConfirmationModal
         visible={confirmationNotificationModalVisible}
         onCancel={closeConfirmationModal}
@@ -303,6 +315,22 @@ const styles = StyleSheet.create({
     height: 80,
     marginTop: 12,
     borderRadius: 15,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#FF033E",
+    fontWeight: "bold",
+  },
+  containerLoadingtextScreen: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
+    height: 40,
+  },
+  containerLoading: {
+    flexDirection: "column",
+    gap: 16,
   },
 });
 

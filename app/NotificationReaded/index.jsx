@@ -14,6 +14,8 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import Config from "../config";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import NotificationsLoading from "../loading/NotificationsLoading";
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -64,16 +66,18 @@ const SectionHeader = React.memo(({ title }) => (
 const NotificationScreen = () => {
   const { user } = useAuthContext();
 
-  
   // --------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchReadedNotificationData = async () => {
     try {
-      const response = await api.get(`/Notification/client/read/${user?.info?.id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
+      const response = await api.get(
+        `/Notification/client/read/${user?.info?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
 
       // Check if the response is valid
       if (response.status !== 200) {
@@ -134,8 +138,13 @@ const NotificationScreen = () => {
   // Render loading state
   if (ReadedNotificationDataLoading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
+        <View className="mx-5" style={styles.containerLoading}>
+          <View style={styles.containerLoadingtextScreen}>
+            <ShimmerPlaceholder style={styles.textScreen} />
+          </View>
+          <NotificationsLoading />
+        </View>
       </SafeAreaView>
     );
   }
@@ -178,6 +187,7 @@ const NotificationScreen = () => {
               </View>
             )}
             keyExtractor={(section) => section.title}
+            showsVerticalScrollIndicator={false}
             ListFooterComponent={<View style={{ marginBottom: 30 }} />}
           />
         </View>
@@ -243,6 +253,22 @@ const styles = StyleSheet.create({
     height: 80,
     marginTop: 12,
     borderRadius: 15,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#FF033E",
+    fontWeight: "bold",
+  },
+  containerLoadingtextScreen: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
+    height: 40,
+  },
+  containerLoading: {
+    flexDirection: "column",
+    gap: 16,
   },
 });
 

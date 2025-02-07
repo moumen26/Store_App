@@ -52,7 +52,7 @@ const RequestStores = () => {
       if (response.status !== 200) {
         const errorData = await response.data;
         if (errorData.error.statusCode == 404) {
-          return []; // Return an empty array for 404 errors
+          return []; // Return an empty array for 404
         } else {
           throw new Error("Error receiving stores data");
         }
@@ -121,7 +121,7 @@ const RequestStores = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-  
+
   //--------------------------------------------Rendering--------------------------------------------
   if (AllNonActiveStoresDataLoading || CategoriesDataLoading) {
     return (
@@ -143,7 +143,7 @@ const RequestStores = () => {
     <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <BackButton />
-        <Text style={styles.titleScreen}>Stores</Text>
+        <Text style={styles.titleScreen}>Request Stores</Text>
         <View style={styles.Vide}></View>
       </View>
       <View
@@ -159,7 +159,7 @@ const RequestStores = () => {
           // onChangeText={setSearchQuery}
         />
       </View>
-      <View style={styles.container}>
+      <View className="mx-5" style={styles.container}>
         <RequestStoresCard
           StoresData={AllNonActiveStoresData}
           CategoriesData={CategoriesData}

@@ -171,11 +171,14 @@ const home = () => {
   // Function to fetch public publicities data
   const fetchNotificationData = async () => {
     try {
-      const response = await api.get(`/Notification/client/nonRead/${user?.info?.id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
+      const response = await api.get(
+        `/Notification/client/nonRead/${user?.info?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
 
       // Check if the response is valid
       if (response.status !== 200) {
@@ -239,19 +242,32 @@ const home = () => {
               <Text style={styles.text}>Blida, Algeria</Text>
             </View>
           </View>
-          {!NotificationDataError && 
+          {!NotificationDataError && (
             <TouchableOpacity
               style={styles.notification}
-              onPress={() => navigation.navigate("Notifications/index",{
-                NotificationData: NotificationData,
-                NotificationDataRefetch: NotificationDataRefetch,
-                NotificationDataLoading: NotificationDataLoading,
-                user: user
-              })}
+              onPress={() =>
+                navigation.navigate("Notifications/index", {
+                  NotificationData: NotificationData,
+                  NotificationDataRefetch: NotificationDataRefetch,
+                  NotificationDataLoading: NotificationDataLoading,
+                  user: user,
+                })
+              }
             >
-              <BellIcon size={20} color="#26667E" />
+              <View style={styles.bellContainer}>
+                <BellIcon size={20} color="#26667E" />
+                {NotificationData?.length > 0 && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>
+                      {NotificationData.length > 9
+                        ? "9+"
+                        : NotificationData.length}
+                    </Text>
+                  </View>
+                )}
+              </View>
             </TouchableOpacity>
-          }
+          )}
         </View>
       ) : (
         <></>
@@ -362,6 +378,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
+    position: "relative",
+  },
+  bellContainer: {
+    position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: -12,
+    right: -12,
+    backgroundColor: "red",
+    borderRadius: 10,
+    width: 16,
+    height: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   search: {
     color: "#888888",

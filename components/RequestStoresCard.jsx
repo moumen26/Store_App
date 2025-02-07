@@ -2,11 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, Animated, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
+import ConfirmationModal from "./ConfirmationModal";
 
 const RequestStoresCard = ({ StoresData, CategoriesData }) => {
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalSubTitle, setModalSubTitle] = useState("");
 
   useEffect(() => {
     Animated.parallel([
@@ -55,12 +60,15 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
       title={item.store.storeName}
       sousTitle={`${item.store.wilaya}, ${item.store.commune}`}
       buttonText={item?.status == "pending" ? "Pending" : "Rejected"}
-      onPress={() =>{
+      onPress={() => {
         if (item?.status == "pending") {
-            alert("Store didn't accept your request yet");
-        }else {
-            alert("Store rejected your request");
+          setModalTitle("En attente");
+          setModalSubTitle("Le magasin n'a pas encore accepté votre demande.");
+        } else {
+          setModalTitle("Rejeté");
+          setModalSubTitle("Le magasin a rejeté votre demande.");
         }
+        setModalVisible(true);
       }}
     />
   );
@@ -117,6 +125,13 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
           ListEmptyComponent={renderNoStores}
         />
       </Animated.View>
+      <ConfirmationModal
+        visible={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        modalTitle={modalTitle}
+        modalSubTitle={modalSubTitle}
+        showButton={false}
+      />
     </View>
   );
 };

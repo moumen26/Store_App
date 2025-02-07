@@ -119,7 +119,7 @@ const cart = () => {
               />
             )}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.containerScroll}
+            contentContainerStyle={styles.dddddddd}
           />
         ) : (
           <View
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     color: "#FF033E",
     fontWeight: "bold",
   },
-  containerScroll: {
+  dddddddd: {
     flexDirection: "column",
     gap: 16,
   },
