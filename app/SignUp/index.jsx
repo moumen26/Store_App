@@ -1,19 +1,30 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+} from "react-native";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import {
   CheckIcon,
   ChevronDownIcon,
+  ChevronUpIcon,
   EyeIcon,
 } from "react-native-heroicons/outline";
-import SelectOption from "../../components/SelectOption";
 import { useNavigation } from "expo-router";
+import WilayaDropdown from "../../components/DropDown";
 
 const SignUpScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const [isChecked, setIsChecked] = useState(false);
+
+  const [expaneded, setExpaneded] = useState(false);
+  const toggleExpanded = useCallback(() => setExpaneded(!expaneded), []);
 
   const toggleCheckbox = () => {
     setIsChecked((previousState) => !previousState);
@@ -22,129 +33,158 @@ const SignUpScreen = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [showSelectOption, setShowSelectOption] = useState(false);
 
+  const data = [
+    { label: "Item 1", value: "1" },
+    { label: "Item 2", value: "2" },
+    { label: "Item 3", value: "3" },
+    { label: "Item 4", value: "4" },
+    { label: "Item 5", value: "5" },
+    { label: "Item 6", value: "6" },
+    { label: "Item 7", value: "7" },
+    { label: "Item 8", value: "8" },
+  ];
+
   const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.SignInScreen} className="bg-white h-full">
-      <View className="flex-col w-[70%] items-center">
-        <Text className="mb-[16]" style={styles.textSignIn}>
-          Create Account
-        </Text>
-        <Text style={styles.textSousSignIn}>
-          Fill your information below or register with your social account.
-        </Text>
-      </View>
-      <View className="mt-[36]">
-        <View className="flex-col space-y-[6] mb-[16]">
-          <Text style={styles.textlabel}>Name</Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Ex. Amine Faroukhi"
-            placeholderTextColor="#888888"
-          />
+      <ScrollView
+        className="mx-5"
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="flex-col w-[70%] items-center">
+          <Text className="mb-[16]" style={styles.textSignIn}>
+            Create Account
+          </Text>
+          <Text style={styles.textSousSignIn}>
+            Fill your information below or register with your social account.
+          </Text>
         </View>
-        <View className="flex-col space-y-[6] mb-[16]">
-          <Text style={styles.textlabel}>Email</Text>
-          <TextInput
-            style={styles.textInput}
-            placeholder="example@gmail.com"
-            placeholderTextColor="#888888"
-          />
-        </View>
-        <View className="flex-col space-y-[6] mb-[16]">
-          <Text style={styles.textlabel}>Password</Text>
-          <View
-            className="flex-row items-center justify-between"
-            style={styles.passwordContainer}
-          >
+        <View className="mt-[36]">
+          <View style={styles.inputClass}>
+            <Text style={styles.textlabel}>Name</Text>
             <TextInput
-              style={styles.textInputPassword}
-              placeholder="********"
-              secureTextEntry={!passwordVisible}
+              style={styles.textInput}
+              placeholder="Ex. Amine Faroukhi"
               placeholderTextColor="#888888"
-
-              //   value={password}
-              //   onChangeText={setPassword}
             />
-            <TouchableOpacity
-              onPress={() => setPasswordVisible(!passwordVisible)}
-              style={styles.eyeIcon}
+          </View>
+          <View style={styles.inputClass}>
+            <Text style={styles.textlabel}>Email</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="example@gmail.com"
+              placeholderTextColor="#888888"
+            />
+          </View>
+          <View style={styles.inputClass}>
+            <Text style={styles.textlabel}>Password</Text>
+            <View
+              className="flex-row items-center justify-between"
+              style={styles.passwordContainer}
             >
-              <EyeIcon
-                name={passwordVisible ? "visibility" : "visibility-off"}
-                size={20}
-                color="#888888"
+              <TextInput
+                style={styles.textInputPassword}
+                placeholder="********"
+                secureTextEntry={!passwordVisible}
+                placeholderTextColor="#888888"
+
+                //   value={password}
+                //   onChangeText={setPassword}
               />
+              <TouchableOpacity
+                onPress={() => setPasswordVisible(!passwordVisible)}
+                style={styles.eyeIcon}
+              >
+                <EyeIcon
+                  name={passwordVisible ? "visibility" : "visibility-off"}
+                  size={20}
+                  color="#888888"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.inputClass}>
+            <Text style={styles.textlabel}>Phone Number</Text>
+            <View
+              className="flex-row items-center"
+              style={styles.passwordContainer}
+            >
+              <Text style={styles.textInputPassword}>+213</Text>
+              <TextInput style={styles.textInputPhone} />
+            </View>
+          </View>
+          <View style={styles.inputClass}>
+            <Text style={styles.textlabel}>Commercial register number</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="26052002"
+              placeholderTextColor="#888888"
+            />
+          </View>
+          <View style={styles.row}>
+            <View style={styles.inputClass}>
+              <Text style={styles.textlabel}>Wilaya</Text>
+              <WilayaDropdown data={data} dropDownTitle="Select Wilaya" />
+            </View>
+            <View style={styles.inputClass}>
+              <Text style={styles.textlabel}>Commune</Text>
+              <WilayaDropdown data={data} dropDownTitle="Select Commune" />
+            </View>
+          </View>
+          <View className="flex-row ml-1 items-center">
+            <TouchableOpacity
+              style={[styles.checkbox, isChecked && styles.checked]}
+              onPress={toggleCheckbox}
+              className="mr-1"
+            >
+              {isChecked && <CheckIcon name="check" size={14} color="white" />}
             </TouchableOpacity>
+            <View className="flex-row space-x-1">
+              <Text style={styles.text} className="mr-1">
+                Agree with
+              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("SignIn/index")}
+              >
+                <Text style={styles.textForgotPassword}>Terms & Condition</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        <View className="flex-col space-y-[6] mb-[16]">
-          <Text style={styles.textlabel}>Phone Number</Text>
-          <View
-            className="flex-row items-center"
-            style={styles.passwordContainer}
-          >
-            <Text style={styles.textInputPassword}>+213</Text>
-            <TextInput style={styles.textInputPassword} />
-          </View>
-        </View>
-        <TouchableOpacity
-          style={styles.selectOption}
-          onPress={() => setShowSelectOption(true)}
-          className="flex-row mb-[16]"
-        >
-          <Text style={styles.textlabel}>Wilaya</Text>
-          <ChevronDownIcon size={15} color="#26667E" />
-        </TouchableOpacity>
-        <SelectOption
-          options={["Option 1", "Option 2", "Option 3"]}
-          visible={showSelectOption}
-          onSelect={(option) => {
-            setSelectedOption(option);
-            setShowSelectOption(false);
-          }}
-        />
-        <View className="flex-row ml-1 items-center">
+
           <TouchableOpacity
-            style={[styles.checkbox, isChecked && styles.checked]}
-            onPress={toggleCheckbox}
-            className="mr-1"
+            className="mt-[24]"
+            style={styles.loginButton}
+            onPress={() => navigation.navigate("VerifyCode/index")}
           >
-            {isChecked && <CheckIcon name="check" size={15} color="white" />}
+            <Text style={styles.loginButtonText}>Sign Up</Text>
           </TouchableOpacity>
-          <View className="flex-row space-x-1">
+
+          <View className="flex-row justify-center items-center space-x-1 mt-[28]">
             <Text style={styles.text} className="mr-1">
-              Agree with
+              Already have an account?
             </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("SignIn/index")}
             >
-              <Text style={styles.textForgotPassword}>Terms & Condition</Text>
+              <Text style={styles.textForgotPassword}>Sign In</Text>
             </TouchableOpacity>
           </View>
         </View>
-
-        <TouchableOpacity
-          className="mt-[24]"
-          style={styles.loginButton}
-          onPress={() => navigation.navigate("VerifyCode/index")}
-        >
-          <Text style={styles.loginButtonText}>Sign Up</Text>
-        </TouchableOpacity>
-
-        <View className="flex-row justify-center items-center space-x-1 mt-[28]">
-          <Text style={styles.text} className="mr-1">
-            Already have an account?
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignIn/index")}>
-            <Text style={styles.textForgotPassword}>Sign In</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+    gap: 8,
+    alignItems: "center",
+    paddingVertical: 24,
+    flexDirection: "column",
+  },
   SignInScreen: {
     justifyContent: "center",
     alignItems: "center",
@@ -182,7 +222,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
     marginTop: 4,
-
+    alignSelf: "center",
   },
   textInput: {
     width: 340,
@@ -194,11 +234,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
     marginTop: 4,
-
+    alignSelf: "center",
   },
   textInputPassword: {
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
+  },
+  textInputPhone: {
+    fontSize: 12,
+    fontFamily: "Montserrat-Regular",
+    width: "100%",
+    height: "100%",
   },
   textForgotPassword: {
     fontSize: 13,
@@ -247,7 +293,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderWidth: 0.5,
-    borderColor: "black",
+    // borderColor: "black",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 2,
@@ -255,18 +301,16 @@ const styles = StyleSheet.create({
   },
   checked: {
     backgroundColor: "#26667E",
+    borderColor: "#26667E",
   },
-  selectOption: {
-    width: 110,
-    height: 30,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderColor: "#3E9CB9",
-    borderWidth: 0.5,
+  inputClass: {
+    flexDirection: "column",
+    gap: 8,
+    marginBottom: 16,
+  },
+  row: {
+    flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
   },
 });
 

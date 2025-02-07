@@ -15,7 +15,7 @@ import {
 const LocationIcon = require("../assets/icons/Location.png");
 
 const OrderType = ({ storeId, storeCart, navigation, handleChangeType }) => {
-  const [activeTab, setActiveTab] = useState("delivery");
+  const [activeTab, setActiveTab] = useState("");
   const handleChangeActiveTab = (val) => {
     setActiveTab(val);
     handleChangeType(val);
