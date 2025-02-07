@@ -8,15 +8,15 @@ import Config from "../app/config";
 const FavoriteButton = ({
   user,
   storeId,
-  productId, 
+  productId,
   isFavorite,
   setSnackbarKey,
   setSnackbarMessage,
-  setSnackbarColor,
+  setSnackbarType,
 }) => {
   const [submitionLoading, setSubmitionLoading] = useState(false);
   const [favorite, setFavorite] = useState(isFavorite);
-  
+
   const submitFavorite = async () => {
     setSubmitionLoading(true);
     try {
@@ -38,13 +38,13 @@ const FavoriteButton = ({
       const json = await response.json();
       if (!response.ok) {
         setSubmitionLoading(false);
-        setSnackbarColor("#FF0000");
+        setSnackbarType("error");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         return;
       } else {
         setSubmitionLoading(false);
-        setSnackbarColor("#00FF00");
+        setSnackbarType("success");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         setFavorite(true);
@@ -76,13 +76,13 @@ const FavoriteButton = ({
       const json = await response.json();
       if (!response.ok) {
         setSubmitionLoading(false);
-        setSnackbarColor("#FF0000");
+        setSnackbarType("error");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         return;
       } else {
         setSubmitionLoading(false);
-        setSnackbarColor("#00FF00");
+        setSnackbarType("success");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         setFavorite(false);
@@ -93,15 +93,13 @@ const FavoriteButton = ({
       setSubmitionLoading(false);
     }
   };
-  
+
   return (
     <>
-      {!submitionLoading ?
-        <TouchableOpacity 
-          style={styles.BackButton} 
-          onPress={
-            favorite ? submitUnFavorite : submitFavorite
-          }
+      {!submitionLoading ? (
+        <TouchableOpacity
+          style={styles.BackButton}
+          onPress={favorite ? submitUnFavorite : submitFavorite}
         >
           {favorite ? (
             <SolidHeartIcon color="#26667E" size={18} />
@@ -109,18 +107,15 @@ const FavoriteButton = ({
             <OutlineHeartIcon color="#26667E" size={18} />
           )}
         </TouchableOpacity>
-      : 
-        <TouchableOpacity 
-          style={styles.BackButton} 
-          disabled={true}
-        >
+      ) : (
+        <TouchableOpacity style={styles.BackButton}>
           {favorite ? (
             <SolidHeartIcon color="#26667E" size={18} />
           ) : (
             <OutlineHeartIcon color="#26667E" size={18} />
           )}
         </TouchableOpacity>
-      }
+      )}
     </>
   );
 };

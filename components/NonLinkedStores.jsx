@@ -8,12 +8,17 @@ import Snackbar from "./Snackbar";
 import useAuthContext from "../app/hooks/useAuthContext";
 import Config from "../app/config";
 
-const NonLinkedStores = ({ StoresData, CategoriesData, AllStoresDataRefetch }) => {
+const NonLinkedStores = ({
+  StoresData,
+  CategoriesData,
+  AllStoresDataRefetch,
+}) => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarColor, setSnackbarColor] = useState("#FF0000");
+  const [snackbarType, setSnackbarType] = useState("");
+
   const [submitionLoading, setSubmitionLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
@@ -123,13 +128,13 @@ const NonLinkedStores = ({ StoresData, CategoriesData, AllStoresDataRefetch }) =
       const json = await response.json();
       if (!response.ok) {
         setSubmitionLoading(false);
-        setSnackbarColor("#FF0000");
+        setSnackbarType("error");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         return;
       } else {
         setSubmitionLoading(false);
-        setSnackbarColor("#00FF00");
+        setSnackbarType("success");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         AllStoresDataRefetch();
@@ -156,11 +161,8 @@ const NonLinkedStores = ({ StoresData, CategoriesData, AllStoresDataRefetch }) =
 
       <Animated.View
         style={[
-          {
-            height: "70%",
-            opacity: opacityAnim,
-            transform: [{ scale: scaleAnim }],
-          },
+          styles.animatedContainer,
+          { opacity: opacityAnim, transform: [{ scale: scaleAnim }] },
         ]}
       >
         <FlatList
@@ -170,6 +172,8 @@ const NonLinkedStores = ({ StoresData, CategoriesData, AllStoresDataRefetch }) =
           contentContainerStyle={{
             paddingHorizontal: 0,
             paddingTop: 15,
+            paddingBottom: 38,
+            height: "100%",
           }}
           ListEmptyComponent={
             <Text style={styles.noStoresText}>
@@ -183,10 +187,7 @@ const NonLinkedStores = ({ StoresData, CategoriesData, AllStoresDataRefetch }) =
           key={snackbarKey}
           message={snackbarMessage}
           duration={2000}
-          actionText="Close"
-          backgroundColor={snackbarColor}
-          textColor="white"
-          actionTextColor="yellow"
+          snackbarType={snackbarType}
         />
       )}
     </View>
@@ -216,6 +217,11 @@ const styles = StyleSheet.create({
   },
   allTransparent: {
     backgroundColor: "transparent",
+  },
+  containerScroll: {
+    flexDirection: "column",
+    gap: 16,
+    paddingBottom: 38,
   },
   storeToggle: {
     backgroundColor: "#C9E4EE",

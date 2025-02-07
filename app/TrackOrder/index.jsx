@@ -43,7 +43,7 @@ const orderData = {
 const TrackOrder = () => {
   const route = useRoute();
   const { data } = route.params;
-  
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
@@ -56,35 +56,40 @@ const TrackOrder = () => {
             <ScanButton />
           </View>
         }
-
         ListFooterComponent={
           <View className="mx-5">
             <View style={styles.commandeContainer}>
               <Text style={styles.titleCategory}>Order Details</Text>
               <View className="flex-row items-center justify-between w-full">
+                <Text style={styles.text}>Order Id</Text>
+                <Text style={styles.textDescription}>{data?.reciept?._id}</Text>
+              </View>
+              <View className="flex-row items-center justify-between w-full">
                 <Text style={styles.text}>Expected Delivery Date</Text>
-                {data?.reciept?.expextedDeliveryDate ?
+                {data?.reciept?.expextedDeliveryDate ? (
                   <Text style={styles.textDescription}>
                     {data?.reciept?.expextedDeliveryDate}
                   </Text>
-                  :
-                  <Text style={styles.textDescription}>
-                    not available yet
-                  </Text>
-                }
+                ) : (
+                  <Text style={styles.textDescription}>not available yet</Text>
+                )}
               </View>
               <View className="flex-row items-center justify-between w-full">
-                <Text style={styles.text}>Order Id</Text>
-                <Text style={styles.textDescription}>
-                  {data?.reciept?._id}
-                </Text>
+                <Text style={styles.text}>Remaining Amount</Text>
+                {data?.reciept?.expextedDeliveryDate ? (
+                  <Text style={styles.textDescription}>
+                    {/* {data?.reciept?.expextedDeliveryDate} */}
+                  </Text>
+                ) : (
+                  <Text style={styles.textDescription}>not available yet</Text>
+                )}
               </View>
             </View>
             <View style={styles.OrderStatus}>
               <Text style={styles.titleCategory}>Order Status</Text>
-              <OrderStatus 
+              <OrderStatus
                 type={data?.reciept?.type}
-                status={data?.reciept?.status} 
+                status={data?.reciept?.status}
               />
             </View>
           </View>

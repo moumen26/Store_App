@@ -89,7 +89,7 @@ const NotificationScreen = () => {
 
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarColor, setSnackbarColor] = useState("#FF0000");
+  const [snackbarType, setSnackbarType] = useState("");
   const [submitionLoading, setSubmitionLoading] = useState(false);
 
   // Initialize notifications with NotificationData when the component mounts
@@ -137,7 +137,7 @@ const NotificationScreen = () => {
       handleSubmitMarkNotificationAsRead(notificationToDelete);
     } else {
       setSubmitionLoading(false);
-      setSnackbarColor("#FF0000");
+      setSnackbarType("error");
       setSnackbarMessage("You have to select a notification to mark as read");
       setSnackbarKey((prevKey) => prevKey + 1);
     }
@@ -161,7 +161,7 @@ const NotificationScreen = () => {
       const json = await response.json();
       if (!response.ok) {
         setSubmitionLoading(false);
-        setSnackbarColor("#FF0000");
+        setSnackbarType("error");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         return;
@@ -171,7 +171,7 @@ const NotificationScreen = () => {
           prevNotifications.filter((notification) => notification._id !== val)
         );
         setSubmitionLoading(false);
-        setSnackbarColor("#00FF00");
+        setSnackbarType("success");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         closeConfirmationModal();
@@ -231,6 +231,7 @@ const NotificationScreen = () => {
               </View>
             )}
             keyExtractor={(section) => section.title}
+            showsVerticalScrollIndicator={false}
             ListFooterComponent={<View style={{ marginBottom: 30 }} />}
           />
         </View>
@@ -248,10 +249,7 @@ const NotificationScreen = () => {
           key={snackbarKey}
           message={snackbarMessage}
           duration={2000}
-          actionText="Close"
-          backgroundColor={snackbarColor}
-          textColor="white"
-          actionTextColor="yellow"
+          snackbarType={snackbarType}
         />
       )}
     </GestureHandlerRootView>

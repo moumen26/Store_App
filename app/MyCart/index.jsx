@@ -34,7 +34,7 @@ const MyCartScreen = () => {
 
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarColor, setSnackbarColor] = useState("#FF0000");
+  const [snackbarType, setSnackbarType] = useState("");
 
   //form
   const [total, setTotal] = useState(0);
@@ -110,7 +110,7 @@ const MyCartScreen = () => {
       const json = await response.json();
       if (!response.ok) {
         setSubmitionLoading(false);
-        setSnackbarColor("#FF0000");
+        setSnackbarType("error");
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         return;
@@ -148,10 +148,7 @@ const MyCartScreen = () => {
           key={snackbarKey}
           message={snackbarMessage}
           duration={2000}
-          actionText="Close"
-          backgroundColor={snackbarColor}
-          textColor="white"
-          actionTextColor="yellow"
+          snackbarType={snackbarType}
         />
       )}
       {!submitionLoading ? (

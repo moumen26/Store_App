@@ -121,6 +121,7 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
           contentContainerStyle={{
             paddingHorizontal: 0,
             paddingTop: 15,
+            height: "100%",
           }}
           ListEmptyComponent={renderNoStores}
         />

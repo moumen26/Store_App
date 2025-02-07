@@ -11,10 +11,12 @@ const OrderScreen = ({ type, status }) => {
     1: 1,
     2: type === "pickup" ? 1 : 2,
     3: 3,
-    10: 10, 
+    10: 10,
   };
 
-  const [currentPage, setCurrentPage] = useState(statusToStepIndex[Number(status)]);
+  const [currentPage, setCurrentPage] = useState(
+    statusToStepIndex[Number(status)]
+  );
   const deliverySteps = [
     { title: "Order Placed" },
     { title: "Preparing your order" },
@@ -37,9 +39,9 @@ const OrderScreen = ({ type, status }) => {
     currentStepStrokeWidth: 2,
     stepStrokeCurrentColor: "#3E9CB9",
     separatorFinishedColor: "#3E9CB9",
-    separatorUnFinishedColor: "#3E9CB9",
+    separatorUnFinishedColor: "#C9E4EE",
     stepIndicatorFinishedColor: "#3E9CB9",
-    stepIndicatorUnFinishedColor: "#3E9CB9",
+    stepIndicatorUnFinishedColor: "#C9E4EE",
     stepIndicatorCurrentColor: "#ffffff",
     stepIndicatorLabelFontSize: 15,
     currentStepIndicatorLabelFontSize: 15,
@@ -58,10 +60,10 @@ const OrderScreen = ({ type, status }) => {
     } else if (stepStatus === "current") {
       iconColor = "#3E9CB9";
     } else {
-      iconColor = "#E7F2F7";
+      iconColor = "#3E9CB9";
       return <XMarkIcon size={18} color={iconColor} />;
     }
-    
+
     return <CheckIcon size={18} color={iconColor} />;
   };
 
@@ -70,8 +72,6 @@ const OrderScreen = ({ type, status }) => {
       <Text style={styles.title}>{item.title}</Text>
     </View>
   );
-
-
 
   return (
     <View style={styles.container}>

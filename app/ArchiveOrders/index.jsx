@@ -1,4 +1,11 @@
-import { View, StyleSheet, SafeAreaView, Text, TextInput, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  TextInput,
+  FlatList,
+} from "react-native";
 import React from "react";
 import BackButton from "../../components/BackButton";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
@@ -26,14 +33,17 @@ const ArchiveOrder = () => {
   // Function to fetch public publicities data
   const fetchArchiveOrdersData = async () => {
     try {
-      const response = await api.get(`/Receipt/client/archive/${user?.info?.id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
+      const response = await api.get(
+        `/Receipt/client/archive/${user?.info?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
 
       // Return the data from the response
-      return await response.data || [];
+      return (await response.data) || [];
     } catch (error) {
       // Handle if the request fails with status code 401 or 404
       if (error?.response?.status === 401 || error?.response?.status === 404) {
@@ -182,6 +192,7 @@ const styles = StyleSheet.create({
   containerScroll: {
     flexDirection: "column",
     gap: 16,
+    paddingBottom: 38,
   },
   Vide: {
     width: 40,

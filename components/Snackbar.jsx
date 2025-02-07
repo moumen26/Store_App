@@ -6,10 +6,7 @@ const Snackbar = ({
   message,
   duration = 3000,
   position = "bottom",
-  containerStyle,
-  messageStyle,
-  backgroundColor,
-  textColor,
+  snackbarType,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -23,21 +20,29 @@ const Snackbar = ({
     }
   }, [isVisible, duration]);
 
+  const backgroundColors = {
+    success: "#3E9CB9",
+    error: "#dc3545",
+    warning: "#ffc107",
+  };
+
   return isVisible ? (
     <View
       style={[
         styles.container,
         position === "top" ? styles.topContainer : styles.bottomContainer,
-        containerStyle,
-        { backgroundColor: backgroundColor },
+        {
+          backgroundColor:
+            backgroundColors[snackbarType] || backgroundColors.info,
+        },
       ]}
-      className="mx-5"
     >
-      <Text style={[styles.messageText, messageStyle, { color: textColor }]}>
-        {message}
-      </Text>
-      <TouchableOpacity onPress={() => setIsVisible(false)}>
-        <XMarkIcon style={styles.closeIcon} />
+      <Text style={styles.messageText}>{message}</Text>
+      <TouchableOpacity
+        onPress={() => setIsVisible(false)}
+        style={styles.closeButton}
+      >
+        <XMarkIcon size={22} color={"#fff"} />
       </TouchableOpacity>
     </View>
   ) : null;
@@ -45,15 +50,20 @@ const Snackbar = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    borderRadius: 5,
+    padding: 14,
+    borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     position: "absolute",
-    left: 0,
-    right: 0,
-    zIndex: 99999999,
+    left: 16,
+    right: 16,
+    zIndex: 9999,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   topContainer: {
     top: 15,
@@ -62,13 +72,13 @@ const styles = StyleSheet.create({
     bottom: 25,
   },
   messageText: {
-    fontSize: 16,
-    width: "90%",
+    fontSize: 15,
+    flex: 1,
+    fontWeight: "500",
+    color: "#fff",
   },
-  closeIcon: {
-    width: 20,
-    height: 20,
-    color: "white",
+  closeButton: {
+    padding: 5,
   },
 });
 

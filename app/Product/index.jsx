@@ -22,16 +22,18 @@ const Product = () => {
   };
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("");
+
   const [snackbarColor, setSnackbarColor] = useState("#FF0000");
   const handleApplyPress = () => {
     if (data.quantity == 0) {
-      setSnackbarColor("#FF0000");
+      setSnackbarType("error");
       setSnackbarMessage("This product is out of stock.");
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
     if (Product == null || Product.quantity == 0) {
-      setSnackbarColor("#FF0000");
+      setSnackbarType("error");
       setSnackbarMessage("Please select a valid product quantity.");
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
@@ -66,22 +68,19 @@ const Product = () => {
           key={snackbarKey}
           message={snackbarMessage}
           duration={2000}
-          actionText="Close"
-          backgroundColor={snackbarColor}
-          textColor="white"
-          actionTextColor="yellow"
+          snackbarType={snackbarType}
         />
       )}
       <View className="mx-5 flex-row justify-between">
         <BackButton />
-        <FavoriteButton 
+        <FavoriteButton
           user={user}
           storeId={storeId}
           productId={data?._id}
           isFavorite={data?.isFavorite}
           setSnackbarKey={setSnackbarKey}
           setSnackbarMessage={setSnackbarMessage}
-          setSnackbarColor={setSnackbarColor}
+          setSnackbarType={setSnackbarType}
         />
       </View>
       <View className="w-full mb-[20] items-center h-[35%]">

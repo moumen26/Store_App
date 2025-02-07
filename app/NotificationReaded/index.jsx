@@ -182,7 +182,7 @@ const NotificationScreen = () => {
                   data={item.data}
                   renderItem={({ item }) => <NotificationItem item={item} />}
                   keyExtractor={(notification) => notification._id}
-                  scrollEnabled={false}
+                  showsVerticalScrollIndicator={false}
                 />
               </View>
             )}
