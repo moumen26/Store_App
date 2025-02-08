@@ -1,57 +1,54 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { RNCamera } from "react-native-camera";
+import { useState, useEffect } from "react";
+import { Text, View, StyleSheet, Button } from "react-native";
 
-const ScanBarCode = () => {
-  const [barcode, setBarcode] = useState(null);
+import { CameraView, Camera } from "expo-camera";
 
-  const handleBarcodeScan = ({ barcodes }) => {
-    if (barcodes && barcodes.length > 0) {
-      setBarcode(barcodes[0].data);
-    }
+export default function App() {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+
+  useEffect(() => {
+    const getCameraPermissions = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    };
+
+    getCameraPermissions();
+  }, []);
+
+  const handleBarCodeScanned = ({ type, data }) => {
+    setScanned(true);
+    alert(`Bar code with type ${type} and data ${data} dhas been scanned!`);
   };
+
+  if (hasPermission === null) {
+    return (
+      <View style={styles.container}>
+        <Text>Requesting for camera permission</Text>;
+      </View>
+    );
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
 
   return (
     <View style={styles.container}>
-      <RNCamera
-        style={styles.camera}
-        type={RNCamera.Constants.Type.back}
-        onBarCodeRead={handleBarcodeScan}
-        captureAudio={false}
-      >
-        <View style={styles.overlay}>
-          {barcode && (
-            <Text style={styles.barcodeText}>Scanned Barcode: {barcode}</Text>
-          )}
-        </View>
-      </RNCamera>
+      <CameraView
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr", "pdf417"],
+        }}
+        style={StyleSheet.absoluteFillObject}
+      />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
-  },
-  camera: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "flex-end",
-  },
-  overlay: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: [{ translateX: -75 }, { translateY: -25 }],
-    alignItems: "center",
-  },
-  barcodeText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
   },
 });
-
-export default ScanBarCode;
