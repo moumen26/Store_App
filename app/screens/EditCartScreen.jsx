@@ -47,6 +47,8 @@ const EditCartScreen = ({
         ProductBrand={item?.product?.brand}
         initialQuantity={item?.quantity}
         ProductImage={item?.product?.image}
+        buyingMathode={item?.buyingMathode}
+        boxItems={item?.boxItems}
         handleQuantityChange={handleQuantityChange}
         handleRemoveItem={handleRemoveItem}
       />

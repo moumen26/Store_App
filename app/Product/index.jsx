@@ -43,6 +43,7 @@ const Product = () => {
       store: storeId,
       ...Product,
       stock: data?._id,
+      
       product: {
         image: `${
           `${Config.API_URL.replace("/api", "")}/files/${

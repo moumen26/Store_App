@@ -43,6 +43,8 @@ const ProductPer = ({
       quantity: quantityPerItem,
       price: pricePerItem,
       unityPrice: selling,
+      buyingMathode: activeTab,
+      boxItems: boxItems,
     });
   }, [itemQuantity, activeTab, selling, boxItems]);
 

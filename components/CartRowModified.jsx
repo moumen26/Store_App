@@ -1,35 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { MinusIcon, PlusIcon } from "react-native-heroicons/outline";
 
-const CartRowModified = ({
+const CartRowModified = memo(({
   id,
   ProductName,
   ProductBrand,
   initialQuantity,
   ProductImage,
+  buyingMathode,
+  boxItems,
   handleQuantityChange,
   handleRemoveItem,
 }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
 
-  const handleIncrease = () => {
-    const newQuantity = quantity + 1;
+  const incrementAmount = buyingMathode === "box" ? boxItems : 1;
+  const minQuantity = buyingMathode === "box" ? boxItems : 1;
+  const displayedQuantity = buyingMathode === "box" ? quantity / boxItems : quantity;
+
+  const handleIncrease = useCallback(() => {
+    const newQuantity = quantity + incrementAmount;
     setQuantity(newQuantity);
     handleQuantityChange(id, newQuantity);
-  };
+  }, [quantity, incrementAmount, id, handleQuantityChange]);
 
-  const handleDecrease = () => {
-    if (quantity > 1) {
-      const newQuantity = quantity - 1;
+  const handleDecrease = useCallback(() => {
+    const newQuantity = quantity - incrementAmount;
+    if (newQuantity >= minQuantity) {
       setQuantity(newQuantity);
       handleQuantityChange(id, newQuantity);
     }
-  };
+  }, [quantity, incrementAmount, minQuantity, id, handleQuantityChange]);
 
-  const handleRemove = () => {
+  const handleRemove = useCallback(() => {
     handleRemoveItem(id);
-  };
+  }, [id, handleRemoveItem]);
 
   return (
     <View style={styles.container}>
@@ -38,7 +44,10 @@ const CartRowModified = ({
         <View style={styles.details}>
           <Text style={styles.productName}>{ProductName}</Text>
           <Text style={styles.productDescription}>
-            {ProductBrand} | Qty.: {quantity}
+            {ProductBrand} | Qty.: {displayedQuantity}
+          </Text>
+          <Text style={styles.productDescription}>
+            Buying Method: {buyingMathode}
           </Text>
           <TouchableOpacity onPress={handleRemove}>
             <Text style={styles.removeText}>Remove</Text>
@@ -48,12 +57,12 @@ const CartRowModified = ({
           <TouchableOpacity
             onPress={handleDecrease}
             style={styles.touchMinus}
-            disabled={quantity === 1}
+            disabled={quantity === minQuantity}
           >
-            <MinusIcon size={20} color={quantity === 1 ? "#888888" : "#000"} />
+            <MinusIcon size={20} color={quantity === minQuantity ? "#888888" : "#000"} />
           </TouchableOpacity>
           <View style={styles.quantityCLass}>
-            <Text>{quantity}</Text>
+            <Text>{displayedQuantity}</Text>
           </View>
           <TouchableOpacity onPress={handleIncrease} style={styles.touchPlus}>
             <PlusIcon size={20} color="#fff" />
@@ -62,14 +71,12 @@ const CartRowModified = ({
       </View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   quantityCLass: {
     width: 18,
     alignItems: "center",
-    display: "flex",
-    flexDirection: "row",
     justifyContent: "center",
   },
   container: {
