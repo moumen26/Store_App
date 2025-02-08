@@ -88,7 +88,10 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Medium",
   },
   cartOrderItem: {
-    height: 200,
+    minHeight: 200,
+    height: "fit-content",
+    paddingHorizontal: 8,
+    paddingVertical: 12,
     borderColor: "#C9E4EE",
     borderWidth: 1,
     borderRadius: 20,

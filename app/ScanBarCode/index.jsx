@@ -24,12 +24,20 @@ export default function App() {
   if (hasPermission === null) {
     return (
       <View style={styles.container}>
-        <Text>Requesting for camera permission</Text>;
+        <Text style={styles.text}>Requesting for camera permission</Text>
       </View>
     );
   }
+ 
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return (
+      <View style={styles.permissionContainer}>
+        <Text style={styles.text}>No access to camera</Text>
+        <TouchableOpacity style={styles.button} onPress={getCameraPermissions}>
+          <Text style={styles.buttonText}>Allow Camera</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   return (
@@ -37,7 +45,7 @@ export default function App() {
       <CameraView
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
         barcodeScannerSettings={{
-          barcodeTypes: ["qr", "pdf417"],
+          barcodeTypes: ["code128"],    
         }}
         style={StyleSheet.absoluteFillObject}
       />
@@ -46,9 +54,32 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  text: {
+    fontSize: 13,
+    color: "#888888",
+    fontFamily: "Montserrat-Regular",
+  },
   container: {
     flex: 1,
-    flexDirection: "column",
     justifyContent: "center",
+    alignItems: "center",
+  },
+  permissionContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  button: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#3E9CB9",
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
