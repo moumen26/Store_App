@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { CheckIcon, XMarkIcon } from "react-native-heroicons/outline";
 import StepIndicator from "react-native-step-indicator";
-import { orderStatusTextDisplayer } from "../app/util/useFullFunctions";
 
 const OrderScreen = ({ type, status }) => {
   // Map the status values to the correct step indices
   const statusToStepIndex = {
     0: 0,
     1: 1,
-    2: type === "pickup" ? 1 : 2,
+    2: 2,
     3: 3,
-    10: 10,
+    10: 4,
   };
 
   const [currentPage, setCurrentPage] = useState(
@@ -26,7 +25,9 @@ const OrderScreen = ({ type, status }) => {
   ];
   const pickupSteps = [
     { title: "Order Placed" },
+    { title: "Preparing your order" },
     { title: "Ready for Pickup" },
+    { title: "Picked up" },
     { title: "Fully paid" },
   ];
 

@@ -25,7 +25,8 @@ const AuthReducer = (state, action) => {
               ? {
                   ...item,
                   quantity: item.quantity + action.payload.quantity,
-                  price: item.unityPrice * (item.quantity + action.payload.quantity), // Update price
+                  price: item.unityPrice * (item.quantity + action.payload.quantity), 
+                  buyingMathode: action.payload.buyingMathode == 'unity' ? action.payload.buyingMathode : item.buyingMathode,
                 }
               : item
           );

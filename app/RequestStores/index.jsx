@@ -25,6 +25,7 @@ import Brands from "../loading/Brands";
 import LoadingStores from "../loading/LoadingStores";
 import RequestStoresCard from "../../components/RequestStoresCard";
 import BackButton from "../../components/BackButton";
+import { useRoute } from "@react-navigation/core";
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -37,6 +38,8 @@ const api = axios.create({
 const RequestStores = () => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
+  const route = useRoute();
+  const { CategoriesData } = route.params;
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -80,50 +83,9 @@ const RequestStores = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-  // Function to fetch stores data
-  const fetchCategoriesData = async () => {
-    try {
-      const response = await api.get(`/Category`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
-
-      // Check if the response is valid
-      if (response.status !== 200) {
-        const errorData = await response.data;
-        if (errorData.error.statusCode == 404) {
-          return []; // Return an empty array for 404 errors
-        } else {
-          throw new Error("Error receiving categories data");
-        }
-      }
-
-      // Return the data from the response
-      return await response.data;
-    } catch (error) {
-      // Handle if the request fails with status code 401 or 404
-      if (error?.response?.status === 401 || error?.response?.status === 404) {
-        return []; // Return an empty array for 401 and 404 errors
-      }
-      throw new Error(error?.message || "Network error");
-    }
-  };
-  const {
-    data: CategoriesData,
-    error: CategoriesDataError,
-    isLoading: CategoriesDataLoading,
-    refetch: CategoriesDataRefetch,
-  } = useQuery({
-    queryKey: ["CategoriesData", user?.token], // Ensure token is part of the query key
-    queryFn: fetchCategoriesData, // Pass token to the fetch function
-    enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchInterval: 10000, // Refetch every 10 seconds
-    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
-  });
 
   //--------------------------------------------Rendering--------------------------------------------
-  if (AllNonActiveStoresDataLoading || CategoriesDataLoading) {
+  if (AllNonActiveStoresDataLoading) {
     return (
       <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
         <View className="mx-5" style={styles.containerLoading}>

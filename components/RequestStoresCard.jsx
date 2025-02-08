@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import ConfirmationModal from "./ConfirmationModal";
 
-const RequestStoresCard = ({ StoresData, CategoriesData }) => {
+const RequestStoresCard = ({ StoresData, CategoriesData }) => { 
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -81,31 +81,26 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
 
   return (
     <View>
-      <FlatList
-        data={CategoriesData}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(category) => category._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.buttonStore,
-              activeTab === item._id && styles.storeToggle,
-            ]}
-            onPress={() => handleMenuClick(item._id)}
-          >
-            <Text
-              style={[
-                styles.text,
-                activeTab === item._id && styles.storeToggle,
-              ]}
+      <View style={[styles.allTransparent]}>
+        <FlatList
+          data={CategoriesData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(category) => category._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              key={item._id}
+              style={[styles.buttonStore, activeTab === item._id && styles.storeToggle]}
+              onPress={() => handleMenuClick(item._id)}
             >
-              {item.name}
-            </Text>
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
-      />
+              <Text style={[styles.text, activeTab === item._id && styles.storeToggle]}>
+                {item.name}
+              </Text>
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
+        />
+      </View>
       <Animated.View
         style={[
           {
@@ -161,6 +156,9 @@ const styles = StyleSheet.create({
   storeToggle: {
     backgroundColor: "#C9E4EE",
     color: "#26667E",
+  },
+  allTransparent: {
+    backgroundColor: "transparent",
   },
 });
 

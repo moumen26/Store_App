@@ -1,69 +1,64 @@
+import React, { useState, useCallback, memo } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import FavoriteButton from "../../components/FavoriteButton";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import Config from "../config";
+import FavoriteButton from "../../components/FavoriteButton";
 import ProductPer from "../../components/ProductPer";
-import useAuthContext from "../hooks/useAuthContext";
 import BackButton from "../../components/BackButton";
 import Snackbar from "../../components/Snackbar.jsx";
+import useAuthContext from "../hooks/useAuthContext";
+import Config from "../config";
 
 const BoxIcon = require("../../assets/icons/CartDark.png");
 
-const Product = () => {
+const Product = memo(() => {
   const route = useRoute();
   const navigator = useNavigation();
   const { data, storeId } = route.params;
   const { user, dispatch } = useAuthContext();
-  const [Product, setProduct] = useState(null);
-  const handleProductOnChange = (val) => {
-    setProduct(val);
-  };
+  const [product, setProduct] = useState(null);
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("");
 
-  const [snackbarColor, setSnackbarColor] = useState("#FF0000");
-  const handleApplyPress = () => {
-    if (data.quantity == 0) {
+  const handleProductOnChange = useCallback((val) => {
+    setProduct(val);
+  }, []);
+
+  const handleApplyPress = useCallback(() => {
+    if (data.quantity === 0) {
       setSnackbarType("error");
       setSnackbarMessage("This product is out of stock.");
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
-    if (Product == null || Product.quantity == 0) {
+    if (!product || product.quantity === 0) {
       setSnackbarType("error");
       setSnackbarMessage("Please select a valid product quantity.");
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
-    //add stock id to Product
+
     const updatedProduct = {
       store: storeId,
-      ...Product,
+      ...product,
       stock: data?._id,
-      
       product: {
-        image: `${
-          `${Config.API_URL.replace("/api", "")}/files/${
-            data?.product?.image
-          }` || ""
-        }`,
-        name: data?.product?.name + " " + data?.product?.size,
+        image: `${Config.API_URL.replace("/api", "")}/files/${data?.product?.image}`,
+        name: `${data?.product?.name} ${data?.product?.size}`,
         brand: data?.product?.brand?.name,
       },
     };
+
     dispatch({ type: "ADD_TO_CART", payload: updatedProduct });
     setProduct(null);
     navigator.goBack();
-  };
+  }, [data, product, storeId, dispatch, navigator]);
+
+  const imageUri = `${Config.API_URL.replace("/api", "")}/files/${data?.product?.image}`;
 
   return (
-    <SafeAreaView
-      style={styles.Container}
-      className="bg-white pt-5 relative h-full"
-    >
+    <SafeAreaView style={styles.container}>
       {snackbarKey !== 0 && (
         <Snackbar
           key={snackbarKey}
@@ -72,7 +67,7 @@ const Product = () => {
           snackbarType={snackbarType}
         />
       )}
-      <View className="mx-5 flex-row justify-between">
+      <View style={styles.header}>
         <BackButton />
         <FavoriteButton
           user={user}
@@ -84,40 +79,21 @@ const Product = () => {
           setSnackbarType={setSnackbarType}
         />
       </View>
-      <View className="w-full mb-[20] items-center h-[35%]">
-        <Image
-          style={styles.image}
-          source={{
-            uri: `${
-              `${Config.API_URL.replace("/api", "")}/files/${
-                data?.product?.image
-              }` || ""
-            }`,
-          }}
-        />
+      <View style={styles.imageContainer}>
+        <Image style={styles.image} source={{ uri: imageUri }} />
       </View>
-      <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
-        <Text style={styles.ProductNameText}>
-          {data?.product?.brand?.name +
-            " " +
-            data?.product?.name +
-            " " +
-            data?.product?.size}
+      <View style={styles.productDetails}>
+        <Text style={styles.productNameText}>
+          {`${data?.product?.brand?.name} ${data?.product?.name} ${data?.product?.size}`}
         </Text>
-        <Text style={styles.PriceText}>Price per unit: DA {data?.selling}</Text>
-        <Text style={styles.PriceText}>
+        <Text style={styles.priceText}>Price per unit: DA {data?.selling}</Text>
+        <Text style={styles.priceText}>
           Price per box: DA {data?.selling * data?.product?.boxItems}
         </Text>
-        <View
-          style={styles.boxClass}
-          className="flex-row space-x-2 items-center"
-        >
-          <View
-            style={styles.boxClass}
-            className="w-fit h-[20] flex-row items-center justify-center bg-[#EDEDED] rounded-xl pl-3 pr-3"
-          >
-            <Text style={styles.BoxText}>{data?.product?.boxItems}</Text>
-            <Text style={styles.BoxText}>/</Text>
+        <View style={styles.boxContainer}>
+          <View style={styles.boxContent}>
+            <Text style={styles.boxText}>{data?.product?.boxItems}</Text>
+            <Text style={styles.boxText}>/</Text>
             <Image style={styles.boxIcon} source={BoxIcon} />
           </View>
         </View>
@@ -130,66 +106,74 @@ const Product = () => {
         quantityLimit={data?.quantityLimit}
         handleProductOnChange={handleProductOnChange}
       />
-      <View className="w-full absolute bottom-8 flex-row justify-center mt-[20]">
+      <View style={styles.applyButtonContainer}>
         <TouchableOpacity style={styles.loginButton} onPress={handleApplyPress}>
           <Text style={styles.loginButtonText}>Apply</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 50,
-    justifyContent: "center",
+    backgroundColor: "white",
+    paddingTop: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
+    marginHorizontal: 20,
   },
-  ProductNameText: {
-    fontSize: 15,
-    fontFamily: "Montserrat-SemiBold",
-  },
-  PriceText: {
-    fontSize: 12,
-    fontFamily: "Montserrat-Medium",
-    color: "#888888",
-  },
-  BoxText: {
-    fontSize: 12,
-    fontFamily: "Montserrat-Medium",
-    color: "#3E9CB9",
+  imageContainer: {
+    width: "100%",
+    height: "35%",
+    alignItems: "center",
+    marginBottom: 20,
   },
   image: {
     width: 150,
     height: 200,
     resizeMode: "contain",
   },
+  productDetails: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+    gap: 5,
+  },
+  productNameText: {
+    fontSize: 15,
+    fontFamily: "Montserrat-SemiBold",
+  },
+  priceText: {
+    fontSize: 12,
+    fontFamily: "Montserrat-Medium",
+    color: "#888888",
+  },
+  boxContainer: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+  },
+  boxContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EDEDED",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  boxText: {
+    fontSize: 12,
+    fontFamily: "Montserrat-Medium",
+    color: "#3E9CB9",
+  },
   boxIcon: {
     width: 15,
     height: 15,
     resizeMode: "contain",
-  },
-  checkbox: {
-    width: 16,
-    height: 16,
-    borderWidth: 0.5,
-    borderColor: "black",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 2,
-    backgroundColor: "#fff",
-  },
-  checked: {
-    backgroundColor: "#26667E",
-  },
-  productDetails: {
-    flexDirection: "column",
-    gap: 5,
-  },
-  boxClass: {
-    flexDirection: "row",
-    gap: 3,
   },
   loginButton: {
     backgroundColor: "#26667E",
@@ -203,6 +187,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontFamily: "Montserrat-Regular",
+  },
+  applyButtonContainer: {
+    position: "absolute",
+    bottom: 20,
+    width: "100%",
+    alignItems: "center",
   },
 });
 

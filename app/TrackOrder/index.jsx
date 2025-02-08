@@ -13,33 +13,6 @@ import BackButton from "../../components/BackButton";
 import OrderStatus from "../../components/OrderStatus";
 import { useRoute } from "@react-navigation/native";
 
-const orderData = {
-  receiptStatus: {
-    products: [
-      {
-        stock: 1,
-        quantity: 2,
-        product: {
-          name: "Product 1",
-          brand: { name: "Brand A" },
-          image: "product1.jpg",
-          boxItems: ["Item 1", "Item 2"],
-        },
-      },
-    ],
-  },
-  receipt: {
-    store: { storeName: "Store A" },
-    _id: "CDR45HGJF",
-    type: "Online",
-    deliveredLocation: { address: "123 Main St" },
-    date: "2025-02-02",
-    status: "Delivered",
-    total: "$100.00",
-  },
-  deliveryCost: "$5.00",
-};
-
 const TrackOrder = () => {
   const route = useRoute();
   const { data } = route.params;
@@ -47,13 +20,16 @@ const TrackOrder = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
-        data={orderData.receiptStatus.products}
-        keyExtractor={(item) => item.stock.toString()}
         ListHeaderComponent={
           <View style={styles.header}>
             <BackButton />
             <Text style={styles.titleScreen}>Track Order</Text>
-            <ScanButton />
+            {!(data?.reciept?.status == 10 && data?.reciept?.delivered == true) ?
+              <ScanButton />
+              :
+              <View></View>
+            }
+            
           </View>
         }
         ListFooterComponent={
@@ -76,9 +52,9 @@ const TrackOrder = () => {
               </View>
               <View className="flex-row items-center justify-between w-full">
                 <Text style={styles.text}>Remaining Amount</Text>
-                {data?.reciept?.expextedDeliveryDate ? (
+                {data?.reciept?.total ? (
                   <Text style={styles.textDescription}>
-                    {/* {data?.reciept?.expextedDeliveryDate} */}
+                    {(data?.reciept?.total - data?.reciept?.payment.reduce((sum, pay) => sum + pay.amount, 0)).toFixed(2)} DA
                   </Text>
                 ) : (
                   <Text style={styles.textDescription}>not available yet</Text>

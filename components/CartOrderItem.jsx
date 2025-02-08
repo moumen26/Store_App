@@ -54,7 +54,7 @@ const CartOrderItem = ({
       <View style={styles.cartItem}>
         <Text style={styles.text}>Status</Text>
         <Text style={styles.textDescription}>
-          {orderStatusTextDisplayer(OrderStatus)}
+          {orderStatusTextDisplayer(OrderStatus, OrderType)}
         </Text>
       </View>
       <View style={styles.cartItem}>

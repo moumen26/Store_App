@@ -43,7 +43,7 @@ const EReceiptDetails = ({
         </View>
         <View className="flex-row items-center justify-between w-full">
           <Text style={styles.text}>Order Status</Text>
-          <Text style={styles.textDescription}>{orderStatusTextDisplayer(OrderStatus)}</Text>
+          <Text style={styles.textDescription}>{orderStatusTextDisplayer(OrderStatus, OrderType)}</Text>
         </View>
       </View>
       <View style={styles.commandeContainer}>

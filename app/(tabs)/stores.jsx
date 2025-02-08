@@ -145,7 +145,9 @@ const stores = () => {
         <Text className="text-center" style={styles.titleScreen}>
           Stores
         </Text>
-        <RequestButton />
+        <RequestButton 
+          CategoriesData={CategoriesData}
+        />
       </View>
       <View
         style={styles.searchBar}
