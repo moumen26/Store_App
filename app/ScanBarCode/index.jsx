@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
-
+import { useState, useEffect, useCallback } from "react";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { CameraView, Camera } from "expo-camera";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
-export default function App() {
+export default function ScanBarCode() {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { onScanComplete } = route.params;
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -16,24 +19,39 @@ export default function App() {
     getCameraPermissions();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} dhas been scanned!`);
-  };
+  const handleBarCodeScanned = useCallback(async (scanResult) => {
+    if (isProcessing) return; // Prevent multiple scans
+    
+    setIsProcessing(true);
+    try {
+      if (onScanComplete) {
+        await onScanComplete(scanResult);
+      }
+      // Use replace instead of goBack to ensure we only navigate once
+      navigation.canGoBack() && navigation.goBack();
+    } catch (error) {
+      console.error('Scan processing error:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [onScanComplete, navigation, isProcessing]);
 
   if (hasPermission === null) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Requesting for camera permission</Text>
+        <Text style={styles.text}>Requesting camera permission</Text>
       </View>
     );
   }
- 
+
   if (hasPermission === false) {
     return (
       <View style={styles.permissionContainer}>
         <Text style={styles.text}>No access to camera</Text>
-        <TouchableOpacity style={styles.button} onPress={getCameraPermissions}>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => Camera.requestCameraPermissionsAsync()}
+        >
           <Text style={styles.buttonText}>Allow Camera</Text>
         </TouchableOpacity>
       </View>
@@ -43,12 +61,17 @@ export default function App() {
   return (
     <View style={styles.container}>
       <CameraView
-        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+        onBarcodeScanned={!isProcessing ? handleBarCodeScanned : undefined}
         barcodeScannerSettings={{
-          barcodeTypes: ["code128"],    
+          barcodeTypes: ["code128"],
         }}
         style={StyleSheet.absoluteFillObject}
       />
+      {isProcessing && (
+        <View style={styles.processingOverlay}>
+          <Text style={styles.text}>Processing scan...</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -81,5 +104,15 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  processingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

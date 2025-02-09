@@ -227,6 +227,7 @@ const EReceiptScreen = () => {
                 <Text style={styles.titleScreen}>E-Receipt</Text>
                 <TrackButton 
                   data={OrderData}
+                  OrderDataRefetch={OrderDataRefetch}
                 />
               </View>
               {OrderData?.reciept?.status !== 10 && (

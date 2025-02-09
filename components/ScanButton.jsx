@@ -1,25 +1,26 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-
-import { TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
-const ScanButton = () => {
+const ScanButton = ({ onScanComplete }) => {
   const navigation = useNavigation();
 
+  const handlePress = () => {
+    navigation.navigate("ScanBarCode/index", {
+      onScanComplete,
+    });
+  };
+
   return (
-    <TouchableOpacity
-      style={styles.ScanButton}
-      onPress={() => navigation.navigate("ScanBarCode/index")}
-    >
+    <TouchableOpacity style={styles.scanButton} onPress={handlePress}>
       <AntDesign name="scan1" color="#26667E" size={20} />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  ScanButton: {
+  scanButton: {
     width: 40,
     height: 40,
     borderRadius: 20,

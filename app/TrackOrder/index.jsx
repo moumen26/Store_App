@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,12 +11,73 @@ import CartRow from "../../components/CartRow";
 import ScanButton from "../../components/ScanButton";
 import BackButton from "../../components/BackButton";
 import OrderStatus from "../../components/OrderStatus";
-import { useRoute } from "@react-navigation/native";
+import Snackbar from "../../components/Snackbar.jsx";
+import useAuthContext from "../hooks/useAuthContext.jsx";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import Config from "../config.jsx";
 
 const TrackOrder = () => {
+  const navigation = useNavigation();
+  const { user } = useAuthContext();
   const route = useRoute();
-  const { data } = route.params;
+  const { 
+    recieptData,
+    OrderDataRefetch
+  } = route.params;
+  const [snackbarKey, setSnackbarKey] = useState(0);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("");
+  const [submitionLoading, setSubmitionLoading] = useState(false);
+  
+  const handleScanComplete = async ({ type, data }) => {
+    setSubmitionLoading(true);
+    
+    try {
+      // Check if the scanned barcode matches
+      if (data !== recieptData.reciept._id) {
+        setSnackbarType("error");
+        setSnackbarMessage("The scanned barcode does not match the receipt you are tracking");
+        setSnackbarKey((prevKey) => prevKey + 1);
+        setSubmitionLoading(false);
+        return;
+      }
 
+      const response = await fetch(
+        `${Config.API_URL}/Receipt/validate/${user?.info?.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify({
+            reciept: data,
+          }),
+        }
+      );
+
+      const json = await response.json();
+      
+      if (!response.ok) {
+        setSnackbarType("error");
+        setSnackbarMessage(json.message);
+        setSnackbarKey((prevKey) => prevKey + 1);
+        return;
+      }
+      navigation.goBack();
+      OrderDataRefetch();
+      setSnackbarType("success");
+      setSnackbarMessage(json.message);
+      setSnackbarKey((prevKey) => prevKey + 1);
+    } catch (err) {
+      console.error(err);
+      setSnackbarType("error");
+      setSnackbarMessage("An error occurred while submitting the receipt validation");
+      setSnackbarKey((prevKey) => prevKey + 1);
+    } finally {
+      setSubmitionLoading(false);
+    }
+  };
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
@@ -24,8 +85,8 @@ const TrackOrder = () => {
           <View style={styles.header}>
             <BackButton />
             <Text style={styles.titleScreen}>Track Order</Text>
-            {!(data?.reciept?.status == 10 && data?.reciept?.delivered == true) ?
-              <ScanButton />
+            {!(recieptData?.reciept?.status == 10 && recieptData?.reciept?.delivered == true) ?
+              <ScanButton onScanComplete={handleScanComplete} />
               :
               <View></View>
             }
@@ -38,13 +99,13 @@ const TrackOrder = () => {
               <Text style={styles.titleCategory}>Order Details</Text>
               <View className="flex-row items-center justify-between w-full">
                 <Text style={styles.text}>Order Id</Text>
-                <Text style={styles.textDescription}>{data?.reciept?._id}</Text>
+                <Text style={styles.textDescription}>{recieptData?.reciept?._id}</Text>
               </View>
               <View className="flex-row items-center justify-between w-full">
                 <Text style={styles.text}>Expected Delivery Date</Text>
-                {data?.reciept?.expextedDeliveryDate ? (
+                {recieptData?.reciept?.expextedDeliveryDate ? (
                   <Text style={styles.textDescription}>
-                    {data?.reciept?.expextedDeliveryDate}
+                    {recieptData?.reciept?.expextedDeliveryDate}
                   </Text>
                 ) : (
                   <Text style={styles.textDescription}>not available yet</Text>
@@ -52,9 +113,9 @@ const TrackOrder = () => {
               </View>
               <View className="flex-row items-center justify-between w-full">
                 <Text style={styles.text}>Remaining Amount</Text>
-                {data?.reciept?.total ? (
+                {recieptData?.reciept?.total ? (
                   <Text style={styles.textDescription}>
-                    {(data?.reciept?.total - data?.reciept?.payment.reduce((sum, pay) => sum + pay.amount, 0)).toFixed(2)} DA
+                    {(recieptData?.reciept?.total - recieptData?.reciept?.payment.reduce((sum, pay) => sum + pay.amount, 0)).toFixed(2)} DA
                   </Text>
                 ) : (
                   <Text style={styles.textDescription}>not available yet</Text>
@@ -64,13 +125,21 @@ const TrackOrder = () => {
             <View style={styles.OrderStatus}>
               <Text style={styles.titleCategory}>Order Status</Text>
               <OrderStatus
-                type={data?.reciept?.type}
-                status={data?.reciept?.status}
+                type={recieptData?.reciept?.type}
+                status={recieptData?.reciept?.status}
               />
             </View>
           </View>
         }
       />
+      {snackbarKey !== 0 && (
+        <Snackbar
+          key={snackbarKey}
+          message={snackbarMessage}
+          duration={2000}
+          snackbarType={snackbarType}
+        />
+      )}
     </SafeAreaView>
   );
 };

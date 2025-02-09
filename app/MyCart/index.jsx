@@ -18,8 +18,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import EditCartScreen from "../screens/EditCartScreen";
 import useAuthContext from "../hooks/useAuthContext";
 import Config from "../config.jsx";
-import ConfirmationModal from "../../components/ConfirmationModal.jsx";
 import Snackbar from "../../components/Snackbar.jsx";
+import ConfirmationModal from "../../components/ConfirmationModal.jsx";
 
 const MyCartScreen = () => {
   const { cart, user, dispatch } = useAuthContext();
@@ -30,9 +30,9 @@ const MyCartScreen = () => {
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("");
+  const [submitionLoading, setSubmitionLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [type, setType] = useState("");
-  const [submitionLoading, setSubmitionLoading] = useState(false);
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
 
   // Filter cart items for the current store
