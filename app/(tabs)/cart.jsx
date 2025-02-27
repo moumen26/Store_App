@@ -26,7 +26,7 @@ const cart = () => {
   // Function to fetch public publicities data
   const fetchOrdersData = async () => {
     try {
-      const response = await api.get(`/Receipt/client/${user?.info?.id}`, {
+      const response = await api.get(`/Receipt/client/all/${user?.info?.id}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`,
         },
@@ -64,6 +64,7 @@ const cart = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+  
   //--------------------------------------------Rendering--------------------------------------------
   if (OrdersDataLoading) {
     return (
