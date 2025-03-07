@@ -43,6 +43,12 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="ResetPassword/index"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
             name="YourCart/index"
             options={{
               headerShown: false,

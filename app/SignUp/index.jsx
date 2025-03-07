@@ -46,7 +46,7 @@ const SignUpScreen = () => {
 
   const navigation = useNavigation();
   return (
-    <SafeAreaView style={styles.SignInScreen} className="bg-white h-full">
+    <SafeAreaView className="bg-white h-full">
       <ScrollView
         className="mx-5"
         contentContainerStyle={styles.container}
@@ -60,7 +60,7 @@ const SignUpScreen = () => {
             Fill your information below or register with your social account.
           </Text>
         </View>
-        <View className="mt-[36]">
+        <View className="mt-[36] mx-5">
           <View style={styles.inputClass}>
             <Text style={styles.textlabel}>Name</Text>
             <TextInput
@@ -161,7 +161,7 @@ const SignUpScreen = () => {
             <Text style={styles.loginButtonText}>Sign Up</Text>
           </TouchableOpacity>
 
-          <View className="flex-row justify-center items-center space-x-1 mt-[28]">
+          <View className="flex-row justify-center items-center space-x-1 mt-[28] pb-4">
             <Text style={styles.text} className="mr-1">
               Already have an account?
             </Text>
@@ -184,12 +184,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 24,
     flexDirection: "column",
-  },
-  SignInScreen: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: "100%",
+    width: "100%"
   },
   textSignIn: {
     fontSize: 30,
@@ -213,7 +208,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   passwordContainer: {
-    width: 340,
+    width: "100%",
     height: 50,
     backgroundColor: "#F7F7F7",
     borderRadius: 10,
@@ -225,7 +220,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   textInput: {
-    width: 340,
+    width: "100%",
     height: 50,
     backgroundColor: "#F7F7F7",
     borderRadius: 10,

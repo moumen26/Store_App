@@ -33,14 +33,20 @@ const MyCartScreen = () => {
   const [submitionLoading, setSubmitionLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [type, setType] = useState("");
-  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
 
   // Filter cart items for the current store
-  const storeCart = useMemo(() => cart?.filter((item) => item.store === storeId) || [], [cart, storeId]);
+  const storeCart = useMemo(
+    () => cart?.filter((item) => item.store === storeId) || [],
+    [cart, storeId]
+  );
 
   // Calculate total price
   const calculateTotal = useCallback(() => {
-    const total = storeCart.reduce((acc, item) => acc + parseFloat(item?.price || 0), 0).toFixed(2);
+    const total = storeCart
+      .reduce((acc, item) => acc + parseFloat(item?.price || 0), 0)
+      .toFixed(2);
     setTotal(total);
   }, [storeCart]);
 
@@ -52,24 +58,27 @@ const MyCartScreen = () => {
   const handleSubmitOrder = useCallback(async () => {
     setSubmitionLoading(true);
     try {
-      const response = await fetch(`${Config.API_URL}/Receipt/${user?.info?.id}/${storeId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.token}`,
-        },
-        body: JSON.stringify({
-          store: storeId,
-          type: type,
-          products: storeCart.map((item) => ({
-            stock: item.stock,
-            quantity: item.quantity,
-            price: item.unityPrice,
-          })),
-          total: total,
-          deliveredLocation: storeCart[0]?.shippingAddress,
-        }),
-      });
+      const response = await fetch(
+        `${Config.API_URL}/Receipt/${user?.info?.id}/${storeId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify({
+            store: storeId,
+            type: type,
+            products: storeCart.map((item) => ({
+              stock: item.stock,
+              quantity: item.quantity,
+              price: item.unityPrice,
+            })),
+            total: total,
+            deliveredLocation: storeCart[0]?.shippingAddress,
+          }),
+        }
+      );
 
       const json = await response.json();
       if (!response.ok) {
@@ -92,29 +101,33 @@ const MyCartScreen = () => {
   }, [storeCart, type, total, user, storeId, dispatch, navigation]);
 
   // Render product items
-  const renderProductItems = useCallback(() => (
-    storeCart.map((item) => (
-      <CartRow
-        key={item?.stock}
-        ProductName={item?.product?.name}
-        ProductBrand={item?.product?.brand}
-        ProductQuantity={item?.quantity}
-        ProductImage={item?.product?.image}
-        BoxItems={item?.product?.boxItems}
-      />
-    ))
-  ), [storeCart]);
+  const renderProductItems = useCallback(
+    () =>
+      storeCart.map((item) => (
+        <CartRow
+          key={item?.stock}
+          ProductName={item?.product?.name}
+          ProductBrand={item?.product?.brand}
+          ProductQuantity={item?.quantity}
+          ProductImage={item?.product?.image}
+          BoxItems={item?.product?.boxItems}
+        />
+      )),
+    [storeCart]
+  );
 
   // Render details items
-  const renderDetailsItems = useCallback(() => (
-    storeCart.map((item) => (
-      <CommandeDetailsItem
-        key={item?.stock}
-        ProductName={item?.product?.name}
-        ProductPriceTotal={item?.price}
-      />
-    ))
-  ), [storeCart]);
+  const renderDetailsItems = useCallback(
+    () =>
+      storeCart.map((item) => (
+        <CommandeDetailsItem
+          key={item?.stock}
+          ProductName={item?.product?.name}
+          ProductPriceTotal={item?.price}
+        />
+      )),
+    [storeCart]
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -129,7 +142,9 @@ const MyCartScreen = () => {
       {submitionLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#FF033E" />
-          <Text style={styles.loadingText}>Please wait till the request is being processed...</Text>
+          <Text style={styles.loadingText}>
+            Please wait till the request is being processed...
+          </Text>
         </View>
       ) : (
         <>
@@ -159,7 +174,9 @@ const MyCartScreen = () => {
             {storeCart.length > 0 && (
               <View style={styles.commandeContainer}>
                 <Text style={styles.sousTitre}>Default Price</Text>
-                <View style={styles.defaultPriceScroll}>{renderDetailsItems()}</View>
+                <View style={styles.defaultPriceScroll}>
+                  {renderDetailsItems()}
+                </View>
                 <View style={styles.subTotalContainer}>
                   <Text style={styles.sousTitre}>Sub total</Text>
                   <Text style={styles.sousTitre}>DA {total}</Text>
@@ -177,7 +194,10 @@ const MyCartScreen = () => {
             </View>
           </ScrollView>
           <View style={styles.navigationClass}>
-            <TouchableOpacity style={styles.loginButton} onPress={() => setConfirmationModalVisible(true)}>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={() => setConfirmationModalVisible(true)}
+            >
               <Text style={styles.loginButtonText}>Place Order</Text>
             </TouchableOpacity>
           </View>
@@ -240,6 +260,7 @@ const styles = StyleSheet.create({
   },
   titleCategory: {
     fontSize: 18,
+    marginBottom: 8,
     fontFamily: "Montserrat-Regular",
   },
   productListContainer: {

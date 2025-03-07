@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   skipContainer: {
     position: "absolute",
-    top: 60,
+    top: 20,
     right: 0,
     zIndex: 99,
   },

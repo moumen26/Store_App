@@ -337,6 +337,7 @@ const home = () => {
 
 const styles = StyleSheet.create({
   stores: {
+    flex: 1,
     paddingBottom: 100,
   },
   specialForYou: {

@@ -111,11 +111,8 @@ const Store = ({ StoresData, CategoriesData }) => {
           data={filteredStores}
           renderItem={renderStoreCard}
           keyExtractor={(store) => store._id}
-          contentContainerStyle={{
-            paddingHorizontal: 0,
-            paddingTop: 15,
-          }}
           ListEmptyComponent={renderNoStores}
+          contentContainerStyle={styles.containerScroll}
         />
       </Animated.View>
     </View>
@@ -123,6 +120,11 @@ const Store = ({ StoresData, CategoriesData }) => {
 };
 
 const styles = StyleSheet.create({
+  containerScroll: {
+    flexDirection: "column",
+    paddingTop: 15,
+    height: "auto",
+  },
   noStoresText: {
     fontSize: 13,
     fontFamily: "Montserrat-Regular",

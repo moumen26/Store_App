@@ -2,7 +2,7 @@ import { TouchableOpacity } from "react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { TruckIcon } from "react-native-heroicons/outline";
-import { useNavigation } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
 const TrackButton = ({data, OrderDataRefetch}) => {
   const navigation = useNavigation();

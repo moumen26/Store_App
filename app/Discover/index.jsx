@@ -9,56 +9,54 @@ const DiscoverScreen = () => {
   const navigation = useNavigation();
 
   return (
-    <>
-      <View className="bg-white h-full">
-        <View
-          style={styles.ImageContainer}
-          className="flex items-center justify-center"
+    <View className="bg-white h-full">
+      <View
+        style={styles.ImageContainer}
+        className="flex items-center justify-center"
+      >
+        <View style={styles.Container}></View>
+        <Image style={styles.Image} source={Home} />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("SignIn/index")}
+          className="mx-5"
+          style={styles.skipContainer}
         >
-          <View style={styles.Container}></View>
-          <Image style={styles.Image} source={Home} />
-          <TouchableOpacity
-            onPress={() => navigation.navigate("SignIn/index")}
-            className="mx-5"
-            style={styles.skipContainer}
+          <Text style={styles.skipText}>Skip</Text>
+        </TouchableOpacity>
+      </View>
+      <View className="mx-5 mt-[24] flex justify-center">
+        <View className="flex h-[90] items-center justify-center">
+          <Text style={styles.title}>Discover the world</Text>
+          <Text style={styles.title} className="text-[#26667E]">
+            of your Store
+          </Text>
+        </View>
+        <View className="flex items-center justify-center h-[50]">
+          <Text style={styles.description}>
+            Store is the world’s first all-in-one
+          </Text>
+        </View>
+
+        <View className="flex-row justify-between mx-5 mt-[40]">
+          <View style={styles.Vide}></View>
+          <View
+            className="flex-row justify-center items-center"
+            style={styles.threePoint}
           >
-            <Text style={styles.skipText}>Skip</Text>
+            <View className="w-[10] h-[10] rounded bg-[#26667E] mr-1"></View>
+            <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
+            <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.NextButton}
+            onPress={() => navigation.navigate("YourCart/index")}
+          >
+            <ArrowRightIcon color="#fff" size={18} />
           </TouchableOpacity>
         </View>
-        <View className="mx-5 mt-[24] flex justify-center">
-          <View className="flex h-[90] items-center justify-center">
-            <Text style={styles.title}>Discover the world</Text>
-            <Text style={styles.title} className="text-[#26667E]">
-              of your Store
-            </Text>
-          </View>
-          <View className="flex items-center justify-center h-[50]">
-            <Text style={styles.description}>
-              Store is the world’s first all-in-one
-            </Text>
-          </View>
-
-          <View className="flex-row justify-between mx-5 mt-[40]">
-            <View style={styles.Vide}></View>
-            <View
-              className="flex-row justify-center items-center"
-              style={styles.threePoint}
-            >
-              <View className="w-[10] h-[10] rounded bg-[#26667E] mr-1"></View>
-              <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
-              <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
-            </View>
-
-            <TouchableOpacity
-              style={styles.NextButton}
-              onPress={() => navigation.navigate("YourCart/index")}
-            >
-              <ArrowRightIcon color="#fff" size={18} />
-            </TouchableOpacity>
-          </View>
-        </View>
       </View>
-    </>
+    </View>
   );
 };
 
@@ -104,11 +102,11 @@ const styles = StyleSheet.create({
   },
   skipContainer: {
     position: "absolute",
-    top: 60,
+    top: 20,
     right: 0,
     zIndex: 99,
   },
-  skipText: {
+  skipText: {    
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
     color: "#26667E",

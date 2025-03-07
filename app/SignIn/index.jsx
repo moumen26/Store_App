@@ -62,7 +62,7 @@ const SignInScreen = () => {
           Hi Welcome back, you've been missed
         </Text>
       </View>
-      <View className="mt-[36]">
+      <View className="mt-[36] mx-5">
         <View styles={styles.column} className="mb-[16]">
           <Text style={styles.textlabel}>Username</Text>
           <TextInput
@@ -99,7 +99,10 @@ const SignInScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity className="mt-[26]">
+        <TouchableOpacity
+          className="mt-[26]"
+          onPress={() => navigation.navigate("ResetPassword/index")}
+        >
           <Text style={styles.textForgotPassword} className="text-right">
             Forgot Password?
           </Text>
@@ -172,8 +175,9 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   passwordContainer: {
-    width: 340,
     height: 50,
+    width: "100%",
+
     backgroundColor: "#F7F7F7",
     borderRadius: 10,
     paddingLeft: 15,
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   textInput: {
-    width: 340,
+    width: "100%",
     height: 50,
     backgroundColor: "#F7F7F7",
     borderRadius: 10,
