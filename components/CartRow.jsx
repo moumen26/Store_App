@@ -10,7 +10,7 @@ const CartRow = ({
 }) => {
   return (
     <>
-      <TouchableOpacity className="flex-row items-center justify-between w-full h-[90] pl-2">
+      <TouchableOpacity className="flex-row items-center justify-between w-full bg-red-300 h-[90] p-0">
         <View className="flex-row items-center">
           <Image style={styles.Image} source={{ uri: ProductImage }} />
 

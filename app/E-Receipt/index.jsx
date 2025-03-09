@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
 import CartRow from "../../components/CartRow";
 import EReceiptDetails from "../../components/EReceiptDetails";
+import Barcode from "react-native-barcode-svg";
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -216,23 +218,23 @@ const EReceiptScreen = () => {
   }
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
-      <View style={styles.FlatList}>
+      <View style={styles.FlatList} className="mx-5">
         <FlatList
           data={OrderData?.recieptStatus?.products || []}
           keyExtractor={(item) => item?.stock?.toString()}
           ListHeaderComponent={
             <>
-              <View className="mx-5 mb-[20] flex-row items-center justify-between">
+              <View className="mb-[20] flex-row items-center justify-between">
                 <BackButton />
                 <Text style={styles.titleScreen}>E-Receipt</Text>
-                <TrackButton 
+                <TrackButton
                   data={OrderData}
                   OrderDataRefetch={OrderDataRefetch}
                 />
               </View>
               {OrderData?.reciept?.status !== 10 && (
-                <View className="flex items-center">
-                  <Image source={CodeBare} />
+                <View>
+                  <Barcode value={OrderID} format="CODE128" />
                 </View>
               )}
             </>

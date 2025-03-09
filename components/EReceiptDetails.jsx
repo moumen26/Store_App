@@ -17,7 +17,7 @@ const EReceiptDetails = ({
   OrderDiscount,
 }) => {
   return (
-    <View className="mx-5">
+    <View>
       <View style={styles.commandeContainer}>
         <View className="flex-row items-center justify-between w-full">
           <Text style={styles.text}>Store</Text>
