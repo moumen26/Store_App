@@ -64,10 +64,10 @@ const SignInScreen = () => {
       </View>
       <View className="mt-[36] mx-5">
         <View styles={styles.column} className="mb-[16]">
-          <Text style={styles.textlabel}>Username</Text>
+          <Text style={styles.textlabel}>Phone Number</Text>
           <TextInput
             style={styles.textInput}
-            placeholder="username or phone number"
+            placeholder="Phone number"
             placeholderTextColor="#888888"
             value={userName}
             onChangeText={setUserName}

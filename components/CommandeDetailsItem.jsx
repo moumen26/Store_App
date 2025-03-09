@@ -3,7 +3,7 @@ import React from "react";
 
 const CommandeDetailsItem = ({ ProductName, ProductPriceTotal }) => {
   return (
-    <View className="flex-row items-center justify-between w-full">
+    <View className="flex-row items-center justify-between w-full my-2">
       <Text style={styles.title}>{ProductName}</Text>
       <Text style={styles.title}>
         DA {parseFloat(ProductPriceTotal).toFixed(2)}

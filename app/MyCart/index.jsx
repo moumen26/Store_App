@@ -130,7 +130,7 @@ const MyCartScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView className="bg-white pt-3 relative h-full">
       {snackbarKey !== 0 && (
         <Snackbar
           key={snackbarKey}
@@ -148,52 +148,57 @@ const MyCartScreen = () => {
         </View>
       ) : (
         <>
-          <ScrollView contentContainerStyle={styles.scrollViewContent}>
-            <View style={styles.header}>
-              <BackButton />
-              <Text style={styles.titleScreen}>My Cart</Text>
-              <View style={styles.emptyView} />
-            </View>
-            <View style={styles.orderDetailsHeader}>
-              <Text style={styles.titleCategory}>Order Details</Text>
-              {storeCart.length > 0 && (
-                <TouchableOpacity onPress={() => setModalVisible(true)}>
-                  <PencilSquareIcon size={24} color="#26667E" />
-                </TouchableOpacity>
-              )}
-            </View>
-            <View style={styles.productListContainer}>
-              {storeCart.length > 0 ? (
-                renderProductItems()
-              ) : (
-                <View style={styles.noProductContainer}>
-                  <Text style={styles.noText}>No product is available</Text>
-                </View>
-              )}
-            </View>
-            {storeCart.length > 0 && (
-              <View style={styles.commandeContainer}>
-                <Text style={styles.sousTitre}>Default Price</Text>
-                <View style={styles.defaultPriceScroll}>
-                  {renderDetailsItems()}
-                </View>
-                <View style={styles.subTotalContainer}>
-                  <Text style={styles.sousTitre}>Sub total</Text>
-                  <Text style={styles.sousTitre}>DA {total}</Text>
-                </View>
+          <View className="mx-5" style={styles.FlatList}>
+            <ScrollView>
+              <View style={styles.header}>
+                <BackButton />
+                <Text style={styles.titleScreen}>My Cart</Text>
+                <View style={styles.emptyView} />
               </View>
-            )}
-            <View style={styles.orderTypeContainer}>
-              <Text style={styles.titleCategory}>Order Type</Text>
-              <OrderType
-                storeId={storeId}
-                storeCart={storeCart}
-                handleChangeType={setType}
-                navigation={navigation}
-              />
-            </View>
-          </ScrollView>
-          <View style={styles.navigationClass}>
+              <View style={styles.orderDetailsHeader}>
+                <Text style={styles.titleCategory}>Order Details</Text>
+                {storeCart.length > 0 && (
+                  <TouchableOpacity onPress={() => setModalVisible(true)}>
+                    <PencilSquareIcon size={24} color="#26667E" />
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.productListContainer}>
+                {storeCart.length > 0 ? (
+                  renderProductItems()
+                ) : (
+                  <View style={styles.noProductContainer}>
+                    <Text style={styles.noText}>No product is available</Text>
+                  </View>
+                )}
+              </View>
+              {storeCart.length > 0 && (
+                <View style={styles.commandeContainer}>
+                  <Text style={styles.sousTitre}>Default Price</Text>
+                  <View style={styles.defaultPriceScroll}>
+                    {renderDetailsItems()}
+                  </View>
+                  <View style={styles.subTotalContainer}>
+                    <Text style={styles.sousTitre}>Sub total</Text>
+                    <Text style={styles.sousTitre}>DA {total}</Text>
+                  </View>
+                </View>
+              )}
+              <View style={styles.orderTypeContainer}>
+                <Text style={styles.titleCategory}>Order Type</Text>
+                <OrderType
+                  storeId={storeId}
+                  storeCart={storeCart}
+                  handleChangeType={setType}
+                  navigation={navigation}
+                />
+              </View>
+            </ScrollView>
+          </View>
+          <View
+            className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
+            style={styles.navigationClass}
+          >
             <TouchableOpacity
               style={styles.loginButton}
               onPress={() => setConfirmationModalVisible(true)}
@@ -201,29 +206,29 @@ const MyCartScreen = () => {
               <Text style={styles.loginButtonText}>Place Order</Text>
             </TouchableOpacity>
           </View>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View style={styles.modalView}>
-              <EditCartScreen
-                data={storeCart}
-                storeId={storeId}
-                onClose={() => setModalVisible(false)}
-              />
-            </View>
-          </Modal>
-          <ConfirmationModal
-            visible={confirmationModalVisible}
-            onCancel={() => setConfirmationModalVisible(false)}
-            onConfirm={handleSubmitOrder}
-            modalTitle="Order Confirmation"
-            modalSubTitle="Make sure all information is correct before finalizing"
-          />
         </>
       )}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalView}>
+          <EditCartScreen
+            data={storeCart}
+            storeId={storeId}
+            onClose={() => setModalVisible(false)}
+          />
+        </View>
+      </Modal>
+      <ConfirmationModal
+        visible={confirmationModalVisible}
+        onCancel={() => setConfirmationModalVisible(false)}
+        onConfirm={handleSubmitOrder}
+        modalTitle="Order Confirmation"
+        modalSubTitle="Make sure all information is correct before finalizing"
+      />
     </SafeAreaView>
   );
 };
@@ -235,8 +240,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollViewContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 95,
+    backgroundColor: "red",
+    height: "100%",
   },
   header: {
     flexDirection: "row",
@@ -282,9 +287,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: "#F7F7F7",
+    gap: 4,
   },
   defaultPriceScroll: {
     gap: 2,
+    paddingBottom: 8,
+
   },
   subTotalContainer: {
     flexDirection: "row",
@@ -301,20 +309,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   navigationClass: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 80,
-    backgroundColor: "white",
-    borderTopWidth: 0.5,
     borderColor: "#888888",
-    borderTopLeftRadius: 30,
+    borderWidth: 0.5,
+    backgroundColor: "#fff",
     borderTopRightRadius: 30,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 12,
+    borderTopLeftRadius: 30,
   },
   loginButton: {
     backgroundColor: "#26667E",
@@ -344,6 +343,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
     color: "#FF033E",
+  },
+  FlatList: {
+    paddingBottom: 55,
+    flex: 1,
   },
 });
 

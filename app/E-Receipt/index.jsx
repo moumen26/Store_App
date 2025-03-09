@@ -11,6 +11,8 @@ import React, { useLayoutEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
 import CartRow from "../../components/CartRow";
+import SubmitOrderModal from "../../components/SubmitOrderModal.jsx";
+
 import EReceiptDetails from "../../components/EReceiptDetails";
 import Barcode from "react-native-barcode-svg";
 
@@ -33,6 +35,7 @@ import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
 
 import TrackButton from "../../components/TrackButton";
+import SubmitOderModalReason from "../../components/SubmitOderModalReason.jsx";
 
 const CodeBare = require("../../assets/images/CodeBare.png");
 
@@ -48,6 +51,20 @@ const EReceiptScreen = () => {
   const { user } = useAuthContext();
   const route = useRoute();
   const { OrderID } = route.params;
+
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] =
+    useState(false);
+
+  const handleOpenNotAllConfirmationModal = () => {
+    setConfirmationModalVisible(false);
+    setNotAllConfirmationModalVisible(true);
+  };
+
+  const handleCloseNotAllConfirmationModal = () => {
+    setNotAllConfirmationModalVisible(false); 
+  };
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -274,15 +291,31 @@ const EReceiptScreen = () => {
           }
         />
       </View>
-
       <View
         className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
         style={styles.navigationClass}
       >
-        <TouchableOpacity style={styles.loginButton} onPress={generatePDF}>
+        <TouchableOpacity
+          style={styles.loginButton}
+          // onPress={generatePDF}
+          onPress={() => setConfirmationModalVisible(true)}
+        >
           <Text style={styles.loginButtonText}>Download E-Receipt</Text>
         </TouchableOpacity>
       </View>
+      <SubmitOrderModal
+        visible={confirmationModalVisible}
+        onCancel={handleOpenNotAllConfirmationModal}
+        modalTitle="Submit Order Confirmation"
+        modalSubTitle="Do you want to submit all the scanned orders now?"
+      />
+
+      <SubmitOderModalReason
+        visible={notAllConfirmationModalVisible}
+        onCancel={handleCloseNotAllConfirmationModal}
+        modalTitle="Partial Submission"
+        modalSubTitle="Are you sure you don't want to submit all orders?"
+      />
     </SafeAreaView>
   );
 };
@@ -366,7 +399,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    height: hp(45),
+    height: hp(55),
   },
   noText: {
     fontSize: 13,
