@@ -52,20 +52,6 @@ const EReceiptScreen = () => {
   const route = useRoute();
   const { OrderID } = route.params;
 
-  const [confirmationModalVisible, setConfirmationModalVisible] =
-    useState(false);
-  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] =
-    useState(false);
-
-  const handleOpenNotAllConfirmationModal = () => {
-    setConfirmationModalVisible(false);
-    setNotAllConfirmationModalVisible(true);
-  };
-
-  const handleCloseNotAllConfirmationModal = () => {
-    setNotAllConfirmationModalVisible(false); 
-  };
-
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchOrderData = async () => {
@@ -297,25 +283,11 @@ const EReceiptScreen = () => {
       >
         <TouchableOpacity
           style={styles.loginButton}
-          // onPress={generatePDF}
-          onPress={() => setConfirmationModalVisible(true)}
+          onPress={generatePDF}
         >
           <Text style={styles.loginButtonText}>Download E-Receipt</Text>
         </TouchableOpacity>
       </View>
-      <SubmitOrderModal
-        visible={confirmationModalVisible}
-        onCancel={handleOpenNotAllConfirmationModal}
-        modalTitle="Submit Order Confirmation"
-        modalSubTitle="Do you want to submit all the scanned orders now?"
-      />
-
-      <SubmitOderModalReason
-        visible={notAllConfirmationModalVisible}
-        onCancel={handleCloseNotAllConfirmationModal}
-        modalTitle="Partial Submission"
-        modalSubTitle="Are you sure you don't want to submit all orders?"
-      />
     </SafeAreaView>
   );
 };

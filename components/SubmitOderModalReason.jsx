@@ -18,8 +18,9 @@ const SubmitOderModalReason = ({
   modalSubTitle,
   showButton = true,
   isloading = false,
+  setReason,
+  reason
 }) => {
-  const [reason, setReason] = useState(""); 
 
   return (
     <Modal
@@ -37,7 +38,7 @@ const SubmitOderModalReason = ({
             {/* Input for reason */}
             <TextInput
               style={styles.input}
-              placeholder="Enter reason..."
+              placeholder="Enter une reason..."
               placeholderTextColor="#999"
               value={reason}
               onChangeText={setReason}

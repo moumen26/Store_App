@@ -27,11 +27,14 @@ const NonLinkedStores = ({
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
 
-  const openRequestModal = () => {
+  const [item, setItem] = useState(null);
+  const openRequestModal = (val) => {
+    setItem(val);
     setConfirmationModalVisible(true);
   };
 
   const closeConfirmationModal = () => {
+    setItem(null);
     setConfirmationModalVisible(false);
   };
 
@@ -95,15 +98,7 @@ const NonLinkedStores = ({
         title={item.storeName}
         sousTitle={`${item.wilaya}, ${item.commune}`}
         buttonText="Request"
-        onPress={openRequestModal}
-      />
-      <ConfirmationModal
-        visible={confirmationModalVisible}
-        onCancel={closeConfirmationModal}
-        onConfirm={() => handleSubmitStoreAccess(item._id)}
-        isloading={submitionLoading}
-        modalTitle="Access Store Permission"
-        modalSubTitle={`Your request will be sent to the administrator of ${item.storeName}`}
+        onPress={() => openRequestModal(item)}
       />
     </>
   );
@@ -138,6 +133,7 @@ const NonLinkedStores = ({
         setSnackbarMessage(json.message);
         setSnackbarKey((prevKey) => prevKey + 1);
         AllStoresDataRefetch();
+        closeConfirmationModal();
       }
     } catch (err) {
       console.log(err);
@@ -167,7 +163,7 @@ const NonLinkedStores = ({
       >
         <FlatList
           data={filteredStores}
-          renderItem={renderStoreCard}
+          renderItem={(store) => renderStoreCard(store)}
           keyExtractor={(store) => store._id}
           contentContainerStyle={{
             paddingHorizontal: 0,
@@ -182,6 +178,14 @@ const NonLinkedStores = ({
           }
         />
       </Animated.View>
+      <ConfirmationModal
+        visible={confirmationModalVisible}
+        onCancel={closeConfirmationModal}
+        onConfirm={() => handleSubmitStoreAccess(item?._id)}
+        isloading={submitionLoading}
+        modalTitle="Access Store Permission"
+        modalSubTitle={`Your request will be sent to the administrator of the store "${item?.storeName}".`}
+      />
       {snackbarKey !== 0 && (
         <Snackbar
           key={snackbarKey}

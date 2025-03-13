@@ -2,30 +2,29 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
-const WilayaDropdown = ({ dropDownTitle, data }) => {
+const WilayaDropdown = ({ data, dropDownTitle, onSelect }) => {
   const [value, setValue] = useState(null);
-  const [isFocus, setIsFocus] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <Dropdown
-      style={[styles.dropdown, isFocus && { borderColor: "#3E9CB9" }]}
+      style={[styles.dropdown, isFocused && { borderColor: "#3E9CB9" }]}
       placeholderStyle={styles.placeholderStyle}
       selectedTextStyle={styles.selectedTextStyle}
-      inputSearchStyle={styles.inputSearchStyle}
-      iconStyle={styles.iconStyle}
       data={data}
       search
-      maxHeight={170}
+      maxHeight={200}
       labelField="label"
       valueField="value"
-      placeholder={!isFocus ? dropDownTitle || "Select Wilaya" : "..."}
+      placeholder={dropDownTitle}
       searchPlaceholder="Search..."
       value={value}
-      onFocus={() => setIsFocus(true)}
-      onBlur={() => setIsFocus(false)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
       onChange={(item) => {
         setValue(item.value);
-        setIsFocus(false);
+        onSelect(item.value);
+        setIsFocused(false);
       }}
     />
   );

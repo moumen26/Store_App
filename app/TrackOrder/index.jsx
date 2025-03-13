@@ -15,6 +15,8 @@ import Snackbar from "../../components/Snackbar.jsx";
 import useAuthContext from "../hooks/useAuthContext.jsx";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Config from "../config.jsx";
+import SubmitOrderModal from "../../components/SubmitOrderModal.jsx";
+import SubmitOderModalReason from "../../components/SubmitOderModalReason.jsx";
 
 const TrackOrder = () => {
   const navigation = useNavigation();
@@ -28,13 +30,26 @@ const TrackOrder = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("");
   const [submitionLoading, setSubmitionLoading] = useState(false);
-  
-  const handleScanComplete = async ({ type, data }) => {
+  const [scanedData, setScanedData] = useState({ type: null, data: null });
+  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] = useState(false);
+  const [reason, setReason] = useState(""); 
+
+  const handleOpenNotAllConfirmationModal = () => {
+    setConfirmationModalVisible(false);
+    setNotAllConfirmationModalVisible(true);
+  };
+
+  const handleCloseNotAllConfirmationModal = () => {
+    setScanedData({ type: null, data: null });
+    setNotAllConfirmationModalVisible(false); 
+  };
+  const handleScanComplete = async (val) => {
     setSubmitionLoading(true);
     
     try {
       // Check if the scanned barcode matches
-      if (data !== recieptData.reciept._id) {
+      if (scanedData?.data != recieptData.reciept._id) {
         setSnackbarType("error");
         setSnackbarMessage("The scanned barcode does not match the receipt you are tracking");
         setSnackbarKey((prevKey) => prevKey + 1);
@@ -51,7 +66,9 @@ const TrackOrder = () => {
             Authorization: `Bearer ${user?.token}`,
           },
           body: JSON.stringify({
-            reciept: data,
+            reciept: scanedData?.data,
+            status: val,
+            raison: reason
           }),
         }
       );
@@ -86,7 +103,10 @@ const TrackOrder = () => {
             <BackButton />
             <Text style={styles.titleScreen}>Track Order</Text>
             {!(recieptData?.reciept?.status == 10 && recieptData?.reciept?.delivered == true) ?
-              <ScanButton onScanComplete={handleScanComplete} />
+              <ScanButton onScanComplete={({ type, data }) => {
+                setScanedData({ type, data });
+                setConfirmationModalVisible(true)
+              }} />
               :
               <View></View>
             }
@@ -131,6 +151,25 @@ const TrackOrder = () => {
             </View>
           </View>
         }
+      />
+      <SubmitOrderModal
+        visible={confirmationModalVisible}
+        onCancel={handleOpenNotAllConfirmationModal}
+        modalTitle="Submit Order Confirmation"
+        modalSubTitle="Do you want to submit all the scanned orders now?"
+        onConfirm={() => handleScanComplete(3)}
+        isloading={submitionLoading}
+      />
+
+      <SubmitOderModalReason
+        visible={notAllConfirmationModalVisible}
+        onCancel={handleCloseNotAllConfirmationModal}
+        modalTitle="Partial Submission"
+        modalSubTitle="Are you sure you don't want to submit all orders?"
+        onConfirm={() => handleScanComplete(4)}
+        isloading={submitionLoading}
+        setReason={setReason}
+        reason={reason}
       />
       {snackbarKey !== 0 && (
         <Snackbar
