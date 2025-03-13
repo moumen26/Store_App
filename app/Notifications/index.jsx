@@ -44,7 +44,7 @@ const formatTime = (date) => {
 };
 
 // Component to render each notification item
-const NotificationItem = React.memo(({ item, onPress, onDelete }) => {
+const NotificationItem = React.memo(({ item, onDelete }) => {
   const renderRightActions = () => (
     <TouchableOpacity
       style={styles.deleteButton}
@@ -56,7 +56,7 @@ const NotificationItem = React.memo(({ item, onPress, onDelete }) => {
 
   return (
     <Swipeable renderRightActions={renderRightActions}>
-      <TouchableOpacity onPress={() => onPress(item._id)}>
+      <TouchableOpacity>
         <View style={styles.notificationItem}>
           <Text style={styles.message}>{item.message}</Text>
           <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
@@ -221,7 +221,6 @@ const NotificationScreen = () => {
                   renderItem={({ item }) => (
                     <NotificationItem
                       item={item}
-                      onPress={(id) => console.log(`Marked as read: ${id}`)}
                       onDelete={openConfirmationModal}
                     />
                   )}
