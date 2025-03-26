@@ -102,11 +102,10 @@ const styles = StyleSheet.create({
   },
   skipContainer: {
     position: "absolute",
-    top: 20,
     right: 0,
     zIndex: 99,
   },
-  skipText: {    
+  skipText: {
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
     color: "#26667E",

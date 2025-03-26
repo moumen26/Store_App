@@ -3,18 +3,15 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  FlatList,
-  ScrollView,
+  Keyboard,
+  Platform,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  EyeIcon,
-} from "react-native-heroicons/outline";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import { CheckIcon, EyeIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "expo-router";
 import WilayaDropdown from "../../components/DropDown";
 import useAuthContext from "../hooks/useAuthContext";
@@ -73,10 +70,17 @@ const SignUpScreen = () => {
   });
 
   // Filter wilayas and communes
-  const wilayas = citiesData?.filter((city) => city.codeC == `${city.codeW}001`)
-    .map((city) => ({ value: city.codeW, label: city.wilaya })) || [];
-  
-  const communes = selectedWilaya ? citiesData?.filter((city) => city.codeW == selectedWilaya && city.codeC != `${city.codeW}001`)
+  const wilayas =
+    citiesData
+      ?.filter((city) => city.codeC == `${city.codeW}001`)
+      .map((city) => ({ value: city.codeW, label: city.wilaya })) || [];
+
+  const communes = selectedWilaya
+    ? citiesData
+        ?.filter(
+          (city) =>
+            city.codeW == selectedWilaya && city.codeC != `${city.codeW}001`
+        )
         .map((city) => ({ value: city.codeC, label: city.baladiya })) || []
     : [];
 
@@ -125,20 +129,25 @@ const SignUpScreen = () => {
       setSnackbarType("success");
       setSnackbarMessage(json.message);
       setSnackbarKey((prev) => prev + 1);
-      // navigation.navigate("VerifyCode");
+      navigation.navigate("SignIn/index");
     } catch (err) {
       console.error(err);
       setSnackbarType("error");
-      setSnackbarMessage("An error occurred while creating your account. Please try again later.");
+      setSnackbarMessage(
+        "An error occurred while creating your account. Please try again later."
+      );
       setSnackbarKey((prev) => prev + 1);
     } finally {
       setSubmissionLoading(false);
     }
   };
+
   return (
     <SafeAreaView className="bg-white h-full">
-      <ScrollView
-        className="mx-5"
+      <KeyboardAwareScrollView
+        extraScrollHeight={50}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
@@ -150,6 +159,7 @@ const SignUpScreen = () => {
             Fill your information below or register with your social account.
           </Text>
         </View>
+
         <View className="mt-[36] mx-5">
           <View style={styles.inputClass}>
             <Text style={styles.textlabel}>First name</Text>
@@ -157,36 +167,42 @@ const SignUpScreen = () => {
               style={styles.textInput}
               placeholder="Ex. Amine"
               placeholderTextColor="#888888"
-                value={firstName}
-                onChangeText={setFirstName}
+              value={firstName}
+              onChangeText={setFirstName}
+              returnKeyType="next"
             />
           </View>
+
           <View style={styles.inputClass}>
             <Text style={styles.textlabel}>Last name</Text>
             <TextInput
               style={styles.textInput}
               placeholder="Ex. Faroukhi"
               placeholderTextColor="#888888"
-                value={lastName}
-                onChangeText={setLastName}
+              value={lastName}
+              onChangeText={setLastName}
+              returnKeyType="next"
             />
           </View>
+
           <View style={styles.inputClass}>
             <Text style={styles.textlabel}>Phone Number</Text>
             <View
               className="flex-row items-center"
               style={styles.passwordContainer}
             >
-              {/* <Text style={styles.textInputPassword}>+213</Text> */}
-              <TextInput 
-                style={styles.textInputPhone} 
-                placeholder="07XXXXXXXX"  
-                placeholderTextColor="#888888" 
-                  value={phone}
-                  onChangeText={setPhone}
+              <TextInput
+                style={styles.textInputPhone}
+                placeholder="07XXXXXXXX"
+                placeholderTextColor="#888888"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+                returnKeyType="next"
               />
             </View>
           </View>
+
           <View style={styles.inputClass}>
             <Text style={styles.textlabel}>Password</Text>
             <View
@@ -198,8 +214,9 @@ const SignUpScreen = () => {
                 placeholder="********"
                 secureTextEntry={!passwordVisible}
                 placeholderTextColor="#888888"
-                  value={password}
-                  onChangeText={setPassword}
+                value={password}
+                onChangeText={setPassword}
+                returnKeyType="next"
               />
               <TouchableOpacity
                 onPress={() => setPasswordVisible(!passwordVisible)}
@@ -213,6 +230,7 @@ const SignUpScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
+
           <View style={styles.inputClass}>
             <Text style={styles.textlabel}>Confirm password</Text>
             <View
@@ -224,59 +242,72 @@ const SignUpScreen = () => {
                 placeholder="********"
                 secureTextEntry={!confirmPasswordVisible}
                 placeholderTextColor="#888888"
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                returnKeyType="next"
               />
               <TouchableOpacity
-                onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                onPress={() =>
+                  setConfirmPasswordVisible(!confirmPasswordVisible)
+                }
                 style={styles.eyeIcon}
               >
                 <EyeIcon
-                  name={confirmPasswordVisible ? "visibility" : "visibility-off"}
+                  name={
+                    confirmPasswordVisible ? "visibility" : "visibility-off"
+                  }
                   size={20}
                   color="#888888"
                 />
               </TouchableOpacity>
             </View>
           </View>
+
           <View style={styles.inputClass}>
             <Text style={styles.textlabel}>Email</Text>
             <TextInput
               style={styles.textInput}
               placeholder="example@gmail.com"
               placeholderTextColor="#888888"
-                value={email}
-                onChangeText={setEmail}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              returnKeyType="next"
             />
           </View>
+
           <View style={styles.inputClass}>
             <Text style={styles.textlabel}>Commercial register number</Text>
             <TextInput
               style={styles.textInput}
               placeholder="26052002"
               placeholderTextColor="#888888"
-                value={commercialRegister}
-                onChangeText={setCommercialRegister}
+              value={commercialRegister}
+              onChangeText={setCommercialRegister}
+              returnKeyType="next"
             />
           </View>
+
           <View style={styles.row}>
             <View style={styles.inputClass}>
               <Text style={styles.textlabel}>Wilaya</Text>
-              <WilayaDropdown  
-                data={wilayas} 
-                dropDownTitle="Select Wilaya" 
-                onSelect={(value) => setSelectedWilaya(value)}  
+              <WilayaDropdown
+                data={wilayas}
+                dropDownTitle="Select Wilaya"
+                onSelect={(value) => setSelectedWilaya(value)}
               />
             </View>
             <View style={styles.inputClass}>
               <Text style={styles.textlabel}>Commune</Text>
-              <WilayaDropdown 
-                data={communes} 
-                dropDownTitle="Select Commune" 
+              <WilayaDropdown
+                data={communes}
+                dropDownTitle="Select Commune"
                 onSelect={(value) => setSelectedCommune(value)}
               />
             </View>
           </View>
+
           <View className="flex-row ml-1 items-center">
             <TouchableOpacity
               style={[styles.checkbox, isChecked && styles.checked]}
@@ -301,8 +332,11 @@ const SignUpScreen = () => {
             className="mt-[24]"
             style={styles.loginButton}
             onPress={handleSignUp}
+            disabled={submissionLoading}
           >
-            <Text style={styles.loginButtonText}>Sign Up</Text>
+            <Text style={styles.loginButtonText}>
+              {submissionLoading ? "Processing..." : "Sign Up"}
+            </Text>
           </TouchableOpacity>
 
           <View className="flex-row justify-center items-center space-x-1 mt-[28] pb-4">
@@ -316,7 +350,8 @@ const SignUpScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
+
       {snackbarKey !== 0 && (
         <Snackbar
           key={snackbarKey}
@@ -336,7 +371,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 24,
     flexDirection: "column",
-    width: "100%"
+    width: "100%",
   },
   textSignIn: {
     fontSize: 30,
@@ -457,8 +492,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: 12,
   },
 });
-
 export default SignUpScreen;
