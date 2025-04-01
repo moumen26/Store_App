@@ -120,7 +120,7 @@ const stores = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-  
+
   //--------------------------------------------Rendering--------------------------------------------
   if (AllStoresDataLoading || CategoriesDataLoading) {
     return (
@@ -143,11 +143,9 @@ const stores = () => {
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <View style={styles.Vide}></View>
         <Text className="text-center" style={styles.titleScreen}>
-          Stores
+          Magasins
         </Text>
-        <RequestButton 
-          CategoriesData={CategoriesData}
-        />
+        <RequestButton CategoriesData={CategoriesData} />
       </View>
       <View
         style={styles.searchBar}
@@ -156,7 +154,7 @@ const stores = () => {
         <MagnifyingGlassIcon size={20} color="#26667E" />
         <TextInput
           style={styles.searchBarItem}
-          placeholder="Search your store.."
+          placeholder="Recherchez votre magasin..."
           placeholderTextColor="#888888"
           // value={searchQuery}
           // onChangeText={setSearchQuery}

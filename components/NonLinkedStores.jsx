@@ -97,7 +97,7 @@ const NonLinkedStores = ({
         key={item._id}
         title={item.storeName}
         sousTitle={`${item.wilaya}, ${item.commune}`}
-        buttonText="Request"
+        buttonText="Demander"
         onPress={() => openRequestModal(item)}
       />
     </>
@@ -183,8 +183,8 @@ const NonLinkedStores = ({
         onCancel={closeConfirmationModal}
         onConfirm={() => handleSubmitStoreAccess(item?._id)}
         isloading={submitionLoading}
-        modalTitle="Access Store Permission"
-        modalSubTitle={`Your request will be sent to the administrator of the store "${item?.storeName}".`}
+        modalTitle="Demande d'accès au magasin"
+        modalSubTitle={`Votre demande sera envoyée à l'administrateur du magasin "${item?.storeName}".`}
       />
       {snackbarKey !== 0 && (
         <Snackbar

@@ -28,48 +28,48 @@ const CartOrderItem = ({
   return (
     <View style={styles.cartOrderItem}>
       <View style={styles.cartItem}>
-        <Text style={styles.text}>Store</Text>
+        <Text style={styles.text}>Magasin</Text>
         <Text style={styles.textDescription}>{OrderStoreName}</Text>
       </View>
       <View style={styles.cartItem}>
-        <Text style={styles.text}>Order ID</Text>
+        <Text style={styles.text}>Numéro de commande</Text>
         <Text style={styles.textDescription}>{OrderID}</Text>
       </View>
       <View style={styles.cartItem}>
-        <Text style={styles.text}>Order Type</Text>
+        <Text style={styles.text}>Type de commande</Text>
         <Text style={styles.textDescription}>
           {capitalizeFirstLetters(OrderType)}
         </Text>
       </View>
       {OrderDeliveryAddress && (
         <View style={styles.cartItem}>
-          <Text style={styles.text}>Delivery Address</Text>
+          <Text style={styles.text}>Adresse de livraison</Text>
           <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
         </View>
       )}
       <View style={styles.cartItem}>
-        <Text style={styles.text}>Order Date</Text>
+        <Text style={styles.text}>Date de commande</Text>
         <Text style={styles.textDescription}>{formatDate(OrderDate)}</Text>
       </View>
       <View style={styles.cartItem}>
-        <Text style={styles.text}>Status</Text>
+        <Text style={styles.text}>Statut</Text>
         <Text style={styles.textDescription}>
           {orderStatusTextDisplayer(OrderStatus, OrderType)}
         </Text>
       </View>
       <View style={styles.cartItem}>
-        <Text style={styles.text}>Sub Total</Text>
+        <Text style={styles.text}>Sous-total</Text>
         <Text style={styles.textDescription}>DA {OrderSubTotal}</Text>
       </View>
       <View
         style={styles.cartItemMoreDetails}
         className="flex-row justify-end pr-[15] w-full"
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           className="flex-row items-center space-x-1 mt-2"
           onPress={() => navigation.navigate("E-Receipt/index", { OrderID })}
         >
-          <Text style={styles.text}>More Detail</Text>
+          <Text style={styles.text}>Plus de détails</Text>
           <ChevronRightIcon size={11} color="#888888" />
         </TouchableOpacity>
       </View>

@@ -116,10 +116,10 @@ const settings = () => {
   return (
     <SafeAreaView className="bg-white pt-3 pb-1 relative h-full">
       <Text className="text-center mb-[20]" style={styles.titleScreen}>
-        Settings
+        Paramètres{" "}
       </Text>
       <View className="mx-5">
-        <Text style={styles.text}>Account</Text>
+        <Text style={styles.text}>Compte</Text>
         <View style={styles.settingsItems} className="mt-[20]">
           {settings.map((setting, index) => (
             <TouchableOpacity
@@ -152,11 +152,11 @@ const settings = () => {
           style={styles.logoutButton}
           onPress={openConfirmationLogOutModal}
         >
-          <Text style={styles.textItemRegular}>Log Out</Text>
+          <Text style={styles.textItemRegular}>Se Déconnecter</Text>
         </TouchableOpacity>
         <View className="flex-col items-center space-y-[1]">
-          <Text style={styles.textVersion}>App Version 0.0.1</Text>
-          <Text style={styles.textItemRegular}>All Rights Reserved</Text>
+          <Text style={styles.textVersion}>Version de l'application 0.0.1</Text>
+          <Text style={styles.textItemRegular}>Tous droits réservés</Text>
         </View>
       </View>
 
@@ -176,13 +176,13 @@ const settings = () => {
             />
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.saveButton} onPress={saveSetting}>
-                <Text style={styles.buttonText}>Save</Text>
+                <Text style={styles.buttonText}>Sauvegarder</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.cancelButton}
                 onPress={closeModal}
               >
-                <Text style={styles.buttonTextCancel}>Cancel</Text>
+                <Text style={styles.buttonTextCancel}>Annuler</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -197,20 +197,20 @@ const settings = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.deleteModalText}>
-              Are you sure you want to delete your account?
+              Êtes-vous sûr de vouloir supprimer votre compte ?
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.cancelButton}
                 onPress={closeModal}
               >
-                <Text style={styles.buttonTextCancel}>Cancel</Text>
+                <Text style={styles.buttonTextCancel}>Annuler</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.deleteButton}
                 onPress={confirmDeleteAccount}
               >
-                <Text style={styles.buttonText}>Confirm</Text>
+                <Text style={styles.buttonText}>Confirmer</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -220,8 +220,8 @@ const settings = () => {
         visible={confirmationModalVisible}
         onCancel={closeConfirmationModal}
         onConfirm={handleLogOut}
-        modalTitle="Confirm Log Out"
-        modalSubTitle="You will be signed out of your account."
+        modalTitle="Confirmer la déconnexion"
+        modalSubTitle="Vous serez déconnecté de votre compte."
       />
     </SafeAreaView>
   );

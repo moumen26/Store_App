@@ -235,7 +235,7 @@ const home = () => {
         <View className="flex-row items-center mx-5 space-x-3">
           <View style={styles.topClass}>
             <Text style={styles.text} className="text-gray-400">
-              Location
+              Emplacement
             </Text>
             <View style={styles.iconText} className="flex-row">
               <MapPinIcon size={18} color="#26667E" />
@@ -288,8 +288,8 @@ const home = () => {
           >
             <MagnifyingGlassIcon color="#888888" size={20} />
             <TextInput
-              style={styles.searchButto}
-              placeholder="Search by Store.."
+              style={styles.searchButton}
+              placeholder="Rechercher par magasin..."
               placeholderTextColor="#888888"
               // value={searchQuery}
               // onChangeText={setSearchQuery}
@@ -307,7 +307,7 @@ const home = () => {
         </View>
       ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
         <View className="mx-5 mb-[20]">
-          <Text style={styles.titleCategory}>#SpecialForYou</Text>
+          <Text style={styles.titleCategory}>#SpécialPourVous</Text>
           <SliderHome PublicPublicitiesData={PublicPublicitiesData} />
         </View>
       ) : (
@@ -325,7 +325,7 @@ const home = () => {
       ) : (CategoriesData && CategoriesData?.length > 0) ||
         (StoresData && StoresData?.length > 0) ? (
         <View style={styles.stores} className="mx-5">
-          <Text style={styles.titleCategory}>My Stores</Text>
+          <Text style={styles.titleCategory}>Mes Magasins</Text>
           <Store StoresData={StoresData} CategoriesData={CategoriesData} />
         </View>
       ) : (

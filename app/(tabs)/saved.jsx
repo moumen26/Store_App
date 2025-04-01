@@ -87,7 +87,7 @@ const Saved = () => {
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <View style={styles.Vide}></View>
         <Text className="text-center" style={styles.titleScreen}>
-          Saved Stores
+          Magasins Enregistrés{" "}
         </Text>
         <View style={styles.Vide}></View>
       </View>
@@ -96,7 +96,7 @@ const Saved = () => {
         <MagnifyingGlassIcon size={20} color="#26667E" />
         <TextInput
           style={styles.searchBarItem}
-          placeholder="Search your store.."
+          placeholder="Rechercher par magasin..."
           placeholderTextColor="#888888"
         />
       </View>
@@ -135,7 +135,7 @@ const Saved = () => {
                 fontFamily: "Montserrat-Regular",
               }}
             >
-              No Stores found
+              Aucun magasin trouvé{" "}
             </Text>
           </View>
         )}

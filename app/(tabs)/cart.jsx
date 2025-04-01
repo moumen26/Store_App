@@ -64,7 +64,7 @@ const cart = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
-  
+
   //--------------------------------------------Rendering--------------------------------------------
   if (OrdersDataLoading) {
     return (
@@ -85,7 +85,7 @@ const cart = () => {
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <View style={styles.Vide}></View>
         <Text className="text-center" style={styles.titleScreen}>
-          My Orders
+          Mes commandes{" "}
         </Text>
         <ArchiveButton />
       </View>
@@ -96,7 +96,7 @@ const cart = () => {
         <MagnifyingGlassIcon size={20} color="#26667E" />
         <TextInput
           style={styles.searchBarItem}
-          placeholder="Search your order.."
+          placeholder="Recherchez votre commande..."
           placeholderTextColor="#888888"
           // value={searchQuery}
           // onChangeText={setSearchQuery}
@@ -136,7 +136,7 @@ const cart = () => {
                 fontFamily: "Montserrat-Regular",
               }}
             >
-              No order found
+              Aucune commande trouvée
             </Text>
           </View>
         )}
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   containerScroll: {
     flexDirection: "column",
     gap: 16,
-    paddingBottom:  38,
+    paddingBottom: 38,
   },
   Vide: {
     width: 40,
