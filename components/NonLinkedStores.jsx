@@ -170,6 +170,7 @@ const NonLinkedStores = ({
             paddingTop: 15,
             paddingBottom: 38,
             height: "100%",
+            alignItems: "center",
           }}
           ListEmptyComponent={
             <Text style={styles.noStoresText}>

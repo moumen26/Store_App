@@ -16,24 +16,24 @@ const DiscoverScreen = () => {
       >
         <View style={styles.Container}></View>
         <Image style={styles.Image} source={Home} />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => navigation.navigate("SignIn/index")}
           className="mx-5"
           style={styles.skipContainer}
         >
           <Text style={styles.skipText}>Skip</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View className="mx-5 mt-[24] flex justify-center">
         <View className="flex h-[90] items-center justify-center">
-          <Text style={styles.title}>Discover the world</Text>
+          <Text style={styles.title}>Découvrez le monde</Text>
           <Text style={styles.title} className="text-[#26667E]">
-            of your Store
+            de votre magasin
           </Text>
         </View>
         <View className="flex items-center justify-center h-[50]">
           <Text style={styles.description}>
-            Store is the world’s first all-in-one
+            Le magasin est le premier tout-en-un au monde
           </Text>
         </View>
 

@@ -2,76 +2,82 @@ import React, { useState, useCallback, memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { MinusIcon, PlusIcon } from "react-native-heroicons/outline";
 
-const CartRowModified = memo(({
-  id,
-  ProductName,
-  ProductBrand,
-  initialQuantity,
-  ProductImage,
-  buyingMathode,
-  boxItems,
-  handleQuantityChange,
-  handleRemoveItem,
-}) => {
-  const [quantity, setQuantity] = useState(initialQuantity);
+const CartRowModified = memo(
+  ({
+    id,
+    ProductName,
+    ProductBrand,
+    initialQuantity,
+    ProductImage,
+    buyingMathode,
+    boxItems,
+    handleQuantityChange,
+    handleRemoveItem,
+  }) => {
+    const [quantity, setQuantity] = useState(initialQuantity);
 
-  const incrementAmount = buyingMathode === "box" ? boxItems : 1;
-  const minQuantity = buyingMathode === "box" ? boxItems : 1;
-  const displayedQuantity = buyingMathode === "box" ? quantity / boxItems : quantity;
+    const incrementAmount = buyingMathode === "box" ? boxItems : 1;
+    const minQuantity = buyingMathode === "box" ? boxItems : 1;
+    const displayedQuantity =
+      buyingMathode === "box" ? quantity / boxItems : quantity;
 
-  const handleIncrease = useCallback(() => {
-    const newQuantity = quantity + incrementAmount;
-    setQuantity(newQuantity);
-    handleQuantityChange(id, newQuantity);
-  }, [quantity, incrementAmount, id, handleQuantityChange]);
-
-  const handleDecrease = useCallback(() => {
-    const newQuantity = quantity - incrementAmount;
-    if (newQuantity >= minQuantity) {
+    const handleIncrease = useCallback(() => {
+      const newQuantity = quantity + incrementAmount;
       setQuantity(newQuantity);
       handleQuantityChange(id, newQuantity);
-    }
-  }, [quantity, incrementAmount, minQuantity, id, handleQuantityChange]);
+    }, [quantity, incrementAmount, id, handleQuantityChange]);
 
-  const handleRemove = useCallback(() => {
-    handleRemoveItem(id);
-  }, [id, handleRemoveItem]);
+    const handleDecrease = useCallback(() => {
+      const newQuantity = quantity - incrementAmount;
+      if (newQuantity >= minQuantity) {
+        setQuantity(newQuantity);
+        handleQuantityChange(id, newQuantity);
+      }
+    }, [quantity, incrementAmount, minQuantity, id, handleQuantityChange]);
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <Image source={{ uri: ProductImage }} style={styles.image} />
-        <View style={styles.details}>
-          <Text style={styles.productName}>{ProductName}</Text>
-          <Text style={styles.productDescription}>
-            {ProductBrand} | Qty.: {displayedQuantity}
-          </Text>
-          <Text style={styles.productDescription}>
-            Buying Method: {buyingMathode}
-          </Text>
-          <TouchableOpacity onPress={handleRemove}>
-            <Text style={styles.removeText}>Remove</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.actions}>
-          <TouchableOpacity
-            onPress={handleDecrease}
-            style={styles.touchMinus}
-            disabled={quantity === minQuantity}
-          >
-            <MinusIcon size={20} color={quantity === minQuantity ? "#888888" : "#000"} />
-          </TouchableOpacity>
-          <View style={styles.quantityCLass}>
-            <Text>{displayedQuantity}</Text>
+    const handleRemove = useCallback(() => {
+      handleRemoveItem(id);
+    }, [id, handleRemoveItem]);
+
+    return (
+      <View style={styles.container}>
+        <View style={styles.row}>
+          <Image source={{ uri: ProductImage }} style={styles.image} />
+          <View style={styles.details}>
+            <Text style={styles.productName}>{ProductName}</Text>
+            <Text style={styles.productDescription}>
+              {ProductBrand} | Qty.: {displayedQuantity}
+            </Text>
+            <Text style={styles.productDescription}>
+              Méthode d'achat: {buyingMathode}
+            </Text>
+            <TouchableOpacity onPress={handleRemove}>
+              <Text style={styles.removeText}>Supprimer</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={handleIncrease} style={styles.touchPlus}>
-            <PlusIcon size={20} color="#fff" />
-          </TouchableOpacity>
+          <View style={styles.actions}>
+            <TouchableOpacity
+              onPress={handleDecrease}
+              style={styles.touchMinus}
+              disabled={quantity === minQuantity}
+            >
+              <MinusIcon
+                size={20}
+                color={quantity === minQuantity ? "#888888" : "#000"}
+              />
+            </TouchableOpacity>
+            <View style={styles.quantityCLass}>
+              <Text>{displayedQuantity}</Text>
+            </View>
+            <TouchableOpacity onPress={handleIncrease} style={styles.touchPlus}>
+              <PlusIcon size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
-  );
-});
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   quantityCLass: {

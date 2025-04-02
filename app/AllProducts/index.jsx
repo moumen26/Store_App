@@ -17,7 +17,7 @@ const AllProductsScreen = () => {
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <BackButton />
         <Text className="text-center" style={styles.titleScreen}>
-          All Products
+          Tous les produits
         </Text>
         <View style={styles.Vide}></View>
       </View>
@@ -35,10 +35,12 @@ const AllProductsScreen = () => {
             imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
               item?.product?.image
             }`}
-            onPress={() => navigation.navigate("Product/index", { 
-              data: item,
-              storeId: storeId,
-            })}
+            onPress={() =>
+              navigation.navigate("Product/index", {
+                data: item,
+                storeId: storeId,
+              })
+            }
           />
         ))}
       </ScrollView>

@@ -83,7 +83,7 @@ const ArchiveOrder = () => {
       <View className="mx-5 mb-[20] flex-row items-center justify-between">
         <BackButton />
         <Text className="text-center" style={styles.titleScreen}>
-          My Archive Orders
+          Mes commandes archivées
         </Text>
         <View style={styles.Vide}></View>
       </View>
@@ -130,11 +130,12 @@ const ArchiveOrder = () => {
           >
             <Text
               style={{
+                color: "#888888",
                 fontSize: 14,
                 fontFamily: "Montserrat-Regular",
               }}
             >
-              No order found
+              Aucune commande trouvée
             </Text>
           </View>
         )}

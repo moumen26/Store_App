@@ -132,6 +132,7 @@ const cart = () => {
           >
             <Text
               style={{
+                color: "#888888",
                 fontSize: 14,
                 fontFamily: "Montserrat-Regular",
               }}

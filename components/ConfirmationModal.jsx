@@ -20,7 +20,7 @@ const ConfirmationModal = ({
 }) => {
   return (
     <Modal
-      animationType="fade"
+      animationType="slide"
       transparent={true}
       visible={visible}
       onRequestClose={onCancel}

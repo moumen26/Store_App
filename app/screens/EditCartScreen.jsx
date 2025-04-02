@@ -19,11 +19,17 @@ const EditCartScreen = memo(({ data, storeId, onClose }) => {
       const itemToUpdate = data.find((item) => item.stock === id);
       if (!itemToUpdate) return; // Handle case where item is not found
 
-      const updatedPrice = (itemToUpdate.price * newQuantity) / itemToUpdate.quantity;
+      const updatedPrice =
+        (itemToUpdate.price * newQuantity) / itemToUpdate.quantity;
 
       dispatch({
         type: "UPDATE_CART",
-        payload: { stock: id, quantity: newQuantity, price: updatedPrice, storeId },
+        payload: {
+          stock: id,
+          quantity: newQuantity,
+          price: updatedPrice,
+          storeId,
+        },
       });
     },
     [data, dispatch, storeId]
@@ -62,7 +68,7 @@ const EditCartScreen = memo(({ data, storeId, onClose }) => {
 
   return (
     <Animated.View style={styles.modalView}>
-      <Text style={styles.titleCategory}>Order Details</Text>
+      <Text style={styles.titleCategory}>Détails de la Commande</Text>
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
@@ -71,7 +77,7 @@ const EditCartScreen = memo(({ data, storeId, onClose }) => {
       </ScrollView>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.loginButton} onPress={onClose}>
-          <Text style={styles.loginButtonText}>Close</Text>
+          <Text style={styles.loginButtonText}>Fermer</Text>
         </TouchableOpacity>
       </View>
     </Animated.View>

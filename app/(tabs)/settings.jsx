@@ -37,7 +37,7 @@ const settings = () => {
     {
       id: "name",
       icon: <UserIcon color="#26667E" size={18} />,
-      label: "Name",
+      label: "Nom",
       value: `${user.info.firstName} ${user.info.lastName}`,
     },
     {
@@ -49,13 +49,13 @@ const settings = () => {
     {
       id: "password",
       icon: <LockClosedIcon color="#26667E" size={18} />,
-      label: "Password",
+      label: "Mot de passe",
       value: "mot*****",
     },
     {
       id: "phone",
       icon: <PhoneIcon color="#26667E" size={18} />,
-      label: "Phone Number",
+      label: "Numero de télephone",
       value: user.info.phoneNumber,
     },
     {
@@ -163,26 +163,27 @@ const settings = () => {
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.textItemRegular}>{currentSetting.label}</Text>
-            <TextInput
-              style={styles.modalInput}
-              value={currentValue}
-              editable={false}
-            />
-            <TextInput
-              style={styles.modalInput}
-              value={newValue}
-              onChangeText={setNewValue}
-            />
+            <Text style={styles.textItemRegular}>
+              Modifier {currentSetting.label}
+            </Text>
+            <View style={styles.inputChange}>
+              <UserIcon size={20} color="#888888" />
+              <TextInput
+                style={styles.modalInput}
+                value={newValue}
+                onChangeText={setNewValue}
+              />
+            </View>
+
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.saveButton} onPress={saveSetting}>
-                <Text style={styles.buttonText}>Sauvegarder</Text>
+              <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
+                <Text style={styles.buttonTextCancel}>Annuler</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={closeModal}
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={saveSetting}
               >
-                <Text style={styles.buttonTextCancel}>Annuler</Text>
+                <Text style={styles.buttonText}>Sauvegarder</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -207,7 +208,7 @@ const settings = () => {
                 <Text style={styles.buttonTextCancel}>Annuler</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.deleteButton}
+                style={[styles.modalButton, styles.confirmButton]}
                 onPress={confirmDeleteAccount}
               >
                 <Text style={styles.buttonText}>Confirmer</Text>
@@ -297,19 +298,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
   },
-  modalInput: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    marginTop: 10,
-    marginBottom: 10,
-    paddingLeft: 10,
-    borderRadius: 5,
-  },
+
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 10,
   },
   saveButton: {
     backgroundColor: "#3E9CB9",
@@ -352,6 +345,33 @@ const styles = StyleSheet.create({
   buttonVersion: {
     flexDirection: "column",
     gap: 40,
+  },
+  inputChange: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    height: 40,
+    borderColor: "#ccc",
+    marginTop: 10,
+    borderWidth: 1,
+    paddingLeft: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  modalInput: {
+    height: 40,
+    paddingLeft: 10,
+    width: "100%",
+  },
+  modalButton: {
+    backgroundColor: "#F7F7F7",
+    borderRadius: 10,
+    padding: 10,
+    width: 120,
+    alignItems: "center",
+  },
+  confirmButton: {
+    backgroundColor: "#26667E",
   },
 });
 

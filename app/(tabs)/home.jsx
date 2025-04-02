@@ -288,7 +288,7 @@ const home = () => {
           >
             <MagnifyingGlassIcon color="#888888" size={20} />
             <TextInput
-              style={styles.searchButton}
+              style={styles.searchButto}
               placeholder="Rechercher par magasin..."
               placeholderTextColor="#888888"
               // value={searchQuery}
@@ -338,7 +338,6 @@ const home = () => {
 const styles = StyleSheet.create({
   stores: {
     flex: 1,
-    paddingBottom: 100,
   },
   specialForYou: {
     marginBottom: 10,

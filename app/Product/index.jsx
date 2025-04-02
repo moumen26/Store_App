@@ -44,7 +44,9 @@ const Product = memo(() => {
       ...product,
       stock: data?._id,
       product: {
-        image: `${Config.API_URL.replace("/api", "")}/files/${data?.product?.image}`,
+        image: `${Config.API_URL.replace("/api", "")}/files/${
+          data?.product?.image
+        }`,
         name: `${data?.product?.name} ${data?.product?.size}`,
         brand: data?.product?.brand?.name,
       },
@@ -55,7 +57,9 @@ const Product = memo(() => {
     navigator.goBack();
   }, [data, product, storeId, dispatch, navigator]);
 
-  const imageUri = `${Config.API_URL.replace("/api", "")}/files/${data?.product?.image}`;
+  const imageUri = `${Config.API_URL.replace("/api", "")}/files/${
+    data?.product?.image
+  }`;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,9 +90,9 @@ const Product = memo(() => {
         <Text style={styles.productNameText}>
           {`${data?.product?.brand?.name} ${data?.product?.name} ${data?.product?.size}`}
         </Text>
-        <Text style={styles.priceText}>Price per unit: DA {data?.selling}</Text>
+        <Text style={styles.priceText}>Prix par unité: {data?.selling} DA</Text>
         <Text style={styles.priceText}>
-          Price per box: DA {data?.selling * data?.product?.boxItems}
+          Prix par boîte: {data?.selling * data?.product?.boxItems} DA
         </Text>
         <View style={styles.boxContainer}>
           <View style={styles.boxContent}>
@@ -108,7 +112,7 @@ const Product = memo(() => {
       />
       <View style={styles.applyButtonContainer}>
         <TouchableOpacity style={styles.loginButton} onPress={handleApplyPress}>
-          <Text style={styles.loginButtonText}>Apply</Text>
+          <Text style={styles.loginButtonText}>Ajouter au panier</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -164,6 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 4,
+    gap: 2,
   },
   boxText: {
     fontSize: 12,

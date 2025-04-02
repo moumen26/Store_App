@@ -7,133 +7,170 @@ import {
   Animated,
   Image,
 } from "react-native";
-import { BuildingStorefrontIcon, ClockIcon } from "react-native-heroicons/outline";
+import {
+  BuildingStorefrontIcon,
+  ClockIcon,
+} from "react-native-heroicons/outline";
 
 const LocationIcon = require("../assets/icons/Location.png");
 
-const OrderType = memo(({ storeId, storeCart, navigation, handleChangeType }) => {
-  const [activeTab, setActiveTab] = useState("");
-  const opacityAnim = useRef(new Animated.Value(1)).current;
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+const OrderType = memo(
+  ({ storeId, storeCart, navigation, handleChangeType }) => {
+    const [activeTab, setActiveTab] = useState("");
+    const opacityAnim = useRef(new Animated.Value(1)).current;
+    const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const handleChangeActiveTab = useCallback(
-    (val) => {
-      setActiveTab(val);
-      handleChangeType(val);
-    },
-    [handleChangeType]
-  );
+    const handleChangeActiveTab = useCallback(
+      (val) => {
+        setActiveTab(val);
+        handleChangeType(val);
+      },
+      [handleChangeType]
+    );
 
-  const animateTabChange = useCallback(() => {
-    Animated.sequence([
-      Animated.timing(opacityAnim, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [opacityAnim]);
+    const animateTabChange = useCallback(() => {
+      Animated.sequence([
+        Animated.timing(opacityAnim, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, [opacityAnim]);
 
-  const handleMenuClick = useCallback(
-    (tab) => {
-      handleChangeActiveTab(tab);
-      animateTabChange();
-    },
-    [handleChangeActiveTab, animateTabChange]
-  );
+    const handleMenuClick = useCallback(
+      (tab) => {
+        handleChangeActiveTab(tab);
+        animateTabChange();
+      },
+      [handleChangeActiveTab, animateTabChange]
+    );
 
-  const handleChangePress = useCallback(() => {
-    navigation.navigate("ShippingAddress/index", { storeId });
-  }, [navigation, storeId]);
+    const handleChangePress = useCallback(() => {
+      navigation.navigate("ShippingAddress/index", { storeId });
+    }, [navigation, storeId]);
 
-  const renderDeliveryContent = () => (
-    <View style={styles.tabContent}>
-      <View style={styles.headerRow}>
-        <Text style={styles.titleCategory}>Delivery Address</Text>
-        {!storeCart[0]?.shippingAddress && (
-          <TouchableOpacity style={styles.changeButton} onPress={handleChangePress}>
-            <Text style={styles.textChange}>Add</Text>
-          </TouchableOpacity>
+    const renderDeliveryContent = () => (
+      <View style={styles.tabContent}>
+        <View style={styles.headerRow}>
+          <Text style={styles.titleCategory}>Adresse de livraison</Text>
+          {!storeCart[0]?.shippingAddress && (
+            <TouchableOpacity
+              style={styles.changeButton}
+              onPress={handleChangePress}
+            >
+              <Text style={styles.textChange}>Ajouter</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        {storeCart[0]?.shippingAddress && (
+          <View style={styles.addressContainer}>
+            <View style={styles.gapRow}>
+              <View style={styles.iconClass}>
+                <Image source={LocationIcon} />
+              </View>
+              <View style={styles.gapColumn}>
+                <Text style={styles.textPlace}>
+                  {storeCart[0]?.shippingAddress?.name}
+                </Text>
+                <Text style={styles.textdescription}>
+                  {storeCart[0]?.shippingAddress?.address}
+                </Text>
+                <View style={styles.timeContainer}>
+                  <ClockIcon size={16} color="#888888" />
+                  <Text style={styles.textdescription}>
+                    25 minutes estimate arrived
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.changeButton}
+              onPress={handleChangePress}
+            >
+              <Text style={styles.textChange}>Modifier</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </View>
-      {storeCart[0]?.shippingAddress && (
+    );
+
+    const renderPickupContent = () => (
+      <View style={styles.tabContent}>
+        <Text style={styles.titleCategory}>Adresse de retrait</Text>
         <View style={styles.addressContainer}>
           <View style={styles.gapRow}>
             <View style={styles.iconClass}>
-              <Image source={LocationIcon} />
+              <BuildingStorefrontIcon color="#26667E" size={20} />
             </View>
             <View style={styles.gapColumn}>
-              <Text style={styles.textPlace}>{storeCart[0]?.shippingAddress?.name}</Text>
+              <Text style={styles.textPlace}>The Daily Grind Hub</Text>
               <Text style={styles.textdescription}>
-                {storeCart[0]?.shippingAddress?.address}
+                Rue Douid Mohamed, Beni Tamou
               </Text>
               <View style={styles.timeContainer}>
                 <ClockIcon size={16} color="#888888" />
-                <Text style={styles.textdescription}>25 minutes estimate arrived</Text>
+                <Text style={styles.textdescription}>
+                  1.5 km away from your location
+                </Text>
               </View>
             </View>
           </View>
-          <TouchableOpacity style={styles.changeButton} onPress={handleChangePress}>
-            <Text style={styles.textChange}>Change</Text>
+        </View>
+      </View>
+    );
+
+    return (
+      <View>
+        <View style={styles.orderTypeButtonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.buttonOrderType,
+              activeTab === "delivery" && styles.orderTypeToggle,
+            ]}
+            onPress={() => handleMenuClick("delivery")}
+          >
+            <Text
+              style={[
+                styles.text,
+                activeTab === "delivery" && styles.orderTypeToggleText,
+              ]}
+            >
+              Livraison
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.buttonOrderType,
+              activeTab === "pickup" && styles.orderTypeToggle,
+            ]}
+            onPress={() => handleMenuClick("pickup")}
+          >
+            <Text
+              style={[
+                styles.text,
+                activeTab === "pickup" && styles.orderTypeToggleText,
+              ]}
+            >
+              Retrait
+            </Text>
           </TouchableOpacity>
         </View>
-      )}
-    </View>
-  );
-
-  const renderPickupContent = () => (
-    <View style={styles.tabContent}>
-      <Text style={styles.titleCategory}>Pickup Address</Text>
-      <View style={styles.addressContainer}>
-        <View style={styles.gapRow}>
-          <View style={styles.iconClass}>
-            <BuildingStorefrontIcon color="#26667E" size={20} />
-          </View>
-          <View style={styles.gapColumn}>
-            <Text style={styles.textPlace}>The Daily Grind Hub</Text>
-            <Text style={styles.textdescription}>Rue Douid Mohamed, Beni Tamou</Text>
-            <View style={styles.timeContainer}>
-              <ClockIcon size={16} color="#888888" />
-              <Text style={styles.textdescription}>1.5 km away from your location</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
-
-  return (
-    <View>
-      <View style={styles.orderTypeButtonContainer}>
-        <TouchableOpacity
-          style={[styles.buttonOrderType, activeTab === "delivery" && styles.orderTypeToggle]}
-          onPress={() => handleMenuClick("delivery")}
+        <Animated.View
+          style={{ opacity: opacityAnim, transform: [{ scale: scaleAnim }] }}
         >
-          <Text style={[styles.text, activeTab === "delivery" && styles.orderTypeToggleText]}>
-            Delivery
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.buttonOrderType, activeTab === "pickup" && styles.orderTypeToggle]}
-          onPress={() => handleMenuClick("pickup")}
-        >
-          <Text style={[styles.text, activeTab === "pickup" && styles.orderTypeToggleText]}>
-            Pickup
-          </Text>
-        </TouchableOpacity>
+          {activeTab === "delivery" && renderDeliveryContent()}
+          {activeTab === "pickup" && renderPickupContent()}
+        </Animated.View>
       </View>
-      <Animated.View style={{ opacity: opacityAnim, transform: [{ scale: scaleAnim }] }}>
-        {activeTab === "delivery" && renderDeliveryContent()}
-        {activeTab === "pickup" && renderPickupContent()}
-      </Animated.View>
-    </View>
-  );
-});
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   iconClass: { width: 20 },

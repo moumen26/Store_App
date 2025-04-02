@@ -24,7 +24,7 @@ const BrandScreen = () => {
       </View>
 
       <Text className="mb-[12] mx-5" style={styles.titleCategory}>
-        Product List
+        Liste des produits
       </Text>
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 0 }}
@@ -43,10 +43,12 @@ const BrandScreen = () => {
             imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
               item?.product?.image
             }`}
-            onPress={() => navigation.navigate("Product/index", { 
-              data: item,
-              storeId: storeId,
-            })}
+            onPress={() =>
+              navigation.navigate("Product/index", {
+                data: item,
+                storeId: storeId,
+              })
+            }
           />
         ))}
       </ScrollView>

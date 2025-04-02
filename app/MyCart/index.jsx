@@ -143,20 +143,20 @@ const MyCartScreen = () => {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#FF033E" />
           <Text style={styles.loadingText}>
-            Please wait till the request is being processed...
+            Veuillez patienter pendant le traitement de votre demande...
           </Text>
         </View>
       ) : (
         <>
           <View className="mx-5" style={styles.FlatList}>
-            <ScrollView>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
               <View style={styles.header}>
                 <BackButton />
-                <Text style={styles.titleScreen}>My Cart</Text>
+                <Text style={styles.titleScreen}>Mon Panier</Text>
                 <View style={styles.emptyView} />
               </View>
               <View style={styles.orderDetailsHeader}>
-                <Text style={styles.titleCategory}>Order Details</Text>
+                <Text style={styles.titleCategory}>Détails de la Commande</Text>
                 {storeCart.length > 0 && (
                   <TouchableOpacity onPress={() => setModalVisible(true)}>
                     <PencilSquareIcon size={24} color="#26667E" />
@@ -168,24 +168,24 @@ const MyCartScreen = () => {
                   renderProductItems()
                 ) : (
                   <View style={styles.noProductContainer}>
-                    <Text style={styles.noText}>No product is available</Text>
+                    <Text style={styles.noText}>Aucun produit disponible</Text>
                   </View>
                 )}
               </View>
               {storeCart.length > 0 && (
                 <View style={styles.commandeContainer}>
-                  <Text style={styles.sousTitre}>Default Price</Text>
+                  <Text style={styles.sousTitre}>Prix par défaut</Text>
                   <View style={styles.defaultPriceScroll}>
                     {renderDetailsItems()}
                   </View>
                   <View style={styles.subTotalContainer}>
-                    <Text style={styles.sousTitre}>Sub total</Text>
+                    <Text style={styles.sousTitre}>Sous-total</Text>
                     <Text style={styles.sousTitre}>DA {total}</Text>
                   </View>
                 </View>
               )}
               <View style={styles.orderTypeContainer}>
-                <Text style={styles.titleCategory}>Order Type</Text>
+                <Text style={styles.titleCategory}>Type de commande</Text>
                 <OrderType
                   storeId={storeId}
                   storeCart={storeCart}
@@ -203,7 +203,7 @@ const MyCartScreen = () => {
               style={styles.loginButton}
               onPress={() => setConfirmationModalVisible(true)}
             >
-              <Text style={styles.loginButtonText}>Place Order</Text>
+              <Text style={styles.loginButtonText}>Passer la commande</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -270,14 +270,16 @@ const styles = StyleSheet.create({
   },
   productListContainer: {
     marginTop: 12,
+    justifyContent: "flex-start",
+    flex: 6,
   },
   noProductContainer: {
+    flex: 1, 
     justifyContent: "center",
     alignItems: "center",
-    height: 200,
   },
   noText: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: "Montserrat-Regular",
     color: "#888888",
   },
@@ -292,7 +294,6 @@ const styles = StyleSheet.create({
   defaultPriceScroll: {
     gap: 2,
     paddingBottom: 8,
-
   },
   subTotalContainer: {
     flexDirection: "row",

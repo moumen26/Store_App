@@ -31,7 +31,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="home"
           options={{
-            title: "Home",
+            title: "Accueil",
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <HomeIcon name="home" size={24} color={color} />
@@ -41,7 +41,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="stores"
           options={{
-            title: "Stores",
+            title: "Magasins",
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <BuildingStorefrontIcon name="stores" size={24} color={color} />
@@ -51,7 +51,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="saved"
           options={{
-            title: "Saved",
+            title: "Enregistré",
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <HeartIcon name="saved" size={24} color={color} />
@@ -61,7 +61,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="cart"
           options={{
-            title: "Orders",
+            title: "Commandes",
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <ShoppingCartIcon name="orders" size={24} color={color} />
@@ -71,7 +71,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="settings"
           options={{
-            title: "Settings",
+            title: "Paramètres",
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <Cog8ToothIcon name="settings" size={24} color={color} />

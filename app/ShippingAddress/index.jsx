@@ -1,5 +1,11 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import BackButton from "../../components/BackButton";
@@ -17,7 +23,10 @@ const ShippingAddressScreen = memo(() => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
   // Filter cart items for the current store
-  const storeCart = useMemo(() => cart?.filter((item) => item.store === storeId) || [], [cart, storeId]);
+  const storeCart = useMemo(
+    () => cart?.filter((item) => item.store === storeId) || [],
+    [cart, storeId]
+  );
 
   const handleSelectItem = useCallback((index) => {
     setSelectedIndex(index);
@@ -25,7 +34,9 @@ const ShippingAddressScreen = memo(() => {
 
   const handleApplyPress = useCallback(() => {
     if (!storeCart || storeCart.length === 0) {
-      setSnackbarMessage("Please select some products before choosing an address.");
+      setSnackbarMessage(
+        "Please select some products before choosing an address."
+      );
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
@@ -35,7 +46,9 @@ const ShippingAddressScreen = memo(() => {
       return;
     }
 
-    const selectedAddress = user?.info?.storeAddresses?.find((item) => item._id === selectedIndex);
+    const selectedAddress = user?.info?.storeAddresses?.find(
+      (item) => item._id === selectedIndex
+    );
     if (selectedAddress) {
       dispatch({
         type: "ADD_TO_CART_ADDRESS",
@@ -85,7 +98,10 @@ const ShippingAddressScreen = memo(() => {
         <View style={styles.emptyView} />
       </View>
       <View style={styles.scrollContainer}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           {renderItems()}
         </ScrollView>
       </View>
@@ -94,7 +110,10 @@ const ShippingAddressScreen = memo(() => {
           <Text style={styles.addAddressText}>+ Add New Shipping Address</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.footer}>
+      <View
+        style={styles.navigationClass}
+        className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
+      >
         <TouchableOpacity style={styles.applyButton} onPress={handleApplyPress}>
           <Text style={styles.applyButtonText}>Apply</Text>
         </TouchableOpacity>
@@ -187,6 +206,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontFamily: "Montserrat-Regular",
+  },
+  navigationClass: {
+    borderColor: "#888888",
+    borderWidth: 0.5,
+    backgroundColor: "#fff",
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
   },
 });
 

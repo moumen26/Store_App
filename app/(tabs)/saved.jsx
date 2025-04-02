@@ -131,11 +131,12 @@ const Saved = () => {
           >
             <Text
               style={{
+                color: "#888888",
                 fontSize: 14,
                 fontFamily: "Montserrat-Regular",
               }}
             >
-              Aucun magasin trouvé{" "}
+              Aucun magasin trouvé
             </Text>
           </View>
         )}

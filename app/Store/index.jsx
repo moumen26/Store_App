@@ -246,7 +246,7 @@ const Store = () => {
           <View className="flex-row items-center mx-5 mb-[10] space-x-3">
             <View className="flex-1 gap-1">
               <Text style={styles.text} className="text-gray-400">
-                Store
+                Magasin
               </Text>
               <View style={styles.iconText}>
                 <BuildingStorefrontIcon name="cart" size={18} color="#26667E" />
@@ -283,7 +283,7 @@ const Store = () => {
               className="flex-1 flex-row items-center space-x-2 pl-5 h-[50px] border-[1px] rounded-3xl"
             >
               <MagnifyingGlassIcon color="#888888" size={20} />
-              <Text style={styles.search}>Search by Product..</Text>
+              <Text style={styles.search}>Rechercher par produit...</Text>
             </View>
           </TouchableOpacity>
         ) : (
@@ -296,7 +296,7 @@ const Store = () => {
           </View>
         ) : PrivatePublicitiesData && PrivatePublicitiesData?.length > 0 ? (
           <View className="mx-5 mb-[20]">
-            <Text style={styles.titleCategory}>#SpecialForYou</Text>
+            <Text style={styles.titleCategory}>#SpécialPourVous</Text>
             <SliderStore data={PrivatePublicitiesData} />
           </View>
         ) : (
@@ -309,7 +309,7 @@ const Store = () => {
           </View>
         ) : BrandsData && BrandsData?.length > 0 ? (
           <View className="mx-5 mb-[20]">
-            <Text style={styles.titleCategory}>Brands</Text>
+            <Text style={styles.titleCategory}>Marques</Text>
             <ScrollView
               contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
               horizontal
@@ -346,7 +346,7 @@ const Store = () => {
         ) : ProductsData && ProductsData?.length > 0 ? (
           <View className="mx-5 mb-3">
             <View className="flex-row items-center justify-between">
-              <Text style={styles.titleCategory}>All Products</Text>
+              <Text style={styles.titleCategory}>Tous les produits</Text>
               <TouchableOpacity>
                 <Text
                   onPress={() =>
@@ -357,7 +357,7 @@ const Store = () => {
                   }
                   style={styles.seeAll}
                 >
-                  See All
+                  Voir tout
                 </Text>
               </TouchableOpacity>
             </View>
@@ -408,7 +408,7 @@ const Store = () => {
         ) : PopularProductsData && PopularProductsData?.length > 0 ? (
           <View className="mx-5 mb-[20]">
             <View className="flex-row items-center justify-between">
-              <Text style={styles.titleCategory}>Popular Products</Text>
+              <Text style={styles.titleCategory}>Produits populaires</Text>
               <TouchableOpacity>
                 <Text
                   onPress={() =>
@@ -419,7 +419,7 @@ const Store = () => {
                   }
                   style={styles.seeAll}
                 >
-                  See All
+                  Voir tout
                 </Text>
               </TouchableOpacity>
             </View>

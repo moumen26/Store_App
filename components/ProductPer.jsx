@@ -1,4 +1,11 @@
-import React, { useState, useRef, useCallback, useMemo, memo, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+  memo,
+  useEffect,
+} from "react";
 import {
   View,
   Text,
@@ -9,148 +16,167 @@ import {
 } from "react-native";
 import { MinusIcon, PlusIcon } from "react-native-heroicons/outline";
 
-const ProductPer = memo(({
-  selling,
-  quantity,
-  buyingMathode,
-  boxItems,
-  quantityLimit,
-  handleProductOnChange,
-}) => {
-  const [activeTab, setActiveTab] = useState(buyingMathode === "unity" ? "unity" : "box");
-  const [itemQuantity, setItemQuantity] = useState(0);
+const ProductPer = memo(
+  ({
+    selling,
+    quantity,
+    buyingMathode,
+    boxItems,
+    quantityLimit,
+    handleProductOnChange,
+  }) => {
+    const [activeTab, setActiveTab] = useState(
+      buyingMathode === "unity" ? "unity" : "box"
+    );
+    const [itemQuantity, setItemQuantity] = useState(0);
 
-  const opacityAnim = useRef(new Animated.Value(1)).current;
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+    const opacityAnim = useRef(new Animated.Value(1)).current;
+    const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  // Derived values
-  const quantityPerItem = useMemo(
-    () => (activeTab === "box" ? boxItems * itemQuantity : itemQuantity),
-    [activeTab, boxItems, itemQuantity]
-  );
-  const totalPrice = useMemo(
-    () => quantityPerItem * selling,
-    [quantityPerItem, selling]
-  );
+    // Derived values
+    const quantityPerItem = useMemo(
+      () => (activeTab === "box" ? boxItems * itemQuantity : itemQuantity),
+      [activeTab, boxItems, itemQuantity]
+    );
+    const totalPrice = useMemo(
+      () => quantityPerItem * selling,
+      [quantityPerItem, selling]
+    );
 
-  // Handle product change
-  const handleProductChange = useCallback(() => {
-    handleProductOnChange({
-      quantity: quantityPerItem,
-      price: totalPrice,
-      unityPrice: selling,
-      buyingMathode: activeTab,
-      boxItems: boxItems,
-    });
-  }, [quantityPerItem, totalPrice, selling, activeTab, boxItems, handleProductOnChange]);
+    // Handle product change
+    const handleProductChange = useCallback(() => {
+      handleProductOnChange({
+        quantity: quantityPerItem,
+        price: totalPrice,
+        unityPrice: selling,
+        buyingMathode: activeTab,
+        boxItems: boxItems,
+      });
+    }, [
+      quantityPerItem,
+      totalPrice,
+      selling,
+      activeTab,
+      boxItems,
+      handleProductOnChange,
+    ]);
 
-  // Trigger handleProductChange when relevant values change
-  useEffect(() => {
-    handleProductChange();
-  }, [handleProductChange]);
+    // Trigger handleProductChange when relevant values change
+    useEffect(() => {
+      handleProductChange();
+    }, [handleProductChange]);
 
-  // Animation logic
-  const animateTabChange = useCallback(() => {
-    Animated.sequence([
-      Animated.timing(opacityAnim, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [opacityAnim]);
+    // Animation logic
+    const animateTabChange = useCallback(() => {
+      Animated.sequence([
+        Animated.timing(opacityAnim, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }, [opacityAnim]);
 
-  const handleMenuClick = useCallback(
-    (tab) => {
-      setItemQuantity(0);
-      setActiveTab(tab);
-      animateTabChange();
-    },
-    [animateTabChange]
-  );
+    const handleMenuClick = useCallback(
+      (tab) => {
+        setItemQuantity(0);
+        setActiveTab(tab);
+        animateTabChange();
+      },
+      [animateTabChange]
+    );
 
-  const handleIncrease = useCallback(() => {
-    const maxQuantity =
-      activeTab === "unity"
-        ? quantity
-        : quantity / boxItems;
-    if (itemQuantity < (quantityLimit > 0 ? quantityLimit : maxQuantity)) {
-      setItemQuantity((prev) => prev + 1);
-    }
-  }, [activeTab, quantity, boxItems, quantityLimit, itemQuantity]);
+    const handleIncrease = useCallback(() => {
+      const maxQuantity =
+        activeTab === "unity" ? quantity : quantity / boxItems;
+      if (itemQuantity < (quantityLimit > 0 ? quantityLimit : maxQuantity)) {
+        setItemQuantity((prev) => prev + 1);
+      }
+    }, [activeTab, quantity, boxItems, quantityLimit, itemQuantity]);
 
-  const handleDecrease = useCallback(() => {
-    if (itemQuantity > 0) {
-      setItemQuantity((prev) => prev - 1);
-    }
-  }, [itemQuantity]);
+    const handleDecrease = useCallback(() => {
+      if (itemQuantity > 0) {
+        setItemQuantity((prev) => prev - 1);
+      }
+    }, [itemQuantity]);
 
-  return (
-    <View style={styles.ProductDetail}>
-      <View>
-        <View style={styles.boxUnit}>
-          {(buyingMathode === "unity" || buyingMathode === "both") && (
-            <TouchableOpacity
-              style={styles.boxUnitText}
-              onPress={() => handleMenuClick("unity")}
-            >
-              <View
-                style={[
-                  styles.checkbox,
-                  activeTab === "unity" && styles.checkboxChecked,
-                ]}
-              />
-              <Text style={styles.PriceText}>Per unit</Text>
-            </TouchableOpacity>
-          )}
-          {(buyingMathode === "box" || buyingMathode === "both") && (
-            <TouchableOpacity
-              style={styles.boxUnitText}
-              onPress={() => handleMenuClick("box")}
-            >
-              <View
-                style={[
-                  styles.checkbox,
-                  activeTab === "box" && styles.checkboxChecked,
-                ]}
-              />
-              <Text style={styles.PriceText}>Per box</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        <Animated.View style={{ opacity: opacityAnim, transform: [{ scale: scaleAnim }] }}>
-          <View style={styles.boxUnitContainer}>
-            {quantity > 0 ? (
-              <View style={styles.minusPlus}>
-                <TouchableOpacity
-                  style={styles.touchMinus}
-                  onPress={handleDecrease}
-                  disabled={itemQuantity === 0}
-                >
-                  <MinusIcon size={20} color={itemQuantity > 0 ? "#3E9CB9" : "#888888"} />
-                </TouchableOpacity>
-                <Text style={styles.textQuantity}>{itemQuantity}</Text>
-                <TouchableOpacity style={styles.touchPlus} onPress={handleIncrease}>
-                  <PlusIcon size={20} color="#fff" />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <Text style={styles.OutOfStock}>Out of stock</Text>
+    return (
+      <View style={styles.ProductDetail}>
+        <View>
+          <View style={styles.boxUnit}>
+            {(buyingMathode === "unity" || buyingMathode === "both") && (
+              <TouchableOpacity
+                style={styles.boxUnitText}
+                onPress={() => handleMenuClick("unity")}
+              >
+                <View
+                  style={[
+                    styles.checkbox,
+                    activeTab === "unity" && styles.checkboxChecked,
+                  ]}
+                />
+                <Text style={styles.PriceText}>Par unité</Text>
+              </TouchableOpacity>
             )}
-            <View style={styles.SubTotal}>
-              <Text style={styles.textSubTotal}>DA {totalPrice.toFixed(2)}</Text>
-            </View>
+            {(buyingMathode === "box" || buyingMathode === "both") && (
+              <TouchableOpacity
+                style={styles.boxUnitText}
+                onPress={() => handleMenuClick("box")}
+              >
+                <View
+                  style={[
+                    styles.checkbox,
+                    activeTab === "box" && styles.checkboxChecked,
+                  ]}
+                />
+                <Text style={styles.PriceText}>Par boîte</Text>
+              </TouchableOpacity>
+            )}
           </View>
-        </Animated.View>
+          <Animated.View
+            style={{ opacity: opacityAnim, transform: [{ scale: scaleAnim }] }}
+          >
+            <View style={styles.boxUnitContainer}>
+              {quantity > 0 ? (
+                <View style={styles.minusPlus}>
+                  <TouchableOpacity
+                    style={styles.touchMinus}
+                    onPress={handleDecrease}
+                    disabled={itemQuantity === 0}
+                  >
+                    <MinusIcon
+                      size={20}
+                      color={itemQuantity > 0 ? "#3E9CB9" : "#888888"}
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.textQuantity}>{itemQuantity}</Text>
+                  <TouchableOpacity
+                    style={styles.touchPlus}
+                    onPress={handleIncrease}
+                  >
+                    <PlusIcon size={20} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Text style={styles.OutOfStock}>Out of stock</Text>
+              )}
+              <View style={styles.SubTotal}>
+                <Text style={styles.textSubTotal}>
+                  DA {totalPrice.toFixed(2)}
+                </Text>
+              </View>
+            </View>
+          </Animated.View>
+        </View>
       </View>
-    </View>
-  );
-});
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   ProductDetail: {

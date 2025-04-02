@@ -229,7 +229,7 @@ const EReceiptScreen = () => {
             <>
               <View className="mb-[20] flex-row items-center justify-between">
                 <BackButton />
-                <Text style={styles.titleScreen}>E-Receipt</Text>
+                <Text style={styles.titleScreen}>E-Reçu</Text>
                 <TrackButton
                   data={OrderData}
                   OrderDataRefetch={OrderDataRefetch}
@@ -257,7 +257,7 @@ const EReceiptScreen = () => {
           )}
           ListEmptyComponent={
             <View style={styles.containerNoAvailable}>
-              <Text style={styles.noText}>No product is available</Text>
+              <Text style={styles.noText}>Aucun produit disponible</Text>
             </View>
           }
           ListFooterComponent={
@@ -281,11 +281,10 @@ const EReceiptScreen = () => {
         className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
         style={styles.navigationClass}
       >
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={generatePDF}
-        >
-          <Text style={styles.loginButtonText}>Download E-Receipt</Text>
+        <TouchableOpacity style={styles.loginButton} onPress={generatePDF}>
+          <Text style={styles.loginButtonText}>
+            Télécharger le reçu électronique
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -374,7 +373,7 @@ const styles = StyleSheet.create({
     height: hp(55),
   },
   noText: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: "Montserrat-Regular",
     color: "#888888",
   },
