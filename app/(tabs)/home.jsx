@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -37,6 +37,8 @@ const api = axios.create({
 const home = () => {
   const { user } = useAuthContext();
   const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredStores, setFilteredStores] = useState([]);
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -214,6 +216,31 @@ const home = () => {
     retry: 2,
     retryDelay: 1000,
   });
+  // Update filteredStores whenever StoresData or searchQuery changes
+  useEffect(() => {
+    if (StoresData) {
+      if (searchQuery.trim() === '') {
+        // If search query is empty, show all stores
+        setFilteredStores(StoresData);
+      } else {
+        // Filter stores based on search query
+        const query = searchQuery.toLowerCase().trim();
+        const filtered = StoresData.filter(store => 
+          store.store.storeName?.toLowerCase().includes(query) || 
+          (store.store.wilaya && store.store.wilaya?.toLowerCase().includes(query))
+        );
+        setFilteredStores(filtered);
+      }
+    } else {
+      setFilteredStores([]);
+    }
+  }, [StoresData, searchQuery]);
+
+  // Handle search clear function
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
   //--------------------------------------------RENDERING--------------------------------------------
   if (PublicPublicitiesDataError || StoresDataError || CategoriesDataError) {
     return (
@@ -284,18 +311,25 @@ const home = () => {
         >
           <View
             style={styles.searchButton}
-            className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
-          >
-            <MagnifyingGlassIcon color="#888888" size={20} />
-            <TextInput
-              style={styles.searchButto}
-              placeholder="Rechercher par magasin..."
-              placeholderTextColor="#888888"
-              // value={searchQuery}
-              // onChangeText={setSearchQuery}
-            />
-            {/* <Text style={styles.search}>Search by Store..</Text> */}
-          </View>
+              className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
+            >
+              <MagnifyingGlassIcon color="#888888" size={20} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search by Store.."
+                placeholderTextColor="#888888"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity 
+                  onPress={handleClearSearch}
+                  style={styles.clearButton}
+                >
+                  <Text style={styles.clearButtonText}>✕</Text>
+                </TouchableOpacity>
+              )}
+            </View>
         </View>
       ) : (
         <></>
@@ -322,15 +356,16 @@ const home = () => {
             <LoadingStores />
           </View>
         </View>
-      ) : (CategoriesData && CategoriesData?.length > 0) ||
-        (StoresData && StoresData?.length > 0) ? (
-        <View style={styles.stores} className="mx-5">
-          <Text style={styles.titleCategory}>Mes Magasins</Text>
-          <Store StoresData={StoresData} CategoriesData={CategoriesData} />
-        </View>
-      ) : (
-        <></>
-      )}
+        ) : (CategoriesData && CategoriesData?.length > 0) ||
+        (filteredStores && filteredStores?.length > 0) ? (
+          <View style={styles.stores} className="mx-5">
+            <Text style={styles.titleCategory}>My Stores</Text>
+            <Store StoresData={filteredStores} CategoriesData={CategoriesData} />
+          </View>
+        ) : (
+          <></>
+        )
+      }
     </SafeAreaView>
   );
 };
@@ -422,6 +457,11 @@ const styles = StyleSheet.create({
   loadingStores: {
     marginTop: 16,
   },
+  searchInput:{
+    flex: 1,
+    fontSize: 12,
+    fontFamily: "Montserrat-Regular",
+  }
 });
 
 export default home;

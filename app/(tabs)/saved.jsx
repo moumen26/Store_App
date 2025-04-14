@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, FlatList, StyleSheet, TextInput } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SavedStoreItem from "../../components/SavedStoreItem";
@@ -24,6 +24,8 @@ const api = axios.create({
 const Saved = () => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredFavoriteData, setFilteredFavoriteData] = useState([]);
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch favorite data
@@ -67,6 +69,31 @@ const Saved = () => {
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
 
+  // Update filteredFavoriteData whenever FavoriteData or searchQuery changes
+  useEffect(() => {
+    if (FavoriteData) {
+      if (searchQuery.trim() === '') {
+        // If search query is empty, show all stores
+        setFilteredFavoriteData(FavoriteData);
+      } else {
+        // Filter stores based on search query
+        const query = searchQuery.toLowerCase().trim();
+        const filtered = FavoriteData?.filter(store => 
+          (store.store.storeName && store.store.storeName?.toLowerCase().includes(query)) || 
+          (store.store.wilaya && store.store.wilaya?.toLowerCase().includes(query))
+        );
+        setFilteredFavoriteData(filtered);
+      }
+    } else {
+      setFilteredFavoriteData([]);
+    }
+  }, [FavoriteData, searchQuery]);
+
+  // Handle search clear function
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
   //--------------------------------------------Rendering--------------------------------------------
   if (FavoriteDataLoading) {
     return (
@@ -98,12 +125,22 @@ const Saved = () => {
           style={styles.searchBarItem}
           placeholder="Rechercher par magasin..."
           placeholderTextColor="#888888"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
         />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity
+            onPress={handleClearSearch}
+            style={styles.clearButton}
+          >
+            <Text style={styles.clearButtonText}>✕</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.container}>
-        {FavoriteData?.length > 0 ? (
+        {filteredFavoriteData?.length > 0 ? (
           <FlatList
-            data={FavoriteData}
+            data={filteredFavoriteData}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <SavedStoreItem

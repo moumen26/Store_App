@@ -7,7 +7,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
@@ -32,8 +32,6 @@ import Search from "../loading/Search";
 import TopHomeScreen from "../loading/TopHomeScreen";
 import COMING_SOON from "../../assets/images/comingSoon.jpg";
 import { BuildingStorefrontIcon } from "react-native-heroicons/solid";
-import { store } from "expo-router/build/global-state/router-store";
-const StoreIconVector = require("../../assets/icons/Store.png");
 const api = axios.create({
   baseURL: Config.API_URL,
   headers: {
@@ -276,7 +274,10 @@ const Store = () => {
           <TouchableOpacity
             className="flex-row items-center space-x-2 mx-5 mb-[10]"
             style={styles.searchClass}
-            onPress={() => navigation.navigate("Search/index")}
+            onPress={() => navigation.navigate("Search/index",{
+              ProductsData: ProductsData,
+              storeId: storeId,
+            })}
           >
             <View
               style={styles.searchButton}

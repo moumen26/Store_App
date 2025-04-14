@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, TextInput, FlatList } from "react-native";
-import React from "react";
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from "react-native";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CartOrderItem from "../../components/CartOrderItem";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
@@ -21,6 +21,8 @@ const api = axios.create({
 });
 const cart = () => {
   const { user } = useAuthContext();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState([]);
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -65,6 +67,33 @@ const cart = () => {
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
 
+  // Update filteredOrders whenever OrdersData or searchQuery changes
+  useEffect(() => {
+    if (OrdersData) {
+      if (searchQuery.trim() === '') {
+        // If search query is empty, show all stores
+        setFilteredOrders(OrdersData);
+      } else {
+        // Filter stores based on search query
+        const query = searchQuery.toLowerCase().trim();
+        const filtered = OrdersData?.filter(order => 
+          (order.store.storeName && order.store.storeName?.toLowerCase().includes(query)) || 
+          (order.type && order.type?.toLowerCase().includes(query)) || 
+          (order._id && order._id?.toLowerCase().includes(query)) ||
+          (order.total && order.total.toString().toLowerCase().includes(query))
+        );
+        setFilteredOrders(filtered);
+      }
+    } else {
+      setFilteredOrders([]);
+    }
+  }, [OrdersData, searchQuery]);
+
+  // Handle search clear function
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
   //--------------------------------------------Rendering--------------------------------------------
   if (OrdersDataLoading) {
     return (
@@ -98,14 +127,22 @@ const cart = () => {
           style={styles.searchBarItem}
           placeholder="Recherchez votre commande..."
           placeholderTextColor="#888888"
-          // value={searchQuery}
-          // onChangeText={setSearchQuery}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
         />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity
+            onPress={handleClearSearch}
+            style={styles.clearButton}
+          >
+            <Text style={styles.clearButtonText}>✕</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.container}>
-        {OrdersData?.length > 0 ? (
+        {filteredOrders?.length > 0 ? (
           <FlatList
-            data={OrdersData.reverse()}
+            data={filteredOrders.reverse()}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <CartOrderItem

@@ -5,8 +5,9 @@ import {
   StyleSheet,
   TextInput,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
@@ -36,7 +37,8 @@ const api = axios.create({
 const stores = () => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredAllStoresData, setFilteredAllStoresData] = useState([]);
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchAllStoresData = async () => {
@@ -121,6 +123,31 @@ const stores = () => {
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
 
+  // Update filteredAllStoresData whenever AllStoresData or searchQuery changes
+  useEffect(() => {
+    if (AllStoresData) {
+      if (searchQuery.trim() === '') {
+        // If search query is empty, show all stores
+        setFilteredAllStoresData(AllStoresData);
+      } else {
+        // Filter stores based on search query
+        const query = searchQuery.toLowerCase().trim();
+        const filtered = AllStoresData?.filter(store => 
+          (store.storeName && store.storeName?.toLowerCase().includes(query)) || 
+          (store.wilaya && store.wilaya?.toLowerCase().includes(query))
+        );
+        setFilteredAllStoresData(filtered);
+      }
+    } else {
+      setFilteredAllStoresData([]);
+    }
+  }, [AllStoresData, searchQuery]);
+
+  // Handle search clear function
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  };
+
   //--------------------------------------------Rendering--------------------------------------------
   if (AllStoresDataLoading || CategoriesDataLoading) {
     return (
@@ -156,13 +183,21 @@ const stores = () => {
           style={styles.searchBarItem}
           placeholder="Recherchez votre magasin..."
           placeholderTextColor="#888888"
-          // value={searchQuery}
-          // onChangeText={setSearchQuery}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
         />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity
+            onPress={handleClearSearch}
+            style={styles.clearButton}
+          >
+            <Text style={styles.clearButtonText}>✕</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.container}>
         <NonLinkedStores
-          StoresData={AllStoresData}
+          StoresData={filteredAllStoresData}
           CategoriesData={CategoriesData}
           AllStoresDataRefetch={AllStoresDataRefetch}
         />
