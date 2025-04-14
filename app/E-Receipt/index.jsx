@@ -200,6 +200,9 @@ const EReceiptScreen = () => {
 
     await shareAsync(file.uri);
   };
+  const BarcodeWrapper = ({ value, format = "CODE128", ...props }) => {
+    return <Barcode value={value} format={format} {...props} />;
+  };
 
   //--------------------------------------------Rendering--------------------------------------------
   if (OrderDataLoading) {
@@ -235,11 +238,9 @@ const EReceiptScreen = () => {
                   OrderDataRefetch={OrderDataRefetch}
                 />
               </View>
-              {OrderData?.reciept?.status !== 10 && (
-                <View>
-                  <Barcode value={OrderID} format="CODE128" />
-                </View>
-              )}
+              <View>
+                <BarcodeWrapper value={OrderID} />
+              </View>
             </>
           }
           renderItem={({ item }) => (

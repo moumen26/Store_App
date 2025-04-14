@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   productListContainer: {
     marginTop: 12,
     justifyContent: "flex-start",
-    flex: 6,
+    flex: 1,
   },
   noProductContainer: {
     flex: 1, 
@@ -308,6 +308,7 @@ const styles = StyleSheet.create({
   },
   orderTypeContainer: {
     marginTop: 12,
+    flex: 1
   },
   navigationClass: {
     borderColor: "#888888",
