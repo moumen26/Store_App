@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CartOrderItem from "../../components/CartOrderItem";
@@ -70,17 +77,20 @@ const cart = () => {
   // Update filteredOrders whenever OrdersData or searchQuery changes
   useEffect(() => {
     if (OrdersData) {
-      if (searchQuery.trim() === '') {
+      if (searchQuery.trim() === "") {
         // If search query is empty, show all stores
         setFilteredOrders(OrdersData);
       } else {
         // Filter stores based on search query
         const query = searchQuery.toLowerCase().trim();
-        const filtered = OrdersData?.filter(order => 
-          (order.store.storeName && order.store.storeName?.toLowerCase().includes(query)) || 
-          (order.type && order.type?.toLowerCase().includes(query)) || 
-          (order._id && order._id?.toLowerCase().includes(query)) ||
-          (order.total && order.total.toString().toLowerCase().includes(query))
+        const filtered = OrdersData?.filter(
+          (order) =>
+            (order.store.storeName &&
+              order.store.storeName?.toLowerCase().includes(query)) ||
+            (order.type && order.type?.toLowerCase().includes(query)) ||
+            (order._id && order._id?.toLowerCase().includes(query)) ||
+            (order.total &&
+              order.total.toString().toLowerCase().includes(query))
         );
         setFilteredOrders(filtered);
       }
@@ -91,7 +101,7 @@ const cart = () => {
 
   // Handle search clear function
   const handleClearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   //--------------------------------------------Rendering--------------------------------------------
@@ -118,18 +128,17 @@ const cart = () => {
         </Text>
         <ArchiveButton />
       </View>
-      <View
-        style={styles.searchBar}
-        className="flex-row mx-5 items-center space-x-2 mb-[20] rounded-3xl"
-      >
-        <MagnifyingGlassIcon size={20} color="#26667E" />
-        <TextInput
-          style={styles.searchBarItem}
-          placeholder="Recherchez votre commande..."
-          placeholderTextColor="#888888"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+      <View style={styles.searchBar} className="mx-5 mb-6">
+        <View className="flex-row items-center gap-x-4">
+          <MagnifyingGlassIcon size={20} color="#26667E" />
+          <TextInput
+            style={styles.searchBarItem}
+            placeholder="Rechercher par magasin..."
+            placeholderTextColor="#888888"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
         {searchQuery.length > 0 && (
           <TouchableOpacity
             onPress={handleClearSearch}
@@ -215,6 +224,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     borderRadius: 30,
     flexDirection: "row",
+    justifyContent: "space-between",
+    paddingRight: 15,
     gap: 4,
   },
   searchBarItem: {

@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SavedStoreItem from "../../components/SavedStoreItem";
@@ -72,15 +79,18 @@ const Saved = () => {
   // Update filteredFavoriteData whenever FavoriteData or searchQuery changes
   useEffect(() => {
     if (FavoriteData) {
-      if (searchQuery.trim() === '') {
+      if (searchQuery.trim() === "") {
         // If search query is empty, show all stores
         setFilteredFavoriteData(FavoriteData);
       } else {
         // Filter stores based on search query
         const query = searchQuery.toLowerCase().trim();
-        const filtered = FavoriteData?.filter(store => 
-          (store.store.storeName && store.store.storeName?.toLowerCase().includes(query)) || 
-          (store.store.wilaya && store.store.wilaya?.toLowerCase().includes(query))
+        const filtered = FavoriteData?.filter(
+          (store) =>
+            (store.store.storeName &&
+              store.store.storeName?.toLowerCase().includes(query)) ||
+            (store.store.wilaya &&
+              store.store.wilaya?.toLowerCase().includes(query))
         );
         setFilteredFavoriteData(filtered);
       }
@@ -91,7 +101,7 @@ const Saved = () => {
 
   // Handle search clear function
   const handleClearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   //--------------------------------------------Rendering--------------------------------------------
@@ -119,15 +129,17 @@ const Saved = () => {
         <View style={styles.Vide}></View>
       </View>
 
-      <View style={styles.searchBar}>
-        <MagnifyingGlassIcon size={20} color="#26667E" />
-        <TextInput
-          style={styles.searchBarItem}
-          placeholder="Rechercher par magasin..."
-          placeholderTextColor="#888888"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+      <View style={styles.searchBar} className="mx-5">
+        <View className="flex-row items-center gap-x-4">
+          <MagnifyingGlassIcon size={20} color="#26667E" />
+          <TextInput
+            style={styles.searchBarItem}
+            placeholder="Rechercher par magasin..."
+            placeholderTextColor="#888888"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
         {searchQuery.length > 0 && (
           <TouchableOpacity
             onPress={handleClearSearch}
@@ -214,7 +226,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     borderRadius: 30,
     flexDirection: "row",
-    marginHorizontal: 20,
+    justifyContent: "space-between",
+    paddingRight: 15,
     marginBottom: 20,
   },
   searchBarItem: {

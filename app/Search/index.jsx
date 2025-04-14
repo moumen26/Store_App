@@ -1,4 +1,10 @@
-import { View, Text, ScrollView, TouchableOpacity, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
@@ -29,12 +35,14 @@ const SearchScreen = () => {
           ProductBrand={item?.product?.brand?.name}
           ProductPrice={item.selling}
           imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
-              item?.product?.image
-            }`}
-            onPress={() => navigation.navigate("Product/index", { 
+            item?.product?.image
+          }`}
+          onPress={() =>
+            navigation.navigate("Product/index", {
               data: item,
               storeId: storeId,
-            })}
+            })
+          }
         />
       ));
       items.push(
@@ -50,17 +58,22 @@ const SearchScreen = () => {
   // Update filteredProductsData whenever ProductsData or searchQuery changes
   useEffect(() => {
     if (ProductsData) {
-      if (searchQuery.trim() === '') {
+      if (searchQuery.trim() === "") {
         // If search query is empty, show all stores
         setFilteredProductsData(ProductsData);
       } else {
         // Filter stores based on search query
         const query = searchQuery.toLowerCase().trim();
-        const filtered = ProductsData?.filter(item => 
-          (item?.product?.name && item?.product?.name?.toLowerCase().includes(query)) || 
-          (item?.product?.size && item?.product?.size?.toLowerCase().includes(query)) ||
-          (item?.product?.brand?.name && item?.product?.brand?.name?.toLowerCase().includes(query)) ||
-          (item?.selling && item?.selling?.toString().toLowerCase().includes(query))
+        const filtered = ProductsData?.filter(
+          (item) =>
+            (item?.product?.name &&
+              item?.product?.name?.toLowerCase().includes(query)) ||
+            (item?.product?.size &&
+              item?.product?.size?.toLowerCase().includes(query)) ||
+            (item?.product?.brand?.name &&
+              item?.product?.brand?.name?.toLowerCase().includes(query)) ||
+            (item?.selling &&
+              item?.selling?.toString().toLowerCase().includes(query))
         );
         setFilteredProductsData(filtered);
       }
@@ -71,22 +84,24 @@ const SearchScreen = () => {
 
   // Handle search clear function
   const handleClearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   return (
     <SafeAreaView className="bg-white pt-3 relative h-full">
       <View className="flex-row items-center mx-5 justify-between mb-[20]">
         <BackButton />
-        <View style={styles.searchBar} className="flex-row items-center space-x-2">
-          <MagnifyingGlassIcon size={20} color="#26667E" />
-          <TextInput
-            style={styles.searchBarItem}
-            placeholder={"Search by Product.."}
-            placeholderTextColor="#888888"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+        <View style={styles.searchBar} className="mx-5">
+          <View className="flex-row items-center gap-x-4">
+            <MagnifyingGlassIcon size={20} color="#26667E" />
+            <TextInput
+              style={styles.searchBarItem}
+              placeholder="Rechercher par magasin..."
+              placeholderTextColor="#888888"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
           {searchQuery.length > 0 && (
             <TouchableOpacity
               onPress={handleClearSearch}
@@ -123,6 +138,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingLeft: 15,
     flexDirection: "row",
+    justifyContent: "space-between",
+    paddingRight: 15,
     gap: 4,
   },
   searchBarItem: {

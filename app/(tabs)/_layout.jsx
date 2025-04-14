@@ -25,6 +25,7 @@ const TabLayout = () => {
             position: "absolute",
             overflow: "hidden",
             height: 70,
+            zIndex: 1000,
           },
         }}
       >

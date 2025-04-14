@@ -126,15 +126,17 @@ const stores = () => {
   // Update filteredAllStoresData whenever AllStoresData or searchQuery changes
   useEffect(() => {
     if (AllStoresData) {
-      if (searchQuery.trim() === '') {
+      if (searchQuery.trim() === "") {
         // If search query is empty, show all stores
         setFilteredAllStoresData(AllStoresData);
       } else {
         // Filter stores based on search query
         const query = searchQuery.toLowerCase().trim();
-        const filtered = AllStoresData?.filter(store => 
-          (store.storeName && store.storeName?.toLowerCase().includes(query)) || 
-          (store.wilaya && store.wilaya?.toLowerCase().includes(query))
+        const filtered = AllStoresData?.filter(
+          (store) =>
+            (store.storeName &&
+              store.storeName?.toLowerCase().includes(query)) ||
+            (store.wilaya && store.wilaya?.toLowerCase().includes(query))
         );
         setFilteredAllStoresData(filtered);
       }
@@ -145,7 +147,7 @@ const stores = () => {
 
   // Handle search clear function
   const handleClearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   //--------------------------------------------Rendering--------------------------------------------
@@ -174,18 +176,17 @@ const stores = () => {
         </Text>
         <RequestButton CategoriesData={CategoriesData} />
       </View>
-      <View
-        style={styles.searchBar}
-        className="flex-row mx-5 items-center space-x-2 mb-[10]"
-      >
-        <MagnifyingGlassIcon size={20} color="#26667E" />
-        <TextInput
-          style={styles.searchBarItem}
-          placeholder="Recherchez votre magasin..."
-          placeholderTextColor="#888888"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+      <View style={styles.searchBar} className="mx-5 mb-2">
+        <View className="flex-row items-center gap-x-4">
+          <MagnifyingGlassIcon size={20} color="#26667E" />
+          <TextInput
+            style={styles.searchBarItem}
+            placeholder="Rechercher par magasin..."
+            placeholderTextColor="#888888"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
         {searchQuery.length > 0 && (
           <TouchableOpacity
             onPress={handleClearSearch}
@@ -227,6 +228,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     borderRadius: 30,
     flexDirection: "row",
+    justifyContent: "space-between",
+    paddingRight: 15,
     gap: 4,
   },
   searchBarItem: {

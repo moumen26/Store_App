@@ -55,7 +55,7 @@ const Stores = ({ StoresData, CategoriesData }) => {
   const filteredStores = StoresData.filter((store) =>
     store?.categories.some((category) => category === activeTab)
   );
-  
+
   return (
     <View>
       <View>

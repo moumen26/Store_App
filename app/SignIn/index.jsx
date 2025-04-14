@@ -56,25 +56,25 @@ const SignInScreen = () => {
     <SafeAreaView style={styles.SignInScreen} className="bg-white h-full">
       <View className="flex-col items-center">
         <Text className="mb-[16]" style={styles.textSignIn}>
-          Sign in
+          Se connecter
         </Text>
         <Text style={styles.textSousSignIn}>
-          Hi Welcome back, you've been missed
+          Bonjour, heureux de vous revoir. Votre présence nous a manqué.
         </Text>
       </View>
       <View className="mt-[36] mx-5">
         <View styles={styles.column} className="mb-[16]">
-          <Text style={styles.textlabel}>Phone Number</Text>
+          <Text style={styles.textlabel}>Numéro de téléphone</Text>
           <TextInput
             style={styles.textInput}
-            placeholder="Phone number"
+            placeholder="06 62 81 26 00"
             placeholderTextColor="#888888"
             value={userName}
             onChangeText={setUserName}
           />
         </View>
         <View styles={styles.column}>
-          <Text style={styles.textlabel}>Password</Text>
+          <Text style={styles.textlabel}>Mot de passe</Text>
           <View
             className="flex-row items-center justify-between"
             style={styles.passwordContainer}
@@ -104,7 +104,7 @@ const SignInScreen = () => {
           onPress={() => navigation.navigate("ResetPassword/index")}
         >
           <Text style={styles.textForgotPassword} className="text-right">
-            Forgot Password?
+            Mot de passe oublié ?
           </Text>
         </TouchableOpacity>
         <Text
@@ -122,11 +122,11 @@ const SignInScreen = () => {
           style={styles.loginButton}
           onPress={() => handleLogin()}
         >
-          <Text style={styles.loginButtonText}>Sign In</Text>
+          <Text style={styles.loginButtonText}>Se connecter</Text>
         </TouchableOpacity>
         <View className="flex-row items-center justify-center space-x-4 mt-[24]">
           <View style={styles.lineSignup} className="mr-1"></View>
-          <Text style={styles.textSignUp}>Or Sign up with</Text>
+          <Text style={styles.textSignUp}>Ou inscrivez-vous avec</Text>
           <View style={styles.lineSignup} className="ml-1"></View>
         </View>
         <TouchableOpacity
@@ -135,15 +135,15 @@ const SignInScreen = () => {
         >
           <Image source={FacebookIconVector} className="mr-3" />
           <Text style={styles.loginButtonFacebookText} className="ml-1">
-            Sign Up with Facebook
+            Inscrivez-vous avec Facebook
           </Text>
         </TouchableOpacity>
         <View className="flex-row justify-center items-center space-x-1 mt-[24]">
           <Text style={styles.textSousSignIn} className="mr-1">
-            Don't have an account?
+            Vous n'avez pas de compte ?
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignUp/index")}>
-            <Text style={styles.textForgotPassword}>Sign Up</Text>
+            <Text style={styles.textForgotPassword}>S'inscrire</Text>
           </TouchableOpacity>
         </View>
       </View>

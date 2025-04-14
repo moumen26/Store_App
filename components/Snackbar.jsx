@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { XMarkIcon } from "react-native-heroicons/outline";
 
 const Snackbar = ({
   message,
   duration = 3000,
-  position = "bottom",
+  position = "bottom", // Default position is bottom
   snackbarType,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const { height } = Dimensions.get("window");
 
   useEffect(() => {
     if (isVisible) {
@@ -24,13 +31,16 @@ const Snackbar = ({
     success: "#3E9CB9",
     error: "#dc3545",
     warning: "#ffc107",
+    info: "#26667E", // Added default info color
   };
 
   return isVisible ? (
     <View
       style={[
         styles.container,
-        position === "top" ? styles.topContainer : styles.bottomContainer,
+        position === "top"
+          ? { top: 30 } // Position for top
+          : { bottom: 16 }, // Increased bottom position to stay above tab bar
         {
           backgroundColor:
             backgroundColors[snackbarType] || backgroundColors.info,
@@ -58,24 +68,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 16,
     right: 16,
-    zIndex: 9999,
-    elevation: 5,
+    zIndex: 10000, // Increased z-index to be higher than tab bar
+    elevation: 10, // Increased elevation
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  topContainer: {
-    top: 15,
-  },
-  bottomContainer: {
-    bottom: 25,
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    marginHorizontal: 5,
   },
   messageText: {
     fontSize: 15,
     flex: 1,
     fontWeight: "500",
     color: "#fff",
+    fontFamily: "Montserrat-Medium",
   },
   closeButton: {
     padding: 5,

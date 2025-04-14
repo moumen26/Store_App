@@ -219,15 +219,17 @@ const home = () => {
   // Update filteredStores whenever StoresData or searchQuery changes
   useEffect(() => {
     if (StoresData) {
-      if (searchQuery.trim() === '') {
+      if (searchQuery.trim() === "") {
         // If search query is empty, show all stores
         setFilteredStores(StoresData);
       } else {
         // Filter stores based on search query
         const query = searchQuery.toLowerCase().trim();
-        const filtered = StoresData.filter(store => 
-          store.store.storeName?.toLowerCase().includes(query) || 
-          (store.store.wilaya && store.store.wilaya?.toLowerCase().includes(query))
+        const filtered = StoresData.filter(
+          (store) =>
+            store.store.storeName?.toLowerCase().includes(query) ||
+            (store.store.wilaya &&
+              store.store.wilaya?.toLowerCase().includes(query))
         );
         setFilteredStores(filtered);
       }
@@ -238,7 +240,7 @@ const home = () => {
 
   // Handle search clear function
   const handleClearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   //--------------------------------------------RENDERING--------------------------------------------
@@ -305,31 +307,25 @@ const home = () => {
           <Search />
         </View>
       ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
-        <View
-          className="flex-row items-center space-x-2 mx-5 mb-5"
-          style={styles.searchClass}
-        >
-          <View
-            style={styles.searchButton}
-              className="flex-1 flex-row items-center space-x-2 pl-5 h-12 border-1 rounded-3xl"
+        <View style={styles.searchBar} className="mx-5 mb-2 mt-2">
+          <View className="flex-row items-center gap-x-4">
+            <MagnifyingGlassIcon size={20} color="#26667E" />
+            <TextInput
+              style={styles.searchBarItem}
+              placeholder="Rechercher par magasin..."
+              placeholderTextColor="#888888"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              onPress={handleClearSearch}
+              style={styles.clearButton}
             >
-              <MagnifyingGlassIcon color="#888888" size={20} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search by Store.."
-                placeholderTextColor="#888888"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              />
-              {searchQuery.length > 0 && (
-                <TouchableOpacity 
-                  onPress={handleClearSearch}
-                  style={styles.clearButton}
-                >
-                  <Text style={styles.clearButtonText}>✕</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+              <Text style={styles.clearButtonText}>✕</Text>
+            </TouchableOpacity>
+          )}
         </View>
       ) : (
         <></>
@@ -356,16 +352,15 @@ const home = () => {
             <LoadingStores />
           </View>
         </View>
-        ) : (CategoriesData && CategoriesData?.length > 0) ||
+      ) : (CategoriesData && CategoriesData?.length > 0) ||
         (filteredStores && filteredStores?.length > 0) ? (
-          <View style={styles.stores} className="mx-5">
-            <Text style={styles.titleCategory}>My Stores</Text>
-            <Store StoresData={filteredStores} CategoriesData={CategoriesData} />
-          </View>
-        ) : (
-          <></>
-        )
-      }
+        <View style={styles.stores} className="mx-5">
+          <Text style={styles.titleCategory}>My Stores</Text>
+          <Store StoresData={filteredStores} CategoriesData={CategoriesData} />
+        </View>
+      ) : (
+        <></>
+      )}
     </SafeAreaView>
   );
 };
@@ -390,6 +385,24 @@ const styles = StyleSheet.create({
     borderColor: "#26667E",
     borderRadius: 30,
     alignItems: "center",
+  },
+  searchBar: {
+    height: 50,
+    borderColor: "#26667E",
+    borderWidth: 1,
+    alignItems: "center",
+    paddingLeft: 15,
+    borderRadius: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingRight: 15,
+    gap: 4,
+  },
+  searchBarItem: {
+    color: "black",
+    fontSize: 12,
+    fontFamily: "Montserrat-Regular",
+    width: 220,
   },
   topClass: {
     flex: 1,
@@ -457,11 +470,11 @@ const styles = StyleSheet.create({
   loadingStores: {
     marginTop: 16,
   },
-  searchInput:{
+  searchInput: {
     flex: 1,
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
-  }
+  },
 });
 
 export default home;

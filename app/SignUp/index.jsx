@@ -153,16 +153,17 @@ const SignUpScreen = () => {
       >
         <View className="flex-col w-[70%] items-center">
           <Text className="mb-[16]" style={styles.textSignIn}>
-            Create Account
+            Créer un compte
           </Text>
           <Text style={styles.textSousSignIn}>
-            Fill your information below or register with your social account.
+            Remplissez vos informations ci-dessous ou inscrivez-vous avec votre
+            compte social.
           </Text>
         </View>
 
         <View className="mt-[36] mx-5">
           <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>First name</Text>
+            <Text style={styles.textlabel}>Prénom</Text>
             <TextInput
               style={styles.textInput}
               placeholder="Ex. Amine"
@@ -174,7 +175,7 @@ const SignUpScreen = () => {
           </View>
 
           <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Last name</Text>
+            <Text style={styles.textlabel}>Nom de famille</Text>
             <TextInput
               style={styles.textInput}
               placeholder="Ex. Faroukhi"
@@ -186,7 +187,7 @@ const SignUpScreen = () => {
           </View>
 
           <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Phone Number</Text>
+            <Text style={styles.textlabel}>Numéro de téléphone</Text>
             <View
               className="flex-row items-center"
               style={styles.passwordContainer}
@@ -204,7 +205,7 @@ const SignUpScreen = () => {
           </View>
 
           <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Password</Text>
+            <Text style={styles.textlabel}>Mot de passe</Text>
             <View
               className="flex-row items-center justify-between"
               style={styles.passwordContainer}
@@ -232,7 +233,7 @@ const SignUpScreen = () => {
           </View>
 
           <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Confirm password</Text>
+            <Text style={styles.textlabel}>Confirmer le mot de passe</Text>
             <View
               className="flex-row items-center justify-between"
               style={styles.passwordContainer}
@@ -267,7 +268,7 @@ const SignUpScreen = () => {
             <Text style={styles.textlabel}>Email</Text>
             <TextInput
               style={styles.textInput}
-              placeholder="example@gmail.com"
+              placeholder="exemple@gmail.com"
               placeholderTextColor="#888888"
               value={email}
               onChangeText={setEmail}
@@ -278,7 +279,9 @@ const SignUpScreen = () => {
           </View>
 
           <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Commercial register number</Text>
+            <Text style={styles.textlabel}>
+              Numéro d'enregistrement commercial
+            </Text>
             <TextInput
               style={styles.textInput}
               placeholder="26052002"
@@ -294,7 +297,7 @@ const SignUpScreen = () => {
               <Text style={styles.textlabel}>Wilaya</Text>
               <WilayaDropdown
                 data={wilayas}
-                dropDownTitle="Select Wilaya"
+                dropDownTitle="Sélectionner la Wilaya"
                 onSelect={(value) => setSelectedWilaya(value)}
               />
             </View>
@@ -302,7 +305,7 @@ const SignUpScreen = () => {
               <Text style={styles.textlabel}>Commune</Text>
               <WilayaDropdown
                 data={communes}
-                dropDownTitle="Select Commune"
+                dropDownTitle="Sélectionner la Commune"
                 onSelect={(value) => setSelectedCommune(value)}
               />
             </View>
@@ -318,12 +321,14 @@ const SignUpScreen = () => {
             </TouchableOpacity>
             <View className="flex-row space-x-1">
               <Text style={styles.text} className="mr-1">
-                Agree with
+                Accepter les
               </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("SignIn/index")}
               >
-                <Text style={styles.textForgotPassword}>Terms & Condition</Text>
+                <Text style={styles.textForgotPassword}>
+                  Termes et conditions
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -335,18 +340,18 @@ const SignUpScreen = () => {
             disabled={submissionLoading}
           >
             <Text style={styles.loginButtonText}>
-              {submissionLoading ? "Processing..." : "Sign Up"}
+              {submissionLoading ? "Traitement..." : "S'inscrire"}
             </Text>
           </TouchableOpacity>
 
           <View className="flex-row justify-center items-center space-x-1 mt-[28] pb-4">
             <Text style={styles.text} className="mr-1">
-              Already have an account?
+              Vous avez déjà un compte ?
             </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("SignIn/index")}
             >
-              <Text style={styles.textForgotPassword}>Sign In</Text>
+              <Text style={styles.textForgotPassword}>Se connecter</Text>
             </TouchableOpacity>
           </View>
         </View>

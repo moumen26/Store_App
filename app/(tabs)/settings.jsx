@@ -32,7 +32,7 @@ const Settings = () => {
   const { user, dispatch } = useAuthContext();
   const [modalVisible, setModalVisible] = useState(false);
   const [currentSetting, setCurrentSetting] = useState({});
-  
+
   // For regular fields
   const [inputValues, setInputValues] = useState({
     firstName: user.info.firstName,
@@ -96,7 +96,7 @@ const Settings = () => {
 
   const openModal = (setting) => {
     setCurrentSetting(setting);
-    
+
     // Reset password fields when opening password modal
     if (setting.type === "password") {
       setPasswordValues({
@@ -104,7 +104,7 @@ const Settings = () => {
         newPassword: "",
       });
     }
-    
+
     setModalVisible(true);
   };
 
@@ -128,25 +128,21 @@ const Settings = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  console.log(snackbarKey);
-  console.log(snackbarMessage);
-  console.log(snackbarType);
 
-  
   // Handle profile update
   const handleUpdateProfile = async () => {
     if (submitting) return;
-    
+
     setSubmitting(true);
     let updateData = {};
-    
+
     try {
       // Prepare data based on current setting type
       switch (currentSetting.type) {
         case "fullname":
           updateData = {
             firstName: inputValues.firstName,
-            lastName: inputValues.lastName
+            lastName: inputValues.lastName,
           };
           break;
         case "email":
@@ -156,9 +152,9 @@ const Settings = () => {
           updateData = { phoneNumber: inputValues.phoneNumber };
           break;
         case "password":
-          updateData = { 
+          updateData = {
             password: passwordValues.newPassword,
-            oldPassword: passwordValues.oldPassword
+            oldPassword: passwordValues.oldPassword,
           };
           break;
         default:
@@ -178,7 +174,7 @@ const Settings = () => {
       );
 
       const json = await response.json();
-      
+
       if (!response.ok) {
         setSnackbarType("error");
         setSnackbarMessage(json.message || "Une erreur s'est produite");
@@ -189,61 +185,63 @@ const Settings = () => {
       // Update local state with new values
       if (currentSetting.type === "fullname") {
         const newFullName = `${inputValues.firstName} ${inputValues.lastName}`;
-        setSettings(prevSettings => 
-          prevSettings.map(setting => 
-            setting.id === "name" ? {...setting, value: newFullName} : setting
+        setSettings((prevSettings) =>
+          prevSettings.map((setting) =>
+            setting.id === "name" ? { ...setting, value: newFullName } : setting
           )
         );
-        
+
         // Update auth context
-        dispatch({ 
-          type: 'UPDATE_USER', 
-          payload: { 
-            ...user, 
-            info: { 
-              ...user.info, 
-              firstName: inputValues.firstName, 
-              lastName: inputValues.lastName 
-            } 
-          } 
+        dispatch({
+          type: "UPDATE_USER",
+          payload: {
+            ...user,
+            info: {
+              ...user.info,
+              firstName: inputValues.firstName,
+              lastName: inputValues.lastName,
+            },
+          },
         });
-      } 
-      else if (currentSetting.type === "email") {
-        setSettings(prevSettings => 
-          prevSettings.map(setting => 
-            setting.id === "email" ? {...setting, value: inputValues.email} : setting
+      } else if (currentSetting.type === "email") {
+        setSettings((prevSettings) =>
+          prevSettings.map((setting) =>
+            setting.id === "email"
+              ? { ...setting, value: inputValues.email }
+              : setting
           )
         );
-        
+
         // Update auth context
-        dispatch({ 
-          type: 'UPDATE_USER', 
-          payload: { 
-            ...user, 
-            info: { 
-              ...user.info, 
-              email: inputValues.email 
-            } 
-          } 
+        dispatch({
+          type: "UPDATE_USER",
+          payload: {
+            ...user,
+            info: {
+              ...user.info,
+              email: inputValues.email,
+            },
+          },
         });
-      } 
-      else if (currentSetting.type === "phone") {
-        setSettings(prevSettings => 
-          prevSettings.map(setting => 
-            setting.id === "phone" ? {...setting, value: inputValues.phoneNumber} : setting
+      } else if (currentSetting.type === "phone") {
+        setSettings((prevSettings) =>
+          prevSettings.map((setting) =>
+            setting.id === "phone"
+              ? { ...setting, value: inputValues.phoneNumber }
+              : setting
           )
         );
-        
+
         // Update auth context
-        dispatch({ 
-          type: 'UPDATE_USER', 
-          payload: { 
-            ...user, 
-            info: { 
-              ...user.info, 
-              phoneNumber: inputValues.phoneNumber 
-            } 
-          } 
+        dispatch({
+          type: "UPDATE_USER",
+          payload: {
+            ...user,
+            info: {
+              ...user.info,
+              phoneNumber: inputValues.phoneNumber,
+            },
+          },
         });
       }
 
@@ -251,11 +249,12 @@ const Settings = () => {
       setSnackbarMessage(json.message || "Profil mis à jour avec succès");
       setSnackbarKey((prevKey) => prevKey + 1);
       closeModal();
-      
     } catch (err) {
       console.error("Update error:", err);
       setSnackbarType("error");
-      setSnackbarMessage("Une erreur s'est produite lors de la mise à jour du profil");
+      setSnackbarMessage(
+        "Une erreur s'est produite lors de la mise à jour du profil"
+      );
       setSnackbarKey((prevKey) => prevKey + 1);
     } finally {
       setSubmitting(false);
@@ -283,24 +282,28 @@ const Settings = () => {
               <TextInput
                 style={styles.modalInput}
                 value={inputValues.firstName}
-                onChangeText={(text) => setInputValues(prev => ({...prev, firstName: text}))}
+                onChangeText={(text) =>
+                  setInputValues((prev) => ({ ...prev, firstName: text }))
+                }
                 placeholder="Prénom"
               />
             </View>
-            
+
             <Text style={styles.modalLabel}>Nom</Text>
             <View style={styles.inputChange}>
               <UserIcon size={20} color="#888888" />
               <TextInput
                 style={styles.modalInput}
                 value={inputValues.lastName}
-                onChangeText={(text) => setInputValues(prev => ({...prev, lastName: text}))}
+                onChangeText={(text) =>
+                  setInputValues((prev) => ({ ...prev, lastName: text }))
+                }
                 placeholder="Nom"
               />
             </View>
           </>
         );
-      
+
       case "email":
         return (
           <>
@@ -310,7 +313,9 @@ const Settings = () => {
               <TextInput
                 style={styles.modalInput}
                 value={inputValues.email}
-                onChangeText={(text) => setInputValues(prev => ({...prev, email: text}))}
+                onChangeText={(text) =>
+                  setInputValues((prev) => ({ ...prev, email: text }))
+                }
                 placeholder="Email"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -318,7 +323,7 @@ const Settings = () => {
             </View>
           </>
         );
-      
+
       case "phone":
         return (
           <>
@@ -328,14 +333,16 @@ const Settings = () => {
               <TextInput
                 style={styles.modalInput}
                 value={inputValues.phoneNumber}
-                onChangeText={(text) => setInputValues(prev => ({...prev, phoneNumber: text}))}
+                onChangeText={(text) =>
+                  setInputValues((prev) => ({ ...prev, phoneNumber: text }))
+                }
                 placeholder="Numéro de téléphone"
                 keyboardType="phone-pad"
               />
             </View>
           </>
         );
-      
+
       case "password":
         return (
           <>
@@ -345,12 +352,14 @@ const Settings = () => {
               <TextInput
                 style={styles.passwordInput}
                 value={passwordValues.oldPassword}
-                onChangeText={(text) => setPasswordValues(prev => ({...prev, oldPassword: text}))}
+                onChangeText={(text) =>
+                  setPasswordValues((prev) => ({ ...prev, oldPassword: text }))
+                }
                 placeholder="Ancien mot de passe"
                 secureTextEntry={!showOldPassword}
                 autoCapitalize="none"
               />
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => setShowOldPassword(!showOldPassword)}
                 style={styles.eyeIcon}
               >
@@ -361,19 +370,21 @@ const Settings = () => {
                 )}
               </TouchableOpacity>
             </View>
-            
+
             <Text style={styles.modalLabel}>Nouveau mot de passe</Text>
             <View style={styles.inputChange}>
               <LockClosedIcon size={20} color="#888888" />
               <TextInput
                 style={styles.passwordInput}
                 value={passwordValues.newPassword}
-                onChangeText={(text) => setPasswordValues(prev => ({...prev, newPassword: text}))}
+                onChangeText={(text) =>
+                  setPasswordValues((prev) => ({ ...prev, newPassword: text }))
+                }
                 placeholder="Nouveau mot de passe"
                 secureTextEntry={!showNewPassword}
                 autoCapitalize="none"
               />
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => setShowNewPassword(!showNewPassword)}
                 style={styles.eyeIcon}
               >
@@ -385,72 +396,77 @@ const Settings = () => {
               </TouchableOpacity>
             </View>
             <Text style={styles.passwordHelp}>
-              Le mot de passe doit contenir au moins 8 caractères, une majuscule, 
-              une minuscule, un chiffre et un caractère spécial.
+              Le mot de passe doit contenir au moins 8 caractères, une
+              majuscule, une minuscule, un chiffre et un caractère spécial.
             </Text>
           </>
         );
-      
+
       default:
         return null;
     }
   };
 
   return (
-    <SafeAreaView className="bg-white pt-3 pb-1 relative h-full">
-      {/* Snackbar notifications */}
-      {snackbarKey != 0 && (
-        <Snackbar
-          key={snackbarKey}
-          message={snackbarMessage}
-          duration={3000}
-          snackbarType={snackbarType}
-        />
+    <View style={{ flex: 1, position: "relative" }}>
+      {/* Snackbar rendering directly with higher z-index */}
+      {snackbarKey !== 0 && (
+        <View style={styles.snackbarWrapper}>
+          <Snackbar
+            key={snackbarKey}
+            message={snackbarMessage}
+            duration={3000}
+            snackbarType={snackbarType}
+            position="bottom"
+          />
+        </View>
       )}
-      <Text className="text-center mb-[20]" style={styles.titleScreen}>
-        Paramètres{" "}
-      </Text>
-      <View className="mx-5">
-        <Text style={styles.text}>Compte</Text>
-        <View style={styles.settingsItems} className="mt-[20]">
-          {settings.map((setting, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.settingItem}
-              className="w-full flex-row items-center justify-between"
-              onPress={() => {
-                if (setting.id === "delete") {
-                  setDeleteConfirmationVisible(true);
-                } else {
-                  openModal(setting);
-                }
-              }}
-            >
-              <View style={styles.settingsIconTitle}>
-                {setting.icon}
-                <Text style={styles.textItemRegular}>{setting.label}</Text>
-              </View>
-              <View style={styles.settingsIconTitle}>
-                <Text style={styles.textItemMeduim}>{setting.value}</Text>
-                <ArrowRightIcon color="#26667E" size={18} />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
 
-      <View style={styles.buttonVersion} className="mx-5 mt-[140]">
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={openConfirmationLogOutModal}
-        >
-          <Text style={styles.textItemRegular}>Se Déconnecter</Text>
-        </TouchableOpacity>
-        <View className="flex-col items-center space-y-[1]">
-          <Text style={styles.textVersion}>Version de l'application 0.0.1</Text>
-          <Text style={styles.textItemRegular}>Tous droits réservés</Text>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.titleScreen}>Paramètres</Text>
+        <View style={styles.mainContent}>
+          <Text style={styles.text}>Compte</Text>
+          <View style={[styles.settingsItems, { marginTop: 20 }]}>
+            {settings.map((setting, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.settingItem}
+                onPress={() => {
+                  if (setting.id === "delete") {
+                    setDeleteConfirmationVisible(true);
+                  } else {
+                    openModal(setting);
+                  }
+                }}
+              >
+                <View style={styles.settingsIconTitle}>
+                  {setting.icon}
+                  <Text style={styles.textItemRegular}>{setting.label}</Text>
+                </View>
+                <View style={styles.settingsIconTitle}>
+                  <Text style={styles.textItemMeduim}>{setting.value}</Text>
+                  <ArrowRightIcon color="#26667E" size={18} />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </View>
+
+        <View style={[styles.buttonVersion, { marginTop: 140 }]}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={openConfirmationLogOutModal}
+          >
+            <Text style={styles.textItemRegular}>Se Déconnecter</Text>
+          </TouchableOpacity>
+          <View style={styles.versionContainer}>
+            <Text style={styles.textVersion}>
+              Version de l'application 0.0.1
+            </Text>
+            <Text style={styles.textItemRegular}>Tous droits réservés</Text>
+          </View>
+        </View>
+      </SafeAreaView>
 
       {/* Profile Update Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
@@ -459,12 +475,14 @@ const Settings = () => {
             <Text style={styles.modalTitle}>
               Modifier {currentSetting?.label}
             </Text>
-            
-            {renderModalContent()}
+
+            <View style={styles.modalContentContainer}>
+              {renderModalContent()}
+            </View>
 
             <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={styles.modalButton} 
+              <TouchableOpacity
+                style={styles.modalButton}
                 onPress={closeModal}
                 disabled={submitting}
               >
@@ -472,9 +490,9 @@ const Settings = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
-                  styles.modalButton, 
+                  styles.modalButton,
                   styles.confirmButton,
-                  submitting && styles.disabledButton
+                  submitting && styles.disabledButton,
                 ]}
                 onPress={handleUpdateProfile}
                 disabled={submitting}
@@ -502,7 +520,8 @@ const Settings = () => {
               Êtes-vous sûr de vouloir supprimer votre compte ?
             </Text>
             <Text style={styles.deleteModalSubtext}>
-              Cette action est irréversible et toutes vos données seront perdues.
+              Cette action est irréversible et toutes vos données seront
+              perdues.
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -530,11 +549,28 @@ const Settings = () => {
         modalTitle="Confirmer la déconnexion"
         modalSubTitle="Vous serez déconnecté de votre compte."
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  snackbarWrapper: {
+    position: "absolute",
+    bottom: 80,
+    left: 0,
+    right: 0,
+    zIndex: 10000,
+    alignItems: "center",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: 12,
+    paddingBottom: 4,
+  },
+  mainContent: {
+    marginHorizontal: 20,
+  },
   text: {
     fontSize: 16,
     fontFamily: "Montserrat-Regular",
@@ -543,21 +579,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
-  },
-  titleCategory: {
-    fontSize: 18,
-    fontFamily: "Montserrat-Regular",
-  },
-  navigationClass: {
-    borderColor: "#888888",
-    borderWidth: 0.5,
-    backgroundColor: "#fff",
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-  },
-  navigationText: {
-    fontSize: 10,
-    fontFamily: "Montserrat-Regular",
+    marginBottom: 20,
   },
   textItemRegular: {
     fontSize: 13,
@@ -571,6 +593,10 @@ const styles = StyleSheet.create({
     height: 45,
     borderBottomWidth: 0.5,
     borderColor: "#3E9CB9",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
   },
   settingsIconTitle: {
     flexDirection: "row",
@@ -592,28 +618,47 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
     color: "#888888",
   },
+  versionContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 1,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(201, 228, 238, 0.4)",
+    backgroundColor: "rgba(201, 228, 238, 0.7)",
   },
   modalContent: {
     width: 320,
     padding: 20,
     backgroundColor: "white",
     borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  // New container for modal content to improve styling
+  modalContentContainer: {
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+    padding: 15,
+    marginVertical: 5,
   },
   modalTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: "Montserrat-Medium",
     marginBottom: 15,
     textAlign: "center",
+    color: "#26667E",
   },
   modalLabel: {
     fontSize: 14,
-    fontFamily: "Montserrat-Regular",
+    fontFamily: "Montserrat-Medium",
     marginBottom: 5,
+    color: "#555",
   },
   modalButtons: {
     flexDirection: "row",
@@ -622,19 +667,20 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontFamily: "Montserrat-Regular",
+    fontFamily: "Montserrat-Medium",
     fontSize: 14,
   },
   buttonTextCancel: {
-    color: "black",
+    color: "#555",
     fontFamily: "Montserrat-Regular",
     fontSize: 14,
   },
   deleteModalText: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: "Montserrat-Medium",
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 15,
+    color: "#FF033E",
   },
   deleteModalSubtext: {
     fontSize: 14,
@@ -650,18 +696,20 @@ const styles = StyleSheet.create({
   buttonVersion: {
     flexDirection: "column",
     gap: 40,
+    marginHorizontal: 20,
   },
   inputChange: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    height: 40,
+    height: 45,
     borderColor: "#ccc",
     marginTop: 5,
     borderWidth: 1,
     paddingLeft: 10,
-    borderRadius: 5,
+    borderRadius: 8,
     marginBottom: 15,
+    backgroundColor: "white",
   },
   modalInput: {
     height: 40,
@@ -672,14 +720,20 @@ const styles = StyleSheet.create({
   passwordInput: {
     height: 40,
     paddingLeft: 10,
-    width: "85%",
+    // width: "85%",
+    flex: 2,
     fontFamily: "Montserrat-Regular",
   },
   passwordHelp: {
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
     color: "#666",
-    marginTop: -10,
+    marginTop: -5,
+    backgroundColor: "#f0f0f0",
+    padding: 8,
+    borderRadius: 5,
+    borderLeftWidth: 3,
+    borderLeftColor: "#26667E",
   },
   eyeIcon: {
     padding: 5,
@@ -687,9 +741,10 @@ const styles = StyleSheet.create({
   modalButton: {
     backgroundColor: "#F7F7F7",
     borderRadius: 10,
-    padding: 10,
-    width: 120,
+    padding: 12,
+    width: 130,
     alignItems: "center",
+    elevation: 2,
   },
   confirmButton: {
     backgroundColor: "#26667E",

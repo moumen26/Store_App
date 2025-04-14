@@ -87,18 +87,25 @@ const ArchiveOrder = () => {
         </Text>
         <View style={styles.Vide}></View>
       </View>
-      <View
-        style={styles.searchBar}
-        className="flex-row mx-5 items-center space-x-2 mb-[20] rounded-3xl"
-      >
-        <MagnifyingGlassIcon size={20} color="#26667E" />
-        <TextInput
-          style={styles.searchBarItem}
-          placeholder="Search your order.."
-          placeholderTextColor="#888888"
-          // value={searchQuery}
-          // onChangeText={setSearchQuery}
-        />
+      <View style={styles.searchBar} className="mx-5 mb-6">
+        <View className="flex-row items-center gap-x-4">
+          <MagnifyingGlassIcon size={20} color="#26667E" />
+          <TextInput
+            style={styles.searchBarItem}
+            placeholder="Rechercher par magasin..."
+            placeholderTextColor="#888888"
+            // value={searchQuery}
+            // onChangeText={setSearchQuery}
+          />
+        </View>
+        {/* {searchQuery.length > 0 && (
+          <TouchableOpacity
+            onPress={handleClearSearch}
+            style={styles.clearButton}
+          >
+            <Text style={styles.clearButtonText}>✕</Text>
+          </TouchableOpacity>
+        )} */}
       </View>
       <View style={styles.container}>
         {ArchiveOrdersData?.length > 0 ? (
@@ -176,6 +183,8 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     borderRadius: 30,
     flexDirection: "row",
+    justifyContent: "space-between",
+    paddingRight: 15,
     gap: 4,
   },
   searchBarItem: {
