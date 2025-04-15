@@ -5,8 +5,9 @@ import {
   Text,
   TextInput,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BackButton from "../../components/BackButton";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import useAuthContext from "../hooks/useAuthContext";
@@ -28,7 +29,8 @@ const api = axios.create({
 
 const ArchiveOrder = () => {
   const { user } = useAuthContext();
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredArchiveOrdersData, setFilteredArchiveOrdersData] = useState([]);
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchArchiveOrdersData = async () => {
@@ -64,6 +66,36 @@ const ArchiveOrder = () => {
     refetchInterval: 1000 * 60 * 5, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
+  // Update filteredArchiveOrdersData whenever ArchiveOrdersData or searchQuery changes
+  useEffect(() => {
+    if (ArchiveOrdersData) {
+      if (searchQuery.trim() === "") {
+        // If search query is empty, show all stores
+        setFilteredArchiveOrdersData(ArchiveOrdersData);
+      } else {
+        // Filter stores based on search query
+        const query = searchQuery.toLowerCase().trim();
+        const filtered = ArchiveOrdersData?.filter(
+          (order) =>
+            (order.store.storeName &&
+              order.store.storeName?.toLowerCase().includes(query)) ||
+            (order.type && order.type?.toLowerCase().includes(query)) ||
+            (order._id && order._id?.toLowerCase().includes(query)) ||
+            (order.total &&
+              order.total.toString().toLowerCase().includes(query))
+        );
+        setFilteredArchiveOrdersData(filtered);
+      }
+    } else {
+      setFilteredArchiveOrdersData([]);
+    }
+  }, [ArchiveOrdersData, searchQuery]);
+
+  // Handle search clear function
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
   //--------------------------------------------Rendering--------------------------------------------
   if (ArchiveOrdersDataLoading) {
     return (
@@ -94,23 +126,23 @@ const ArchiveOrder = () => {
             style={styles.searchBarItem}
             placeholder="Rechercher par magasin..."
             placeholderTextColor="#888888"
-            // value={searchQuery}
-            // onChangeText={setSearchQuery}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
         </View>
-        {/* {searchQuery.length > 0 && (
+        {searchQuery.length > 0 && (
           <TouchableOpacity
             onPress={handleClearSearch}
             style={styles.clearButton}
           >
             <Text style={styles.clearButtonText}>✕</Text>
           </TouchableOpacity>
-        )} */}
+        )}
       </View>
       <View style={styles.container}>
-        {ArchiveOrdersData?.length > 0 ? (
+        {filteredArchiveOrdersData?.length > 0 ? (
           <FlatList
-            data={ArchiveOrdersData?.reverse()}
+            data={filteredArchiveOrdersData?.reverse()}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <CartOrderItem

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -15,7 +16,8 @@ import BackButton from "../../components/BackButton";
 import ShippingAddressCard from "../../components/ShippingAddressCard";
 import useAuthContext from "../hooks/useAuthContext";
 import Snackbar from "../../components/Snackbar";
-import { UserIcon, MapPinIcon, MapIcon } from "react-native-heroicons/outline";
+import { UserIcon, MapPinIcon, MapIcon, PencilIcon } from "react-native-heroicons/outline";
+import Config from "../config";
 
 const ShippingAddressScreen = memo(() => {
   const { cart, user, dispatch } = useAuthContext();
@@ -34,6 +36,7 @@ const ShippingAddressScreen = memo(() => {
   // For address modal states
   const [modalVisible, setModalVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [addressToEdit, setAddressToEdit] = useState(null);
   const [newAddress, setNewAddress] = useState({
     name: "",
     address: "",
@@ -84,7 +87,33 @@ const ShippingAddressScreen = memo(() => {
   }, [storeCart, selectedIndex, user, dispatch, storeId, navigation]);
 
   const handleAddAddress = () => {
+    setAddressToEdit(null);
+    setNewAddress({
+      name: "",
+      address: "",
+      location: "Sélectionnez un lieu sur la carte",
+    });
     setModalVisible(true);
+  };
+
+  const handleEditAddress = (addressId) => {
+    const addressToEdit = user?.info?.storeAddresses?.find(
+      (address) => address._id === addressId
+    );
+    
+    if (addressToEdit) {
+      setAddressToEdit(addressToEdit);
+      setNewAddress({
+        name: addressToEdit.name || "",
+        address: addressToEdit.address || "",
+        location: addressToEdit.location || "Sélectionnez un lieu sur la carte",
+      });
+      setModalVisible(true);
+    } else {
+      setSnackbarType("error");
+      setSnackbarMessage("Adresse introuvable.");
+      setSnackbarKey((prevKey) => prevKey + 1);
+    }
   };
 
   const closeModal = () => {
@@ -93,8 +122,9 @@ const ShippingAddressScreen = memo(() => {
     setNewAddress({
       name: "",
       address: "",
-      location: "Select location on map",
+      location: "Sélectionnez un lieu sur la carte",
     });
+    setAddressToEdit(null);
   };
 
   const openLocationPicker = () => {
@@ -117,77 +147,38 @@ const ShippingAddressScreen = memo(() => {
   const handleSaveAddress = async () => {
     if (submitting) return;
 
-    // Validate inputs
-    if (!newAddress.name.trim()) {
-      setSnackbarType("error");
-      setSnackbarMessage("Veuillez entrer un nom pour cette adresse");
-      setSnackbarKey((prevKey) => prevKey + 1);
-      return;
-    }
-
-    if (!newAddress.address.trim()) {
-      setSnackbarType("error");
-      setSnackbarMessage("Veuillez saisir une adresse");
-      setSnackbarKey((prevKey) => prevKey + 1);
-      return;
-    }
-
-    if (newAddress.location === "Sélectionnez un lieu sur la carte") {
-      setSnackbarType("error");
-      setSnackbarMessage("Veuillez sélectionner un lieu sur la carte");
-      setSnackbarKey((prevKey) => prevKey + 1);
-      return;
-    }
-
     setSubmitting(true);
 
     try {
-      // Here you would typically make an API call to save the address
-      // For now, we'll just simulate success after a brief delay
+      // If we're editing an existing address
+      if (addressToEdit) {
+        await updateExistingAddress();
+      } else {
+        // Validate inputs
+        if (!newAddress.name.trim()) {
+          closeModal();
+          setSnackbarType("error");
+          setSnackbarMessage("Veuillez entrer un nom pour cette adresse");
+          setSnackbarKey((prevKey) => prevKey + 1);
+          return;
+        }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Simulate success response
-      const mockResponse = {
-        success: true,
-        newAddress: {
-          _id: `address_${Date.now()}`, // Generate a temporary ID
-          name: newAddress.name,
-          address: newAddress.address,
-          location: newAddress.location,
-        },
-      };
-
-      // Update the local user state with the new address
-      if (mockResponse.success) {
-        const updatedAddresses = [
-          ...(user?.info?.storeAddresses || []),
-          mockResponse.newAddress,
-        ];
-
-        // Update the global state
-        dispatch({
-          type: "UPDATE_USER",
-          payload: {
-            ...user,
-            info: {
-              ...user.info,
-              storeAddresses: updatedAddresses,
-            },
-          },
-        });
-
-        setSnackbarType("success");
-        setSnackbarMessage("Nouvelle adresse ajoutée avec succès");
-        setSnackbarKey((prevKey) => prevKey + 1);
-        closeModal();
+        if (!newAddress.address.trim()) {
+          closeModal();
+          setSnackbarType("error");
+          setSnackbarMessage("Veuillez saisir une adresse");
+          setSnackbarKey((prevKey) => prevKey + 1);
+          return;
+        }
+        // If we're adding a new address
+        await addNewAddress();
       }
     } catch (error) {
-      console.error("Error adding address:", error);
+      console.error("Error saving address:", error);
       setSnackbarType("error");
       setSnackbarMessage(
-        "Échec de l'ajout d'une nouvelle adresse. Veuillez réessayer."
+        error.response?.data?.message || 
+        "Échec de l'opération. Veuillez réessayer."
       );
       setSnackbarKey((prevKey) => prevKey + 1);
     } finally {
@@ -195,9 +186,195 @@ const ShippingAddressScreen = memo(() => {
     }
   };
 
+  const addNewAddress = async () => {
+    const response = await fetch(
+      `${Config.API_URL}/Client/add/address/${user.info.id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: JSON.stringify({
+          name: newAddress.name,
+          addr: newAddress.address,
+          location: newAddress.location,
+        }),
+      }
+    );
+
+    const json = await response.json();
+    if (!response.ok) {
+      closeModal();
+      setSnackbarType("error");
+      setSnackbarMessage(json.message);
+      setSnackbarKey((prevKey) => prevKey + 1);
+      return;
+    }
+    
+    const newAddressAdded = json.address;
+    
+    // Update locally with an estimated structure
+    const updatedAddresses = [
+      ...(user?.info?.storeAddresses || []),
+      {
+        _id: newAddressAdded._id,
+        name: newAddressAdded.name,
+        address: newAddressAdded.address,
+        location: newAddressAdded.location,
+      },
+    ];
+    
+    dispatch({
+      type: "UPDATE_USER",
+      payload: {
+        ...user,
+        info: {
+          ...user.info,
+          storeAddresses: updatedAddresses,
+        },
+      },
+    });
+
+    setSnackbarType("success");
+    setSnackbarMessage(json.message || "Adresse ajoutée avec succès");
+    setSnackbarKey((prevKey) => prevKey + 1);
+    closeModal();
+  };
+
+  const updateExistingAddress = async () => {
+    const response = await fetch(
+      `${Config.API_URL}/Client/update/address/${user.info.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: JSON.stringify({
+          addressId: addressToEdit._id,
+          name: newAddress.name,
+          addr: newAddress.address,
+          location: newAddress.location,
+        }),
+      }
+    );
+
+    const json = await response.json();
+    if (!response.ok) {
+      closeModal();
+      setSnackbarType("error");
+      setSnackbarMessage(json.message);
+      setSnackbarKey((prevKey) => prevKey + 1);
+      return;
+    }
+    
+    // Update the address in the local state
+    const updatedAddresses = user?.info?.storeAddresses.map(address => 
+      address._id === addressToEdit._id 
+        ? {
+            ...address,
+            name: newAddress.name,
+            address: newAddress.address,
+            location: newAddress.location,
+          }
+        : address
+    );
+    
+    dispatch({
+      type: "UPDATE_USER",
+      payload: {
+        ...user,
+        info: {
+          ...user.info,
+          storeAddresses: updatedAddresses,
+        },
+      },
+    });
+
+    setSnackbarType("success");
+    setSnackbarMessage(json.message);
+    setSnackbarKey((prevKey) => prevKey + 1);
+    closeModal();
+  };
+
+  const handleDeleteAddress = (addressId) => {
+    Alert.alert(
+      "Supprimer l'adresse",
+      "Êtes-vous sûr de vouloir supprimer cette adresse?",
+      [
+        {
+          text: "Annuler",
+          style: "cancel"
+        },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: () => confirmDeleteAddress(addressId)
+        }
+      ]
+    );
+  };
+
+  const confirmDeleteAddress = async (addressId) => {
+    try {
+      const response = await fetch(
+        `${Config.API_URL}/Client/delete/address/${user.info.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: JSON.stringify({
+            addressId: addressId,
+          }),
+        }
+      );
+  
+      const json = await response.json();
+      if (!response.ok) {
+        setSnackbarType("error");
+        setSnackbarMessage(json.message || "Échec de la suppression");
+        setSnackbarKey((prevKey) => prevKey + 1);
+        return;
+      }
+  
+      // Update local state
+      const updatedAddresses = user?.info?.storeAddresses.filter(
+        address => address._id !== addressId
+      );
+      
+      dispatch({
+        type: "UPDATE_USER",
+        payload: {
+          ...user,
+          info: {
+            ...user.info,
+            storeAddresses: updatedAddresses,
+          },
+        },
+      });
+  
+      setSnackbarType("success");
+      setSnackbarMessage(json.message || "Adresse supprimée avec succès");
+      setSnackbarKey((prevKey) => prevKey + 1);
+      
+      // Clear selection if the deleted address was selected
+      if (selectedIndex === addressId) {
+        setSelectedIndex(null);
+      }
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      setSnackbarType("error");
+      setSnackbarMessage("Échec de la suppression de l'adresse");
+      setSnackbarKey((prevKey) => prevKey + 1);
+    }
+  };
+
   const renderItems = useCallback(
     () =>
-      user?.info?.storeAddresses?.map((item, index) => (
+      user?.info?.storeAddresses?.map((item) => (
         <View key={item?._id} style={styles.row}>
           <ShippingAddressCard
             index={item?._id}
@@ -207,6 +384,22 @@ const ShippingAddressScreen = memo(() => {
             isSelected={item?._id === selectedIndex}
             onSelect={handleSelectItem}
           />
+          <View style={styles.addressActions}>
+            <TouchableOpacity 
+              style={styles.editButton}
+              onPress={() => handleEditAddress(item?._id)}
+            >
+              <PencilIcon size={18} color="#26667E" />
+              <Text style={styles.editButtonText}>Modifier</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.deleteButton}
+              onPress={() => handleDeleteAddress(item?._id)}
+            >
+              <Text style={styles.deleteButtonText}>Supprimer</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )),
     [user, selectedIndex, handleSelectItem]
@@ -269,11 +462,13 @@ const ShippingAddressScreen = memo(() => {
         </View>
       </SafeAreaView>
 
-      {/* Add New Address Modal */}
+      {/* Add/Edit Address Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Ajouter une nouvelle adresse</Text>
+            <Text style={styles.modalTitle}>
+              {addressToEdit ? "Modifier l'adresse" : "Ajouter une nouvelle adresse"}
+            </Text>
 
             <View style={styles.modalContentContainer}>
               {/* Name Field */}
@@ -352,7 +547,9 @@ const ShippingAddressScreen = memo(() => {
                 {submitting ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.buttonText}>Enregistrer</Text>
+                  <Text style={styles.buttonText}>
+                    {addressToEdit ? "Mettre à jour" : "Enregistrer"}
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -501,7 +698,35 @@ const styles = StyleSheet.create({
   row: {
     borderBottomWidth: 1,
     borderColor: "#F7F7F7",
+    marginBottom: 10,
+    paddingBottom: 5,
+  },
+  addressActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 5,
     marginBottom: 5,
+    paddingHorizontal: 10,
+  },
+  editButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 5,
+    marginRight: 15,
+  },
+  editButtonText: {
+    color: "#26667E",
+    fontSize: 12,
+    fontFamily: "Montserrat-Medium",
+    marginLeft: 5,
+  },
+  deleteButton: {
+    padding: 5,
+  },
+  deleteButtonText: {
+    color: "#FF6B6B",
+    fontSize: 12,
+    fontFamily: "Montserrat-Medium",
   },
   addAddressContainer: {
     marginHorizontal: 20,
@@ -541,8 +766,10 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
   },
-
-  // Modal styles
+  disabledButton: {
+    backgroundColor: "#84a7b5", // Lighter color to indicate disabled state
+  },
+  // Modal styles (remaining styles unchanged)
   modalContainer: {
     flex: 1,
     justifyContent: "center",

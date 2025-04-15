@@ -11,65 +11,74 @@ const AuthReducer = (state, action) => {
       return { user: action.payload };
     case "LOGOUT":
       return { user: null };
-      case "ADD_TO_CART": {
-        const existingProducts = (state.cart || []).filter(
-          (item) =>
-            item.stock === action.payload.stock && 
-            item.store === action.payload.store
-        );        
-        if (existingProducts?.length > 0) {
-          // Product exists in cart; update quantity
-          const updatedCart = state.cart?.map((item) =>
-            item.stock === action.payload.stock && 
-            item.store === action.payload.store
-              ? {
-                  ...item,
-                  quantity: item.quantity + action.payload.quantity,
-                  price: item.unityPrice * (item.quantity + action.payload.quantity), 
-                  buyingMathode: action.payload.buyingMathode == 'unity' ? action.payload.buyingMathode : item.buyingMathode,
-                }
-              : item
-          );
       
-          return {
-            ...state,
-            cart: updatedCart,
-          };
-        }
-        // Product does not exist; add as new entry
+    case "UPDATE_USER":
+      if (action.payload?.token) {
+        AsyncStorage.setItem("user", JSON.stringify(action.payload));
+      }
+      return { 
+        ...state, 
+        user: action.payload 
+      };
+    case "ADD_TO_CART": {
+      const existingProducts = (state.cart || []).filter(
+        (item) =>
+          item.stock === action.payload.stock && 
+          item.store === action.payload.store
+      );        
+      if (existingProducts?.length > 0) {
+        // Product exists in cart; update quantity
+        const updatedCart = state.cart?.map((item) =>
+          item.stock === action.payload.stock && 
+          item.store === action.payload.store
+            ? {
+                ...item,
+                quantity: item.quantity + action.payload.quantity,
+                price: item.unityPrice * (item.quantity + action.payload.quantity), 
+                buyingMathode: action.payload.buyingMathode == 'unity' ? action.payload.buyingMathode : item.buyingMathode,
+              }
+            : item
+        );
+    
         return {
           ...state,
-          cart: [...(state.cart || []), action.payload],
+          cart: updatedCart,
         };
       }
-    case "UPDATE_CART":
-      return { 
-        ...state, 
-        cart: (state.cart || []).map(item =>
-          item.stock === action.payload.stock && item.store === action.payload.storeId
-            ? { ...item, ...action.payload } 
-            : item
-        ),
-      };
-    case "REMOVE_FROM_CART":
-      return { 
-        ...state, 
-        cart: (state.cart || []).filter(item => !(item.stock === action.payload.stock  && item.store === action.payload.storeId)) 
-      };
-    case "REMOVE_ALL_CART":
+      // Product does not exist; add as new entry
       return {
         ...state,
-        cart: (state.cart || []).filter(item => item.store !== action.payload),
+        cart: [...(state.cart || []), action.payload],
       };
-    case "ADD_TO_CART_ADDRESS":
-      return {
-        ...state,
-        cart: (state.cart || []).map(item => (
-          item.store === action.payload.storeId 
-          ?{ ...item, shippingAddress: action.payload.selectedAddress }
+    }
+  case "UPDATE_CART":
+    return { 
+      ...state, 
+      cart: (state.cart || []).map(item =>
+        item.stock === action.payload.stock && item.store === action.payload.storeId
+          ? { ...item, ...action.payload } 
           : item
-        )),
-      };
+      ),
+    };
+  case "REMOVE_FROM_CART":
+    return { 
+      ...state, 
+      cart: (state.cart || []).filter(item => !(item.stock === action.payload.stock  && item.store === action.payload.storeId)) 
+    };
+  case "REMOVE_ALL_CART":
+    return {
+      ...state,
+      cart: (state.cart || []).filter(item => item.store !== action.payload),
+    };
+  case "ADD_TO_CART_ADDRESS":
+    return {
+      ...state,
+      cart: (state.cart || []).map(item => (
+        item.store === action.payload.storeId 
+        ?{ ...item, shippingAddress: action.payload.selectedAddress }
+        : item
+      )),
+    };
     default:
       return state;
   }
