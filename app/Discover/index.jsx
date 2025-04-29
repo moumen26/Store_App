@@ -1,6 +1,15 @@
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
 import React from "react";
 import { useNavigation } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
 
 const Home = require("../../assets/images/Home.png");
@@ -8,51 +17,149 @@ const Home = require("../../assets/images/Home.png");
 const DiscoverScreen = () => {
   const navigation = useNavigation();
 
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+
+  // Calculate image container height based on screen size
+  const imageContainerHeight = isSmallScreen
+    ? height * 0.45
+    : isMediumScreen
+    ? height * 0.5
+    : height * 0.55;
+
+  // Calculate image dimensions
+  const imageWidth = isSmallScreen
+    ? width * 0.7
+    : isMediumScreen
+    ? width * 0.6
+    : width * 0.5;
+  const imageHeight = imageContainerHeight * 0.9;
+
   return (
-    <View className="bg-white h-full">
-      <View
-        style={styles.ImageContainer}
-        className="flex items-center justify-center"
-      >
-        <View style={styles.Container}></View>
-        <Image style={styles.Image} source={Home} />
-        {/* <TouchableOpacity
+    <View style={styles.container}>
+      <StatusBar style="dark" />
+
+      <View style={[styles.imageContainer, { height: imageContainerHeight }]}>
+        <View style={styles.circleContainer}></View>
+        <Image
+          style={[
+            styles.image,
+            {
+              width: imageWidth,
+              height: imageHeight,
+              bottom: isSmallScreen ? -30 : isMediumScreen ? -50 : -70,
+            },
+          ]}
+          source={Home}
+        />
+        {/* Uncomment if skip button is needed
+        <TouchableOpacity
           onPress={() => navigation.navigate("SignIn/index")}
-          className="mx-5"
-          style={styles.skipContainer}
+          style={[
+            styles.skipContainer,
+            { right: horizontalPadding }
+          ]}
         >
           <Text style={styles.skipText}>Skip</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
+        */}
       </View>
-      <View className="mx-5 mt-[24] flex justify-center">
-        <View className="flex h-[90] items-center justify-center">
-          <Text style={styles.title}>Découvrez le monde</Text>
-          <Text style={styles.title} className="text-[#26667E]">
+
+      <View
+        style={[
+          styles.contentContainer,
+          {
+            marginHorizontal: horizontalPadding,
+            marginTop: verticalSpacing,
+          },
+        ]}
+      >
+        <View
+          style={[styles.titleContainer, { height: isSmallScreen ? 70 : 90 }]}
+        >
+          <Text
+            style={[
+              styles.title,
+              { fontSize: isSmallScreen ? 24 : isLargeScreen ? 36 : 30 },
+            ]}
+          >
+            Découvrez le monde
+          </Text>
+          <Text
+            style={[
+              styles.title,
+              {
+                fontSize: isSmallScreen ? 24 : isLargeScreen ? 36 : 30,
+                color: "#26667E",
+              },
+            ]}
+          >
             de votre magasin
           </Text>
         </View>
-        <View className="flex items-center justify-center h-[50]">
-          <Text style={styles.description}>
+
+        <View
+          style={[
+            styles.descriptionContainer,
+            { height: isSmallScreen ? 40 : 50 },
+          ]}
+        >
+          <Text
+            style={[
+              styles.description,
+              { fontSize: isSmallScreen ? 12 : isLargeScreen ? 16 : 13 },
+            ]}
+          >
             Le magasin est le premier tout-en-un au monde
           </Text>
         </View>
 
-        <View className="flex-row justify-between mx-5 mt-[40]">
-          <View style={styles.Vide}></View>
+        <View
+          style={[
+            styles.navigationRow,
+            {
+              marginHorizontal: width * 0.05,
+              marginTop: isSmallScreen ? height * 0.03 : height * 0.04,
+            },
+          ]}
+        >
           <View
-            className="flex-row justify-center items-center"
-            style={styles.threePoint}
-          >
-            <View className="w-[10] h-[10] rounded bg-[#26667E] mr-1"></View>
-            <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
-            <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
+            style={[
+              styles.vide,
+              {
+                width: isSmallScreen ? 32 : 40,
+                height: isSmallScreen ? 32 : 40,
+              },
+            ]}
+          ></View>
+
+          <View style={styles.indicatorContainer}>
+            <View style={styles.activeIndicator}></View>
+            <View style={styles.inactiveIndicator}></View>
+            <View style={[styles.inactiveIndicator, { marginRight: 0 }]}></View>
           </View>
 
           <TouchableOpacity
-            style={styles.NextButton}
+            style={[
+              styles.nextButton,
+              {
+                width: isSmallScreen ? 32 : 40,
+                height: isSmallScreen ? 32 : 40,
+                borderRadius: isSmallScreen ? 16 : 20,
+              },
+            ]}
             onPress={() => navigation.navigate("YourCart/index")}
           >
-            <ArrowRightIcon color="#fff" size={18} />
+            <ArrowRightIcon color="#fff" size={isSmallScreen ? 16 : 18} />
           </TouchableOpacity>
         </View>
       </View>
@@ -61,28 +168,28 @@ const DiscoverScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  Vide: {
-    width: 40,
-    height: 40,
+  container: {
+    flex: 1,
+    backgroundColor: "white",
   },
-  NextButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#fff",
+  vide: {
+    // Dimensions set dynamically
+  },
+  nextButton: {
     alignItems: "center",
     justifyContent: "center",
     borderColor: "#26667E",
     backgroundColor: "#26667E",
     borderWidth: 1,
   },
-  ImageContainer: {
+  imageContainer: {
     width: "100%",
-    height: 492,
     position: "relative",
     overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  Container: {
+  circleContainer: {
     position: "absolute",
     width: 5000,
     height: 5000,
@@ -92,17 +199,13 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderRadius: 4000,
   },
-  Image: {
+  image: {
     position: "absolute",
-    bottom: -58,
-    width: 300,
-    height: "90%",
     resizeMode: "contain",
     zIndex: 99,
   },
   skipContainer: {
     position: "absolute",
-    right: 0,
     zIndex: 99,
   },
   skipText: {
@@ -110,16 +213,49 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
     color: "#26667E",
   },
+  contentContainer: {
+    justifyContent: "center",
+  },
+  titleContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
   title: {
     fontFamily: "Montserrat-Regular",
-    fontSize: 30,
     textAlign: "center",
+  },
+  descriptionContainer: {
+    alignItems: "center",
+    justifyContent: "center",
   },
   description: {
     fontFamily: "Montserrat-Regular",
-    fontSize: 13,
     textAlign: "center",
     color: "#888888",
+  },
+  navigationRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  indicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activeIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#26667E",
+    marginRight: 4,
+  },
+  inactiveIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#EDEDED",
+    marginRight: 4,
   },
 });
 

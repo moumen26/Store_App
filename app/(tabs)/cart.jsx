@@ -5,9 +5,13 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  Dimensions,
+  Platform,
+  useWindowDimensions,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import CartOrderItem from "../../components/CartOrderItem";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import useAuthContext from "../hooks/useAuthContext";
@@ -26,10 +30,19 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
 const cart = () => {
   const { user } = useAuthContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredOrders, setFilteredOrders] = useState([]);
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallDevice = width < 375;
+  const isMediumDevice = width >= 375 && width < 768;
+  const isLargeDevice = width >= 768;
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -61,6 +74,7 @@ const cart = () => {
       throw new Error(error?.message || "Network error");
     }
   };
+
   const {
     data: OrdersData,
     error: OrdersDataError,
@@ -73,6 +87,16 @@ const cart = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
+  // Refetch data when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.token) {
+        OrdersDataRefetch();
+      }
+      return () => {};
+    }, [user?.token])
+  );
 
   // Update filteredOrders whenever OrdersData or searchQuery changes
   useEffect(() => {
@@ -107,10 +131,12 @@ const cart = () => {
   //--------------------------------------------Rendering--------------------------------------------
   if (OrdersDataLoading) {
     return (
-      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-        <View className="mx-5" style={styles.containerLoading}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={[styles.container, { marginHorizontal: width * 0.05 }]}>
           <View style={styles.containerLoadingtextScreen}>
-            <ShimmerPlaceholder style={styles.textScreen} />
+            <ShimmerPlaceholder
+              style={[styles.textScreen, { width: width * 0.6 }]}
+            />
           </View>
           <Search />
           <Cart />
@@ -120,19 +146,49 @@ const cart = () => {
   }
 
   return (
-    <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-      <View className="mx-5 mb-[20] flex-row items-center justify-between">
-        <View style={styles.Vide}></View>
-        <Text className="text-center" style={styles.titleScreen}>
+    <SafeAreaView style={styles.safeArea}>
+      <View
+        style={[
+          styles.headerContainer,
+          { marginHorizontal: width * 0.05, marginBottom: height * 0.025 },
+        ]}
+      >
+        <View style={styles.vide}></View>
+        <Text
+          style={[
+            styles.titleScreen,
+            isSmallDevice && { fontSize: 18 },
+            isLargeDevice && { fontSize: 24 },
+          ]}
+        >
           Mes commandes{" "}
         </Text>
         <ArchiveButton />
       </View>
-      <View style={styles.searchBar} className="mx-5 mb-6">
-        <View className="flex-row items-center gap-x-4">
-          <MagnifyingGlassIcon size={20} color="#26667E" />
+
+      <View
+        style={[
+          styles.searchBar,
+          {
+            marginHorizontal: width * 0.05,
+            marginBottom: height * 0.02,
+            height: Math.max(45, height * 0.06),
+          },
+        ]}
+      >
+        <View style={styles.searchInputContainer}>
+          <MagnifyingGlassIcon size={isSmallDevice ? 16 : 20} color="#26667E" />
           <TextInput
-            style={styles.searchBarItem}
+            style={[
+              styles.searchBarItem,
+              {
+                width: isSmallDevice
+                  ? width * 0.6
+                  : isLargeDevice
+                  ? width * 0.7
+                  : width * 0.65,
+              },
+            ]}
             placeholder="Rechercher par magasin..."
             placeholderTextColor="#888888"
             value={searchQuery}
@@ -148,7 +204,15 @@ const cart = () => {
           </TouchableOpacity>
         )}
       </View>
-      <View style={styles.container}>
+
+      <View
+        style={[
+          styles.listContainer,
+          {
+            paddingHorizontal: width * 0.05,
+          },
+        ]}
+      >
         {filteredOrders?.length > 0 ? (
           <FlatList
             data={filteredOrders.reverse()}
@@ -166,25 +230,17 @@ const cart = () => {
               />
             )}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.containerScroll}
+            contentContainerStyle={[
+              styles.containerScroll,
+              {
+                gap: height * 0.02,
+                paddingBottom: height * 0.05,
+              },
+            ]}
           />
         ) : (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{
-                color: "#888888",
-                fontSize: 14,
-                fontFamily: "Montserrat-Regular",
-              }}
-            >
-              Aucune commande trouvée
-            </Text>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Aucune commande trouvée</Text>
           </View>
         )}
       </View>
@@ -193,6 +249,25 @@ const cart = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+    paddingBottom: 12,
+    height: "100%",
+  },
+  container: {
+    flexDirection: "column",
+    gap: 16,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  listContainer: {
+    flex: 1,
+  },
   containerLoadingtextScreen: {
     flexDirection: "row",
     justifyContent: "center",
@@ -202,52 +277,59 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 16,
   },
-  container: {
-    flex: 1,
-    // paddingBottom: 0,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  titleCategory: {
-    fontSize: 18,
-    fontFamily: "Montserrat-Regular",
-  },
   titleScreen: {
     fontSize: 20,
     fontFamily: "Montserrat-Regular",
+    textAlign: "center",
   },
   searchBar: {
-    height: 50,
     borderColor: "#26667E",
     borderWidth: 1,
     alignItems: "center",
-    paddingLeft: 15,
+    paddingHorizontal: 15,
     borderRadius: 30,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: 15,
-    gap: 4,
+  },
+  searchInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
   },
   searchBarItem: {
     color: "black",
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
-    width: 220,
+    flex: 1,
   },
-  loadingText: {
+  clearButton: {
+    padding: 5,
+  },
+  clearButtonText: {
+    color: "#888888",
     fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-    color: "#FF033E",
-    fontWeight: "bold",
   },
   containerScroll: {
     flexDirection: "column",
-    gap: 16,
-    paddingBottom: 38,
   },
-  Vide: {
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#888888",
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+  },
+  vide: {
     width: 40,
     height: 40,
+  },
+  textScreen: {
+    height: 20,
+    borderRadius: 4,
   },
 });
 

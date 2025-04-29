@@ -6,22 +6,18 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import BackButton from "../../components/BackButton";
 import CartRow from "../../components/CartRow";
 import SubmitOrderModal from "../../components/SubmitOrderModal.jsx";
-
 import EReceiptDetails from "../../components/EReceiptDetails";
 import Barcode from "react-native-barcode-svg";
-
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { useRoute } from "@react-navigation/native";
-
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
 import Config from "../config";
@@ -30,10 +26,8 @@ import ShimmerPlaceholder from "react-native-shimmer-placeholder";
 import CodeBar from "../loading/CodeBar";
 import ArticleItem from "../loading/ArticleItem";
 import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
-
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
-
 import TrackButton from "../../components/TrackButton";
 import SubmitOderModalReason from "../../components/SubmitOderModalReason.jsx";
 
@@ -51,6 +45,29 @@ const EReceiptScreen = () => {
   const { user } = useAuthContext();
   const route = useRoute();
   const { OrderID } = route.params;
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const smallSpacing = height * 0.01;
+
+  // Additional responsive values
+  const buttonHeight = Math.max(45, height * 0.06);
+  const buttonWidth = isLargeScreen ? width * 0.6 : width * 0.85;
+  const barcodeWidth = isSmallScreen
+    ? width * 0.8
+    : isLargeScreen
+    ? width * 0.6
+    : width * 0.7;
+  const bottomBarHeight = isSmallScreen ? 70 : 80;
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -75,6 +92,7 @@ const EReceiptScreen = () => {
       throw new Error(error?.message || "Network error");
     }
   };
+
   const {
     data: OrderData,
     error: OrderDataError,
@@ -84,9 +102,19 @@ const EReceiptScreen = () => {
     queryKey: ["OrderData", user?.token], // Ensure token is part of the query key
     queryFn: fetchOrderData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchInterval: 100, // Refetch every 10 seconds
+    refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
+  // Refetch data when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.token) {
+        OrderDataRefetch();
+      }
+      return () => {};
+    }, [user?.token])
+  );
 
   const html = `
   <html>
@@ -200,6 +228,7 @@ const EReceiptScreen = () => {
 
     await shareAsync(file.uri);
   };
+
   const BarcodeWrapper = ({ value, format = "CODE128", ...props }) => {
     return <Barcode value={value} format={format} {...props} />;
   };
@@ -207,10 +236,14 @@ const EReceiptScreen = () => {
   //--------------------------------------------Rendering--------------------------------------------
   if (OrderDataLoading) {
     return (
-      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-        <View className="mx-5" style={styles.containerLoading}>
+      <SafeAreaView style={styles.safeArea}>
+        <View
+          style={[styles.container, { marginHorizontal: horizontalPadding }]}
+        >
           <View style={styles.containerLoadingtextScreen}>
-            <ShimmerPlaceholder style={styles.textScreen} />
+            <ShimmerPlaceholder
+              style={[styles.textScreen, { width: width * 0.6 }]}
+            />
           </View>
           <CodeBar />
           <ArticleItem />
@@ -222,24 +255,56 @@ const EReceiptScreen = () => {
       </SafeAreaView>
     );
   }
+
   return (
-    <SafeAreaView className="bg-white pt-3 relative h-full">
-      <View style={styles.FlatList} className="mx-5">
+    <SafeAreaView style={styles.safeArea}>
+      <View
+        style={[
+          styles.flatListContainer,
+          {
+            marginHorizontal: horizontalPadding,
+            paddingBottom: bottomBarHeight + 10,
+          },
+        ]}
+      >
         <FlatList
           data={OrderData?.recieptStatus?.products || []}
           keyExtractor={(item) => item?.stock?.toString()}
           ListHeaderComponent={
             <>
-              <View className="mb-[20] flex-row items-center justify-between">
+              <View
+                style={[
+                  styles.headerContainer,
+                  { marginBottom: verticalSpacing },
+                ]}
+              >
                 <BackButton />
-                <Text style={styles.titleScreen}>E-Reçu</Text>
+                <Text
+                  style={[
+                    styles.titleScreen,
+                    {
+                      fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
+                    },
+                  ]}
+                >
+                  E-Reçu
+                </Text>
                 <TrackButton
                   data={OrderData}
                   OrderDataRefetch={OrderDataRefetch}
                 />
               </View>
-              <View>
-                <BarcodeWrapper value={OrderID} />
+              <View
+                style={[
+                  styles.barcodeContainer,
+                  { marginBottom: verticalSpacing },
+                ]}
+              >
+                <BarcodeWrapper
+                  value={OrderID}
+                  width={barcodeWidth}
+                  height={isSmallScreen ? 70 : 80}
+                />
               </View>
             </>
           }
@@ -257,8 +322,8 @@ const EReceiptScreen = () => {
             />
           )}
           ListEmptyComponent={
-            <View style={styles.containerNoAvailable}>
-              <Text style={styles.noText}>Aucun produit disponible</Text>
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Aucun produit disponible</Text>
             </View>
           }
           ListFooterComponent={
@@ -278,12 +343,34 @@ const EReceiptScreen = () => {
           }
         />
       </View>
+
       <View
-        className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
-        style={styles.navigationClass}
+        style={[
+          styles.bottomBar,
+          {
+            height: bottomBarHeight,
+            paddingBottom: isSmallScreen ? 0 : Platform.OS === "ios" ? 10 : 3,
+          },
+        ]}
       >
-        <TouchableOpacity style={styles.loginButton} onPress={generatePDF}>
-          <Text style={styles.loginButtonText}>
+        <TouchableOpacity
+          style={[
+            styles.downloadButton,
+            {
+              height: buttonHeight,
+              width: buttonWidth,
+            },
+          ]}
+          onPress={generatePDF}
+        >
+          <Text
+            style={[
+              styles.buttonText,
+              {
+                fontSize: isSmallScreen ? 14 : 16,
+              },
+            ]}
+          >
             Télécharger le reçu électronique
           </Text>
         </TouchableOpacity>
@@ -293,90 +380,76 @@ const EReceiptScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  notification: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#fff",
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+    height: "100%",
+    position: "relative",
+  },
+  container: {
+    flexDirection: "column",
+    gap: 16,
+  },
+  flatListContainer: {
+    flex: 1,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  barcodeContainer: {
     alignItems: "center",
     justifyContent: "center",
-    borderColor: "#26667E",
-    borderWidth: 1,
-  },
-  FlatList: {
-    paddingBottom: 55,
-    flex: 1,
   },
   containerLoadingtextScreen: {
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 10,
   },
-  containerLoading: {
-    flexDirection: "column",
-    gap: 16,
-  },
-  Vide: {
-    width: 40,
-    height: 40,
+  textScreen: {
+    height: 20,
+    borderRadius: 4,
   },
   titleScreen: {
-    fontSize: 20,
     fontFamily: "Montserrat-Regular",
   },
-  text: {
-    fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-  },
-  titleCategory: {
-    fontSize: 18,
-    fontFamily: "Montserrat-Regular",
-  },
-  container: {
-    flexGrow: 1,
-    flexDirection: "column",
-    minHeight: hp(32),
-    height: "fit-content",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  navigationClass: {
-    borderColor: "#888888",
-    borderWidth: 0.5,
-    backgroundColor: "#fff",
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-  },
-  navigationText: {
-    fontSize: 10,
-    fontFamily: "Montserrat-Regular",
-  },
-  loginButton: {
-    backgroundColor: "#26667E",
-    borderRadius: 10,
-    height: 50,
+  emptyContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: 340,
+    height: 200,
   },
-  loginButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontFamily: "Montserrat-Regular",
-  },
-  containerNoAvailable: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: hp(55),
-  },
-  noText: {
+  emptyText: {
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
     color: "#888888",
+  },
+  bottomBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#fff",
+    borderColor: "#888888",
+    borderWidth: 0.5,
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 10,
+  },
+  downloadButton: {
+    backgroundColor: "#26667E",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontFamily: "Montserrat-Regular",
   },
 });
 

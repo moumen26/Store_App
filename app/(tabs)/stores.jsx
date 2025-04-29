@@ -4,17 +4,15 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  Dimensions,
   TouchableOpacity,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import { useFocusEffect } from "@react-navigation/native";
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
 import Config from "../config";
@@ -34,11 +32,25 @@ const api = axios.create({
   },
 });
 
-const stores = () => {
+const Stores = () => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredAllStoresData, setFilteredAllStoresData] = useState([]);
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const smallSpacing = height * 0.01;
+
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchAllStoresData = async () => {
@@ -69,6 +81,7 @@ const stores = () => {
       throw new Error(error?.message || "Network error");
     }
   };
+
   const {
     data: AllStoresData,
     error: AllStoresDataError,
@@ -81,6 +94,7 @@ const stores = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
   // Function to fetch stores data
   const fetchCategoriesData = async () => {
     try {
@@ -110,6 +124,7 @@ const stores = () => {
       throw new Error(error?.message || "Network error");
     }
   };
+
   const {
     data: CategoriesData,
     error: CategoriesDataError,
@@ -122,6 +137,17 @@ const stores = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
+  // Refetch data when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.token) {
+        AllStoresDataRefetch();
+        CategoriesDataRefetch();
+      }
+      return () => {};
+    }, [user?.token])
+  );
 
   // Update filteredAllStoresData whenever AllStoresData or searchQuery changes
   useEffect(() => {
@@ -153,13 +179,17 @@ const stores = () => {
   //--------------------------------------------Rendering--------------------------------------------
   if (AllStoresDataLoading || CategoriesDataLoading) {
     return (
-      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-        <View className="mx-5" style={styles.containerLoading}>
+      <SafeAreaView style={styles.safeArea}>
+        <View
+          style={[styles.container, { marginHorizontal: horizontalPadding }]}
+        >
           <View style={styles.containerLoadingtextScreen}>
-            <ShimmerPlaceholder style={styles.textScreen} />
+            <ShimmerPlaceholder
+              style={[styles.textScreen, { width: width * 0.6 }]}
+            />
           </View>
           <Search />
-          <View style={styles.CategoryStores}>
+          <View style={[styles.categoryStores, { gap: smallSpacing * 1.5 }]}>
             <Brands />
             <LoadingStores />
           </View>
@@ -167,20 +197,64 @@ const stores = () => {
       </SafeAreaView>
     );
   }
+
   return (
-    <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-      <View className="mx-5 mb-[20] flex-row items-center justify-between">
-        <View style={styles.Vide}></View>
-        <Text className="text-center" style={styles.titleScreen}>
+    <SafeAreaView style={styles.safeArea}>
+      <View
+        style={[
+          styles.headerContainer,
+          {
+            marginHorizontal: horizontalPadding,
+            marginBottom: isSmallScreen ? smallSpacing : verticalSpacing * 0.7,
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.vide,
+            {
+              width: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
+              height: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
+            },
+          ]}
+        ></View>
+        <Text
+          style={[
+            styles.titleScreen,
+            {
+              fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
+            },
+          ]}
+        >
           Magasins
         </Text>
         <RequestButton CategoriesData={CategoriesData} />
       </View>
-      <View style={styles.searchBar} className="mx-5 mb-2">
-        <View className="flex-row items-center gap-x-4">
-          <MagnifyingGlassIcon size={20} color="#26667E" />
+
+      <View
+        style={[
+          styles.searchBar,
+          {
+            marginHorizontal: horizontalPadding,
+            marginBottom: smallSpacing,
+            height: Math.max(45, height * 0.06),
+          },
+        ]}
+      >
+        <View style={styles.searchInputContainer}>
+          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#26667E" />
           <TextInput
-            style={styles.searchBarItem}
+            style={[
+              styles.searchBarItem,
+              {
+                width: isSmallScreen
+                  ? width * 0.6
+                  : isLargeScreen
+                  ? width * 0.7
+                  : width * 0.65,
+                fontSize: isSmallScreen ? 11 : 12,
+              },
+            ]}
             placeholder="Rechercher par magasin..."
             placeholderTextColor="#888888"
             value={searchQuery}
@@ -196,7 +270,16 @@ const stores = () => {
           </TouchableOpacity>
         )}
       </View>
-      <View style={styles.container}>
+
+      <View
+        style={[
+          styles.storesContainer,
+          {
+            paddingBottom: height * 0.03,
+            paddingHorizontal: isLargeScreen ? horizontalPadding : 0,
+          },
+        ]}
+      >
         <NonLinkedStores
           StoresData={filteredAllStoresData}
           CategoriesData={CategoriesData}
@@ -208,60 +291,72 @@ const stores = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    paddingBottom: 30,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+    paddingBottom: 12,
+    height: "100%",
   },
-  titleCategory: {
-    fontSize: 18,
-    fontFamily: "Montserrat-Regular",
+  container: {
+    flexDirection: "column",
+    gap: 16,
   },
-  titleScreen: {
-    fontSize: 20,
-    fontFamily: "Montserrat-Regular",
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   searchBar: {
-    height: 50,
     borderColor: "#26667E",
     borderWidth: 1,
     alignItems: "center",
-    paddingLeft: 15,
+    paddingHorizontal: 15,
     borderRadius: 30,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: 15,
-    gap: 4,
+  },
+  searchInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
   },
   searchBarItem: {
     color: "black",
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
-    width: 220,
+    flex: 1,
   },
-  loadingText: {
+  clearButton: {
+    padding: 5,
+  },
+  clearButtonText: {
+    color: "#888888",
     fontSize: 14,
+  },
+  storesContainer: {
+    flex: 1,
+  },
+  titleScreen: {
     fontFamily: "Montserrat-Regular",
-    color: "#FF033E",
-    fontWeight: "bold",
+    textAlign: "center",
   },
   containerLoadingtextScreen: {
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 10,
   },
-  containerLoading: {
-    flexDirection: "column",
-    gap: 16,
+  textScreen: {
+    height: 20,
+    borderRadius: 4,
   },
-  CategoryStores: {
+  categoryStores: {
     flexDirection: "column",
-    gap: 16,
     marginTop: 8,
   },
-  Vide: {
-    width: 40,
-    height: 40,
+  vide: {
+    // Dimensions set dynamically
   },
 });
 
-export default stores;
+export default Stores;

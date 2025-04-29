@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
-  ActivityIndicator,
-  ScrollView,
+  TextInput,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MagnifyingGlassIcon, BellIcon } from "react-native-heroicons/outline";
+import { MapPinIcon } from "react-native-heroicons/solid";
+import { useFocusEffect } from "@react-navigation/native";
 import Store from "../../components/Store";
 import SliderHome from "../../components/SliderHome";
-import { TextInput } from "react-native";
 import { useAuthContext } from "../hooks/useAuthContext";
 import Config from "../config";
 import axios from "axios";
@@ -23,7 +24,6 @@ import TopHomeScreen from "../loading/TopHomeScreen";
 import LoadingStores from "../loading/LoadingStores";
 import Brands from "../loading/Brands";
 import ShimmerPlaceholder from "react-native-shimmer-placeholder";
-import { MapPinIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "expo-router";
 
 // Axios instance for base URL configuration
@@ -39,6 +39,19 @@ const home = () => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredStores, setFilteredStores] = useState([]);
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const smallSpacing = height * 0.01;
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -70,20 +83,22 @@ const home = () => {
       throw new Error(error?.message || "Network error");
     }
   };
+
   const {
     data: PublicPublicitiesData,
     error: PublicPublicitiesDataError,
     isLoading: PublicPublicitiesDataLoading,
     refetch: PublicPublicitiesDataRefetch,
   } = useQuery({
-    queryKey: ["PublicPublicitiesData", user?.token], // Ensure token is part of the query key
-    queryFn: fetchPublicPublicitiesData, // Pass token to the fetch function
-    enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
-    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minutes
+    queryKey: ["PublicPublicitiesData", user?.token],
+    queryFn: fetchPublicPublicitiesData,
+    enabled: !!user?.token,
+    refetchOnWindowFocus: true,
+    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minute
     retry: 2,
     retryDelay: 1000,
   });
+
   // Function to fetch stores data
   const fetchStoresData = async () => {
     try {
@@ -113,21 +128,23 @@ const home = () => {
       throw new Error(error?.message || "Network error");
     }
   };
+
   const {
     data: StoresData,
     error: StoresDataError,
     isLoading: StoresDataLoading,
     refetch: StoresDataRefetch,
   } = useQuery({
-    queryKey: ["StoresData", user?.token], // Ensure token is part of the query key
-    queryFn: fetchStoresData, // Pass token to the fetch function
-    enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
-    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minutes
+    queryKey: ["StoresData", user?.token],
+    queryFn: fetchStoresData,
+    enabled: !!user?.token,
+    refetchOnWindowFocus: true,
+    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minute
     retry: 2,
     retryDelay: 1000,
   });
-  // Function to fetch stores data
+
+  // Function to fetch categories data
   const fetchCategoriesData = async () => {
     try {
       const response = await api.get(`/Category`, {
@@ -156,21 +173,23 @@ const home = () => {
       throw new Error(error?.message || "Network error");
     }
   };
+
   const {
     data: CategoriesData,
     error: CategoriesDataError,
     isLoading: CategoriesDataLoading,
     refetch: CategoriesDataRefetch,
   } = useQuery({
-    queryKey: ["CategoriesData", user?.token], // Ensure token is part of the query key
-    queryFn: fetchCategoriesData, // Pass token to the fetch function
-    enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
-    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minutes
+    queryKey: ["CategoriesData", user?.token],
+    queryFn: fetchCategoriesData,
+    enabled: !!user?.token,
+    refetchOnWindowFocus: true,
+    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minute
     retry: 2,
     retryDelay: 1000,
   });
-  // Function to fetch public publicities data
+
+  // Function to fetch notification data
   const fetchNotificationData = async () => {
     try {
       const response = await api.get(
@@ -202,20 +221,35 @@ const home = () => {
       throw new Error(error?.message || "Network error");
     }
   };
+
   const {
     data: NotificationData,
     error: NotificationDataError,
     isLoading: NotificationDataLoading,
     refetch: NotificationDataRefetch,
   } = useQuery({
-    queryKey: ["NotificationData", user?.token], // Ensure token is part of the query key
-    queryFn: fetchNotificationData, // Pass token to the fetch function
-    enabled: !!user?.token, // Only run the query if user is authenticated
-    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
-    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minutes
+    queryKey: ["NotificationData", user?.token],
+    queryFn: fetchNotificationData,
+    enabled: !!user?.token,
+    refetchOnWindowFocus: true,
+    refetchInterval: 1000 * 60 * 1, // Refetch every 1 minute
     retry: 2,
     retryDelay: 1000,
   });
+
+  // Refetch data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.token) {
+        PublicPublicitiesDataRefetch();
+        StoresDataRefetch();
+        CategoriesDataRefetch();
+        NotificationDataRefetch();
+      }
+      return () => {};
+    }, [user?.token])
+  );
+
   // Update filteredStores whenever StoresData or searchQuery changes
   useEffect(() => {
     if (StoresData) {
@@ -246,7 +280,7 @@ const home = () => {
   //--------------------------------------------RENDERING--------------------------------------------
   if (PublicPublicitiesDataError || StoresDataError || CategoriesDataError) {
     return (
-      <SafeAreaView className="bg-white h-full">
+      <SafeAreaView style={styles.safeArea}>
         <Text style={styles.errorText}>
           Oops! Something went wrong. Please try again later.
         </Text>
@@ -255,25 +289,53 @@ const home = () => {
   }
 
   return (
-    <SafeAreaView className="bg-white pt-3 pb-10 h-full">
+    <SafeAreaView style={styles.safeArea}>
       {PublicPublicitiesDataLoading ? (
-        <View className="mx-5 mb-[20]">
+        <View
+          style={{
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing,
+          }}
+        >
           <TopHomeScreen />
         </View>
       ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
-        <View className="flex-row items-center mx-5 space-x-3">
-          <View style={styles.topClass}>
-            <Text style={styles.text} className="text-gray-400">
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginHorizontal: horizontalPadding,
+            marginBottom: smallSpacing,
+          }}
+        >
+          <View style={[styles.topClass, { flex: 1 }]}>
+            <Text
+              style={[
+                styles.text,
+                { color: "#9CA3AF", fontSize: isSmallScreen ? 12 : 14 },
+              ]}
+            >
               Emplacement
             </Text>
-            <View style={styles.iconText} className="flex-row">
-              <MapPinIcon size={18} color="#26667E" />
-              <Text style={styles.text}>Blida, Algeria</Text>
+            <View style={styles.iconText}>
+              <MapPinIcon size={isSmallScreen ? 16 : 18} color="#26667E" />
+              <Text
+                style={[styles.text, { fontSize: isSmallScreen ? 12 : 14 }]}
+              >
+                Blida, Algeria
+              </Text>
             </View>
           </View>
           {!NotificationDataError && (
             <TouchableOpacity
-              style={styles.notification}
+              style={[
+                styles.notification,
+                {
+                  width: isSmallScreen ? 36 : 40,
+                  height: isSmallScreen ? 36 : 40,
+                  borderRadius: isSmallScreen ? 18 : 20,
+                },
+              ]}
               onPress={() =>
                 navigation.navigate("Notifications/index", {
                   NotificationData: NotificationData,
@@ -284,7 +346,7 @@ const home = () => {
               }
             >
               <View style={styles.bellContainer}>
-                <BellIcon size={20} color="#26667E" />
+                <BellIcon size={isSmallScreen ? 18 : 20} color="#26667E" />
                 {NotificationData?.length > 0 && (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>
@@ -303,15 +365,43 @@ const home = () => {
       )}
 
       {PublicPublicitiesDataLoading ? (
-        <View className="mx-5 mb-[20]">
+        <View
+          style={{
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing,
+          }}
+        >
           <Search />
         </View>
       ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
-        <View style={styles.searchBar} className="mx-5 mb-2 mt-2">
-          <View className="flex-row items-center gap-x-4">
-            <MagnifyingGlassIcon size={20} color="#26667E" />
+        <View
+          style={[
+            styles.searchBar,
+            {
+              marginHorizontal: horizontalPadding,
+              marginBottom: smallSpacing,
+              marginTop: smallSpacing,
+              height: Math.max(45, height * 0.06),
+            },
+          ]}
+        >
+          <View style={styles.searchInput}>
+            <MagnifyingGlassIcon
+              size={isSmallScreen ? 18 : 20}
+              color="#26667E"
+            />
             <TextInput
-              style={styles.searchBarItem}
+              style={[
+                styles.searchBarItem,
+                {
+                  width: isSmallScreen
+                    ? width * 0.6
+                    : isLargeScreen
+                    ? width * 0.7
+                    : width * 0.65,
+                  fontSize: isSmallScreen ? 11 : 12,
+                },
+              ]}
               placeholder="Rechercher par magasin..."
               placeholderTextColor="#888888"
               value={searchQuery}
@@ -332,12 +422,32 @@ const home = () => {
       )}
 
       {PublicPublicitiesDataLoading ? (
-        <View className="mx-5 mb-[20]">
+        <View
+          style={{
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing,
+          }}
+        >
           <SpecialForYou />
         </View>
       ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
-        <View className="mx-5 mb-[20]">
-          <Text style={styles.titleCategory}>#SpécialPourVous</Text>
+        <View
+          style={{
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing,
+          }}
+        >
+          <Text
+            style={[
+              styles.titleCategory,
+              {
+                fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
+                marginBottom: smallSpacing,
+              },
+            ]}
+          >
+            #SpécialPourVous
+          </Text>
           <SliderHome PublicPublicitiesData={PublicPublicitiesData} />
         </View>
       ) : (
@@ -345,17 +455,34 @@ const home = () => {
       )}
 
       {CategoriesDataLoading || StoresDataLoading ? (
-        <View className="mx-5 mb-[20]">
-          <ShimmerPlaceholder style={styles.textLoading} />
+        <View
+          style={{
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing,
+          }}
+        >
+          <ShimmerPlaceholder
+            style={[styles.textLoading, { width: width * 0.3 }]}
+          />
           <Brands />
-          <View style={styles.loadingStores}>
+          <View style={{ marginTop: height * 0.02 }}>
             <LoadingStores />
           </View>
         </View>
       ) : (CategoriesData && CategoriesData?.length > 0) ||
         (filteredStores && filteredStores?.length > 0) ? (
-        <View style={styles.stores} className="mx-5">
-          <Text style={styles.titleCategory}>My Stores</Text>
+        <View style={[styles.stores, { marginHorizontal: horizontalPadding }]}>
+          <Text
+            style={[
+              styles.titleCategory,
+              {
+                fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
+                marginBottom: smallSpacing,
+              },
+            ]}
+          >
+            My Stores
+          </Text>
           <Store StoresData={filteredStores} CategoriesData={CategoriesData} />
         </View>
       ) : (
@@ -366,46 +493,52 @@ const home = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+    paddingBottom: 10,
+    height: "100%",
+  },
   stores: {
     flex: 1,
   },
-  specialForYou: {
-    marginBottom: 10,
-  },
-  searchClass: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  searchButton: {
-    flex: 1,
-    gap: 4,
-    paddingLeft: 15,
-    height: 50,
-    borderWidth: 1,
-    borderColor: "#26667E",
-    borderRadius: 30,
-    alignItems: "center",
+  errorText: {
+    textAlign: "center",
+    marginTop: 20,
+    color: "#FF033E",
+    fontFamily: "Montserrat-Regular",
+    fontSize: 14,
   },
   searchBar: {
-    height: 50,
     borderColor: "#26667E",
     borderWidth: 1,
     alignItems: "center",
     paddingLeft: 15,
+    paddingRight: 15,
     borderRadius: 30,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: 15,
-    gap: 4,
+  },
+  searchInput: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
   },
   searchBarItem: {
     color: "black",
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
-    width: 220,
+    flex: 1,
+  },
+  clearButton: {
+    padding: 5,
+  },
+  clearButtonText: {
+    color: "#888888",
+    fontSize: 14,
   },
   topClass: {
-    flex: 1,
     flexDirection: "column",
     gap: 4,
   },
@@ -415,13 +548,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   text: {
-    fontSize: 14,
     fontFamily: "Montserrat-Regular",
   },
   notification: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     borderColor: "#3E9CB9",
     borderWidth: 1,
     justifyContent: "center",
@@ -447,33 +576,13 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "bold",
   },
-  search: {
-    color: "#888888",
-    fontSize: 12,
-    fontFamily: "Montserrat-Regular",
-  },
   titleCategory: {
-    fontSize: 18,
     fontFamily: "Montserrat-Regular",
-  },
-  loadingText: {
-    fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-    color: "#FF033E",
-    fontWeight: "bold",
   },
   textLoading: {
-    width: 100,
+    height: 20,
     borderRadius: 5,
     marginBottom: 15,
-  },
-  loadingStores: {
-    marginTop: 16,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 12,
-    fontFamily: "Montserrat-Regular",
   },
 });
 

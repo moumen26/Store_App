@@ -7,8 +7,12 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  useWindowDimensions,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   ArrowRightIcon,
   EnvelopeIcon,
@@ -33,6 +37,24 @@ const Settings = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentSetting, setCurrentSetting] = useState({});
 
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const smallSpacing = height * 0.01;
+  const modalWidth = isSmallScreen
+    ? width * 0.85
+    : isLargeScreen
+    ? width * 0.5
+    : width * 0.8;
+
   // For regular fields
   const [inputValues, setInputValues] = useState({
     firstName: user.info.firstName,
@@ -46,49 +68,63 @@ const Settings = () => {
     oldPassword: "",
     newPassword: "",
   });
+
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-
   const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
     useState(false);
 
   const [settings, setSettings] = useState(() => [
     {
       id: "name",
-      icon: <UserIcon color="#26667E" size={18} />,
+      icon: <UserIcon color="#26667E" size={isSmallScreen ? 16 : 18} />,
       label: "Nom",
       value: `${user.info.firstName} ${user.info.lastName}`,
       type: "fullname",
     },
     {
       id: "email",
-      icon: <EnvelopeIcon color="#26667E" size={18} />,
+      icon: <EnvelopeIcon color="#26667E" size={isSmallScreen ? 16 : 18} />,
       label: "Email",
       value: user.info.email,
       type: "email",
     },
     {
       id: "password",
-      icon: <LockClosedIcon color="#26667E" size={18} />,
+      icon: <LockClosedIcon color="#26667E" size={isSmallScreen ? 16 : 18} />,
       label: "Mot de passe",
       value: "••••••••",
       type: "password",
     },
     {
       id: "phone",
-      icon: <PhoneIcon color="#26667E" size={18} />,
+      icon: <PhoneIcon color="#26667E" size={isSmallScreen ? 16 : 18} />,
       label: "Numero de téléphone",
       value: user.info.phoneNumber,
       type: "phone",
     },
     {
       id: "delete",
-      icon: <TrashIcon color="#26667E" size={18} />,
+      icon: <TrashIcon color="#26667E" size={isSmallScreen ? 16 : 18} />,
       label: "Supprimer le compte",
       value: "Continuer",
       type: "delete",
     },
   ]);
+
+  // Update icons size when screen dimensions change
+  useFocusEffect(
+    useCallback(() => {
+      setSettings((prevSettings) =>
+        prevSettings.map((setting) => ({
+          ...setting,
+          icon: React.cloneElement(setting.icon, {
+            size: isSmallScreen ? 16 : 18,
+          }),
+        }))
+      );
+    }, [isSmallScreen])
+  );
 
   const handleLogOut = () => {
     logout();
@@ -272,13 +308,15 @@ const Settings = () => {
 
   // Render the appropriate modal content based on setting type
   const renderModalContent = () => {
+    const iconSize = isSmallScreen ? 18 : 20;
+
     switch (currentSetting.type) {
       case "fullname":
         return (
           <>
             <Text style={styles.modalLabel}>Prénom</Text>
             <View style={styles.inputChange}>
-              <UserIcon size={20} color="#888888" />
+              <UserIcon size={iconSize} color="#888888" />
               <TextInput
                 style={styles.modalInput}
                 value={inputValues.firstName}
@@ -291,7 +329,7 @@ const Settings = () => {
 
             <Text style={styles.modalLabel}>Nom</Text>
             <View style={styles.inputChange}>
-              <UserIcon size={20} color="#888888" />
+              <UserIcon size={iconSize} color="#888888" />
               <TextInput
                 style={styles.modalInput}
                 value={inputValues.lastName}
@@ -309,7 +347,7 @@ const Settings = () => {
           <>
             <Text style={styles.modalLabel}>Email</Text>
             <View style={styles.inputChange}>
-              <EnvelopeIcon size={20} color="#888888" />
+              <EnvelopeIcon size={iconSize} color="#888888" />
               <TextInput
                 style={styles.modalInput}
                 value={inputValues.email}
@@ -329,7 +367,7 @@ const Settings = () => {
           <>
             <Text style={styles.modalLabel}>Numéro de téléphone</Text>
             <View style={styles.inputChange}>
-              <PhoneIcon size={20} color="#888888" />
+              <PhoneIcon size={iconSize} color="#888888" />
               <TextInput
                 style={styles.modalInput}
                 value={inputValues.phoneNumber}
@@ -348,7 +386,7 @@ const Settings = () => {
           <>
             <Text style={styles.modalLabel}>Ancien mot de passe</Text>
             <View style={styles.inputChange}>
-              <LockClosedIcon size={20} color="#888888" />
+              <LockClosedIcon size={iconSize} color="#888888" />
               <TextInput
                 style={styles.passwordInput}
                 value={passwordValues.oldPassword}
@@ -364,16 +402,16 @@ const Settings = () => {
                 style={styles.eyeIcon}
               >
                 {showOldPassword ? (
-                  <EyeSlashIcon size={20} color="#888888" />
+                  <EyeSlashIcon size={iconSize} color="#888888" />
                 ) : (
-                  <EyeIcon size={20} color="#888888" />
+                  <EyeIcon size={iconSize} color="#888888" />
                 )}
               </TouchableOpacity>
             </View>
 
             <Text style={styles.modalLabel}>Nouveau mot de passe</Text>
             <View style={styles.inputChange}>
-              <LockClosedIcon size={20} color="#888888" />
+              <LockClosedIcon size={iconSize} color="#888888" />
               <TextInput
                 style={styles.passwordInput}
                 value={passwordValues.newPassword}
@@ -389,9 +427,9 @@ const Settings = () => {
                 style={styles.eyeIcon}
               >
                 {showNewPassword ? (
-                  <EyeSlashIcon size={20} color="#888888" />
+                  <EyeSlashIcon size={iconSize} color="#888888" />
                 ) : (
-                  <EyeIcon size={20} color="#888888" />
+                  <EyeIcon size={iconSize} color="#888888" />
                 )}
               </TouchableOpacity>
             </View>
@@ -411,7 +449,7 @@ const Settings = () => {
     <View style={{ flex: 1, position: "relative" }}>
       {/* Snackbar rendering directly with higher z-index */}
       {snackbarKey !== 0 && (
-        <View style={styles.snackbarWrapper}>
+        <View style={[styles.snackbarWrapper, { bottom: height * 0.1 }]}>
           <Snackbar
             key={snackbarKey}
             message={snackbarMessage}
@@ -423,76 +461,227 @@ const Settings = () => {
       )}
 
       <SafeAreaView style={styles.container}>
-        <Text style={styles.titleScreen}>Paramètres</Text>
-        <View style={styles.mainContent}>
-          <Text style={styles.text}>Compte</Text>
-          <View style={[styles.settingsItems, { marginTop: 20 }]}>
-            {settings.map((setting, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.settingItem}
-                onPress={() => {
-                  if (setting.id === "delete") {
-                    setDeleteConfirmationVisible(true);
-                  } else {
-                    openModal(setting);
-                  }
-                }}
-              >
-                <View style={styles.settingsIconTitle}>
-                  {setting.icon}
-                  <Text style={styles.textItemRegular}>{setting.label}</Text>
-                </View>
-                <View style={styles.settingsIconTitle}>
-                  <Text style={styles.textItemMeduim}>{setting.value}</Text>
-                  <ArrowRightIcon color="#26667E" size={18} />
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
+        <Text
+          style={[
+            styles.titleScreen,
+            {
+              fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
+              marginBottom: verticalSpacing * 0.5,
+            },
+          ]}
+        >
+          Paramètres
+        </Text>
 
-        <View style={[styles.buttonVersion, { marginTop: 140 }]}>
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={openConfirmationLogOutModal}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingBottom: Platform.OS === "ios" ? 120 : 100,
+          }}
+        >
+          <View
+            style={[
+              styles.mainContent,
+              { marginHorizontal: horizontalPadding },
+            ]}
           >
-            <Text style={styles.textItemRegular}>Se Déconnecter</Text>
-          </TouchableOpacity>
-          <View style={styles.versionContainer}>
-            <Text style={styles.textVersion}>
-              Version de l'application 0.0.1
+            <Text
+              style={[
+                styles.text,
+                { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 },
+              ]}
+            >
+              Compte
             </Text>
-            <Text style={styles.textItemRegular}>Tous droits réservés</Text>
+
+            <View
+              style={[
+                styles.settingsItems,
+                { marginTop: verticalSpacing * 0.5 },
+              ]}
+            >
+              {settings.map((setting, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.settingItem,
+                    {
+                      height: isSmallScreen ? 40 : isLargeScreen ? 55 : 45,
+                      borderBottomWidth: 0.5,
+                    },
+                  ]}
+                  onPress={() => {
+                    if (setting.id === "delete") {
+                      setDeleteConfirmationVisible(true);
+                    } else {
+                      openModal(setting);
+                    }
+                  }}
+                >
+                  <View
+                    style={[
+                      styles.settingsIconTitle,
+                      { gap: isSmallScreen ? 2 : 4 },
+                    ]}
+                  >
+                    {setting.icon}
+                    <Text
+                      style={[
+                        styles.textItemRegular,
+                        {
+                          fontSize: isSmallScreen
+                            ? 12
+                            : isLargeScreen
+                            ? 15
+                            : 13,
+                        },
+                      ]}
+                    >
+                      {setting.label}
+                    </Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.settingsIconTitle,
+                      { gap: isSmallScreen ? 2 : 4 },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.textItemMedium,
+                        {
+                          fontSize: isSmallScreen
+                            ? 11
+                            : isLargeScreen
+                            ? 14
+                            : 12,
+                        },
+                      ]}
+                    >
+                      {setting.value}
+                    </Text>
+                    <ArrowRightIcon
+                      color="#26667E"
+                      size={isSmallScreen ? 16 : 18}
+                    />
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
+
+          <View
+            style={[
+              styles.buttonVersion,
+              {
+                marginTop: verticalSpacing * 8,
+                marginHorizontal: horizontalPadding,
+                marginBottom: verticalSpacing,
+              },
+            ]}
+          >
+            <TouchableOpacity
+              style={[
+                styles.logoutButton,
+                { height: isSmallScreen ? 45 : isLargeScreen ? 60 : 50 },
+              ]}
+              onPress={openConfirmationLogOutModal}
+            >
+              <Text
+                style={[
+                  styles.textItemRegular,
+                  { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+                ]}
+              >
+                Se Déconnecter
+              </Text>
+            </TouchableOpacity>
+
+            <View style={[styles.versionContainer, { gap: smallSpacing / 2 }]}>
+              <Text
+                style={[
+                  styles.textVersion,
+                  { fontSize: isSmallScreen ? 12 : isLargeScreen ? 14 : 13 },
+                ]}
+              >
+                Version de l'application 0.0.1
+              </Text>
+              <Text
+                style={[
+                  styles.textItemRegular,
+                  { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+                ]}
+              >
+                Tous droits réservés
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
       </SafeAreaView>
 
       {/* Profile Update Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
+          <View
+            style={[
+              styles.modalContent,
+              {
+                width: modalWidth,
+                padding: isSmallScreen ? 15 : 20,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.modalTitle,
+                {
+                  fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
+                  marginBottom: verticalSpacing / 2,
+                },
+              ]}
+            >
               Modifier {currentSetting?.label}
             </Text>
 
-            <View style={styles.modalContentContainer}>
+            <View
+              style={[
+                styles.modalContentContainer,
+                { padding: isSmallScreen ? 10 : 15 },
+              ]}
+            >
               {renderModalContent()}
             </View>
 
-            <View style={styles.modalButtons}>
+            <View style={[styles.modalButtons, { marginTop: verticalSpacing }]}>
               <TouchableOpacity
-                style={styles.modalButton}
+                style={[
+                  styles.modalButton,
+                  {
+                    padding: isSmallScreen ? 10 : 12,
+                    width: isSmallScreen ? modalWidth * 0.38 : modalWidth * 0.4,
+                  },
+                ]}
                 onPress={closeModal}
                 disabled={submitting}
               >
-                <Text style={styles.buttonTextCancel}>Annuler</Text>
+                <Text
+                  style={[
+                    styles.buttonTextCancel,
+                    { fontSize: isSmallScreen ? 13 : 14 },
+                  ]}
+                >
+                  Annuler
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   styles.modalButton,
                   styles.confirmButton,
                   submitting && styles.disabledButton,
+                  {
+                    padding: isSmallScreen ? 10 : 12,
+                    width: isSmallScreen ? modalWidth * 0.38 : modalWidth * 0.4,
+                  },
                 ]}
                 onPress={handleUpdateProfile}
                 disabled={submitting}
@@ -500,7 +689,14 @@ const Settings = () => {
                 {submitting ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.buttonText}>Sauvegarder</Text>
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      { fontSize: isSmallScreen ? 13 : 14 },
+                    ]}
+                  >
+                    Sauvegarder
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -515,26 +711,77 @@ const Settings = () => {
         transparent={true}
       >
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.deleteModalText}>
+          <View
+            style={[
+              styles.modalContent,
+              {
+                width: modalWidth,
+                padding: isSmallScreen ? 15 : 20,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.deleteModalText,
+                {
+                  fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
+                  marginBottom: verticalSpacing / 2,
+                },
+              ]}
+            >
               Êtes-vous sûr de vouloir supprimer votre compte ?
             </Text>
-            <Text style={styles.deleteModalSubtext}>
+            <Text
+              style={[
+                styles.deleteModalSubtext,
+                {
+                  fontSize: isSmallScreen ? 13 : 14,
+                  marginBottom: verticalSpacing,
+                },
+              ]}
+            >
               Cette action est irréversible et toutes vos données seront
               perdues.
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={styles.modalButton}
+                style={[
+                  styles.modalButton,
+                  {
+                    padding: isSmallScreen ? 10 : 12,
+                    width: isSmallScreen ? modalWidth * 0.38 : modalWidth * 0.4,
+                  },
+                ]}
                 onPress={() => setDeleteConfirmationVisible(false)}
               >
-                <Text style={styles.buttonTextCancel}>Annuler</Text>
+                <Text
+                  style={[
+                    styles.buttonTextCancel,
+                    { fontSize: isSmallScreen ? 13 : 14 },
+                  ]}
+                >
+                  Annuler
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, styles.deleteButton]}
+                style={[
+                  styles.modalButton,
+                  styles.deleteButton,
+                  {
+                    padding: isSmallScreen ? 10 : 12,
+                    width: isSmallScreen ? modalWidth * 0.38 : modalWidth * 0.4,
+                  },
+                ]}
                 onPress={confirmDeleteAccount}
               >
-                <Text style={styles.buttonText}>Supprimer</Text>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    { fontSize: isSmallScreen ? 13 : 14 },
+                  ]}
+                >
+                  Supprimer
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -556,7 +803,6 @@ const Settings = () => {
 const styles = StyleSheet.create({
   snackbarWrapper: {
     position: "absolute",
-    bottom: 80,
     left: 0,
     right: 0,
     zIndex: 10000,
@@ -565,33 +811,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: 12,
+    paddingTop: Platform.OS === "android" ? 10 : 12,
     paddingBottom: 4,
   },
   mainContent: {
-    marginHorizontal: 20,
+    flex: 1,
   },
   text: {
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
   },
   titleScreen: {
-    fontSize: 20,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
-    marginBottom: 20,
   },
   textItemRegular: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
   },
-  textItemMeduim: {
-    fontSize: 12,
+  textItemMedium: {
     fontFamily: "Montserrat-Medium",
   },
   settingItem: {
-    height: 45,
-    borderBottomWidth: 0.5,
     borderColor: "#3E9CB9",
     flexDirection: "row",
     alignItems: "center",
@@ -600,7 +839,6 @@ const styles = StyleSheet.create({
   },
   settingsIconTitle: {
     flexDirection: "row",
-    gap: 4,
     alignItems: "center",
   },
   logoutButton: {
@@ -608,20 +846,17 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     backgroundColor: "#F7F7F7",
     borderRadius: 10,
-    height: 50,
     justifyContent: "center",
     alignItems: "center",
     borderStyle: "dotted",
   },
   textVersion: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
     color: "#888888",
   },
   versionContainer: {
     flexDirection: "column",
     alignItems: "center",
-    gap: 1,
   },
   modalContainer: {
     flex: 1,
@@ -630,8 +865,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(201, 228, 238, 0.7)",
   },
   modalContent: {
-    width: 320,
-    padding: 20,
     backgroundColor: "white",
     borderRadius: 10,
     shadowColor: "#000",
@@ -640,22 +873,17 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  // New container for modal content to improve styling
   modalContentContainer: {
     backgroundColor: "#f9f9f9",
     borderRadius: 8,
-    padding: 15,
     marginVertical: 5,
   },
   modalTitle: {
-    fontSize: 18,
     fontFamily: "Montserrat-Medium",
-    marginBottom: 15,
     textAlign: "center",
     color: "#26667E",
   },
   modalLabel: {
-    fontSize: 14,
     fontFamily: "Montserrat-Medium",
     marginBottom: 5,
     color: "#555",
@@ -663,30 +891,23 @@ const styles = StyleSheet.create({
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
   },
   buttonText: {
     color: "white",
     fontFamily: "Montserrat-Medium",
-    fontSize: 14,
   },
   buttonTextCancel: {
     color: "#555",
     fontFamily: "Montserrat-Regular",
-    fontSize: 14,
   },
   deleteModalText: {
-    fontSize: 18,
     fontFamily: "Montserrat-Medium",
     textAlign: "center",
-    marginBottom: 15,
     color: "#FF033E",
   },
   deleteModalSubtext: {
-    fontSize: 14,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
-    marginBottom: 20,
     color: "#666",
   },
   settingsItems: {
@@ -696,7 +917,6 @@ const styles = StyleSheet.create({
   buttonVersion: {
     flexDirection: "column",
     gap: 40,
-    marginHorizontal: 20,
   },
   inputChange: {
     flexDirection: "row",
@@ -720,12 +940,10 @@ const styles = StyleSheet.create({
   passwordInput: {
     height: 40,
     paddingLeft: 10,
-    // width: "85%",
     flex: 2,
     fontFamily: "Montserrat-Regular",
   },
   passwordHelp: {
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
     color: "#666",
     marginTop: -5,
@@ -741,8 +959,6 @@ const styles = StyleSheet.create({
   modalButton: {
     backgroundColor: "#F7F7F7",
     borderRadius: 10,
-    padding: 12,
-    width: 130,
     alignItems: "center",
     elevation: 2,
   },
