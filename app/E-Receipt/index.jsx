@@ -29,9 +29,7 @@ import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
 import TrackButton from "../../components/TrackButton";
-import SubmitOderModalReason from "../../components/SubmitOderModalReason.jsx";
 
-const CodeBare = require("../../assets/images/CodeBare.png");
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -123,99 +121,306 @@ const EReceiptScreen = () => {
       <style>
         body {
           font-family: Montserrat, sans-serif;
-          text-align: center;
-          margin: 12px 24px;
+          margin: 0;
+          padding: 40px;
+          color: #333;
+          background-color: #fff;
         }
-        .barcode {
-          width: 100%;
-          text-align: center;
-          margin-bottom: 10px;
-        }
-        .barcode img{
-          width: 80%;
-        }
-        .product-container {
+        .invoice-header {
           display: flex;
-          flex-direction: row; 
+          justify-content: space-between;
           align-items: center;
-          width: 100%;
+          margin-bottom: 40px;
+          border-bottom: 2px solid #26667E;
+          padding-bottom: 20px;
+        }
+        .company-info {
+          text-align: left;
+        }
+        .company-info h1 {
+          margin: 0;
+          font-size: 32px;
+          color: #26667E;
+          font-weight: 700;
+        }
+        .company-info p {
+          margin: 5px 0;
+          font-size: 14px;
+          color: #666;
+        }
+        .invoice-title {
+          text-align: right;
+        }
+        .invoice-title h2 {
+          margin: 0;
+          font-size: 36px;
+          color: #333;
+          font-weight: 600;
+        }
+        .invoice-title p {
+          margin: 5px 0;
+          font-size: 16px;
+          color: #666;
+        }
+        .barcode-container {
+          text-align: center;
+          margin: 30px 0;
+          background-color: #f8f9fa;
+          padding: 20px;
+          border-radius: 8px;
+        }
+        .client-info {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 40px;
+        }
+        .info-section {
+          flex: 1;
+          margin-right: 20px;
+        }
+        .info-section:last-child {
+          margin-right: 0;
+        }
+        .info-section h3 {
           margin-bottom: 10px;
+          font-size: 16px;
+          font-weight: 600;
+          color: #26667E;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 5px;
+        }
+        .info-section p {
+          margin: 5px 0;
+          font-size: 14px;
+        }
+        .product-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 30px;
+        }
+        .product-table th {
+          background-color: #26667E;
+          color: white;
+          padding: 12px;
+          text-align: left;
+          font-weight: 600;
+          border-bottom: 2px solid #1f5566;
+        }
+        .product-table td {
+          padding: 12px;
+          border-bottom: 1px solid #ddd;
+        }
+        .product-table tr:last-child td {
+          border-bottom: none;
+        }
+        .product-table tr:nth-child(even) {
+          background-color: #f9f9f9;
         }
         .product-image {
-          width: 100px;
-          height: 100px;
+          width: 60px;
+          height: 60px;
           object-fit: contain;
+          border-radius: 4px;
         }
-       .product-details {
+        .product-details {
           display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 4px; 
+          align-items: center;
+          gap: 15px;
         }
-        .product-details p {
-          margin: 0; 
+        .product-name {
+          font-weight: 600;
+          color: #333;
         }
-        .order-details {
-          text-align: left;
-          margin-top: 20px;
-          border-top: 1px solid #ccc;
-          padding-top: 10px;
+        .product-brand {
+          color: #666;
+          font-size: 14px;
         }
-        .order-details p {
-          margin: 5px 0;
+        .total-section {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 30px;
         }
-        h1{
-          font-size: 28px;
+        .total-table {
+          width: 300px;
         }
-        h2{
-          font-size: 22px;
-          text-align: left;
+        .total-table tr {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+        }
+        .total-table .label {
+          font-weight: 500;
+          color: #666;
+        }
+        .total-table .value {
+          font-weight: 600;
+          color: #333;
+        }
+        .total-table .grand-total {
+          border-top: 2px solid #26667E;
+          padding-top: 8px;
+          font-size: 18px;
+        }
+        .total-table .grand-total .label {
+          color: #26667E;
+        }
+        .total-table .grand-total .value {
+          color: #26667E;
+        }
+        .footer {
+          margin-top: 50px;
+          text-align: center;
+          font-size: 12px;
+          color: #666;
+          border-top: 1px solid #ddd;
+          padding-top: 20px;
+        }
+        .thank-you {
+          margin-top: 40px;
+          text-align: center;
+        }
+        .thank-you h3 {
+          color: #26667E;
+          font-size: 18px;
+          margin-bottom: 10px;
+        }
+        .thank-you p {
+          color: #666;
+          font-size: 14px;
         }
       </style>
     </head>
     <body>
-      <h1>E-Receipt</h1>
-      
-      <div class="barcode">
+      <div class="invoice-header">
+        <div class="company-info">
+          <h1>Votre Entreprise</h1>
+          <p>www.votreentreprise.com</p>
+          <p>contact@votreentreprise.com</p>
+          <p>+213 123 456 789</p>
+        </div>
+        <div class="invoice-title">
+          <h2>FACTURE</h2>
+          <p>N° ${OrderData?.reciept?._id}</p>
+          <p>Date: ${new Date(OrderData?.reciept?.date).toLocaleDateString(
+            "fr-FR"
+          )}</p>
+        </div>
+      </div>
+
+      <div class="barcode-container">
         <img src="https://barcode.tec-it.com/barcode.ashx?data=${
           OrderData?.reciept?._id
         }&code=Code128&dpi=300" />
       </div>
 
-      <h2>Order Details</h2>
-
-      <!-- Product List -->
-      ${OrderData?.recieptStatus?.products
-        .map(
-          (product) => `
-        <div class="product-container">
-          <img class="product-image" src="${Config.API_URL.replace(
-            "/api",
-            ""
-          )}/files/${product?.product?.image}" />
-          <div class="product-details">
-            <p><strong>${product?.product?.name}</strong></p>
-            <p>${product?.product?.brand?.name} | Qty: ${product?.quantity}</p>
-          </div>
+      <div class="client-info">
+        <div class="info-section">
+          <h3>Informations du Client</h3>
+          <p><strong>Nom:</strong> ${user?.info?.firstName} ${
+    user?.info?.lastName
+  }</p>
+          <p><strong>Email:</strong> ${user?.info?.email}</p>
+          <p><strong>Téléphone:</strong> ${user?.info?.phoneNumber}</p>
         </div>
-      `
-        )
-        .join("")}
-  
-      <!-- Order Details -->
-      <div class="order-details">
-        <p><strong>Store:</strong> ${OrderData?.reciept?.store?.storeName}</p>
-        <p><strong>Order ID:</strong> ${OrderData?.reciept?._id}</p>
-        <p><strong>Order Type:</strong> ${OrderData?.reciept?.type}</p>
-        <p><strong>Order Date:</strong> ${OrderData?.reciept?.date}</p>
-        <p><strong>Sub Total:</strong> DA ${OrderData?.reciept?.total}</p>
-        ${
-          OrderData?.reciept?.type === "delivery"
-            ? `<p><strong>Delivery Charge:</strong> + DA</p>`
-            : ""
-        }
+        <div class="info-section">
+          <h3>Détails de Livraison</h3>
+          <p><strong>Magasin:</strong> ${
+            OrderData?.reciept?.store?.storeName
+          }</p>
+          <p><strong>Type:</strong> ${
+            OrderData?.reciept?.type === "pickup" ? "Retrait" : "Livraison"
+          }</p>
+          ${
+            OrderData?.reciept?.type === "delivery"
+              ? `
+            <p><strong>Adresse:</strong> ${
+              OrderData?.reciept?.deliveredLocation?.address || ""
+            }</p>
+          `
+              : ""
+          }
+        </div>
       </div>
-  
+
+      <table class="product-table">
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Prix Unitaire</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${OrderData?.recieptStatus?.products
+            ?.map((product) => {
+              const unitPrice = product.quantity
+                ? (product.total / product.quantity).toFixed(2)
+                : "0.00";
+              return `
+              <tr>
+                <td>
+                  <div class="product-details">
+                    <img class="product-image" src="${Config.API_URL.replace(
+                      "/api",
+                      ""
+                    )}/files/${product?.product?.image}" />
+                    <div>
+                      <div class="product-name">${product?.product?.name}</div>
+                      <div class="product-brand">${
+                        product?.product?.brand?.name
+                      }</div>
+                    </div>
+                  </div>
+                </td>
+                <td>${product?.quantity}</td>
+                <td>${unitPrice} DA</td>
+                <td>${product?.total?.toFixed(2)} DA</td>
+              </tr>
+            `;
+            })
+            ?.join("")}
+        </tbody>
+      </table>
+
+      <div class="total-section">
+        <div class="total-table">
+          <tr>
+            <span class="label">Sous-total:</span>
+            <span class="value">${OrderData?.reciept?.total?.toFixed(
+              2
+            )} DA</span>
+          </tr>
+          ${
+            OrderData?.reciept?.type === "delivery"
+              ? `
+            <tr>
+              <span class="label">Frais de livraison:</span>
+              <span class="value">${
+                OrderData?.deliveryCost?.toFixed(2) || "0.00"
+              } DA</span>
+            </tr>
+          `
+              : ""
+          }
+          <tr class="grand-total">
+            <span class="label">Total:</span>
+            <span class="value">${(
+              OrderData?.reciept?.total + (OrderData?.deliveryCost || 0)
+            )?.toFixed(2)} DA</span>
+          </tr>
+        </div>
+      </div>
+
+      <div class="thank-you">
+        <h3>Merci pour votre confiance!</h3>
+        <p>Nous espérons vous revoir bientôt.</p>
+      </div>
+
+      <div class="footer">
+        <p>Ceci est un document électronique généré automatiquement.</p>
+        <p>Pour toute question, veuillez contacter notre service client.</p>
+      </div>
     </body>
   </html>
   `;

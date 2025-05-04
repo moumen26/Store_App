@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Keyboard,
   Platform,
+  useWindowDimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,6 +23,21 @@ import Snackbar from "../../components/Snackbar.jsx";
 const SignUpScreen = () => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const headerWidth = width * 0.85;
+  const inputHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
+  const buttonHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
+  const checkboxSize = isSmallScreen ? 14 : isLargeScreen ? 18 : 16;
 
   // State for form fields
   const [firstName, setFirstName] = useState("");
@@ -53,7 +69,7 @@ const SignUpScreen = () => {
     if (!response.ok) {
       const errorData = await response.json();
       if (errorData.error.statusCode === 404) return [];
-      throw new Error("Error fetching cities data");
+      throw new Error("Erreur lors de la récupération des données des villes");
     }
     return response.json();
   };
@@ -88,14 +104,14 @@ const SignUpScreen = () => {
   const handleSignUp = async () => {
     if (!isChecked) {
       setSnackbarType("error");
-      setSnackbarMessage("You must agree to the terms and conditions");
+      setSnackbarMessage("Vous devez accepter les termes et conditions");
       setSnackbarKey((prev) => prev + 1);
       return;
     }
 
     if (password != confirmPassword) {
       setSnackbarType("error");
-      setSnackbarMessage("Passwords do not match");
+      setSnackbarMessage("Les mots de passe ne correspondent pas");
       setSnackbarKey((prev) => prev + 1);
       return;
     }
@@ -134,7 +150,7 @@ const SignUpScreen = () => {
       console.error(err);
       setSnackbarType("error");
       setSnackbarMessage(
-        "An error occurred while creating your account. Please try again later."
+        "Une erreur s'est produite lors de la création de votre compte. Veuillez réessayer plus tard."
       );
       setSnackbarKey((prev) => prev + 1);
     } finally {
@@ -143,29 +159,64 @@ const SignUpScreen = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView style={styles.safeArea}>
       <KeyboardAwareScrollView
         extraScrollHeight={50}
         enableOnAndroid={true}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[
+          styles.container,
+          { paddingHorizontal: horizontalPadding },
+        ]}
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-col w-[70%] items-center">
-          <Text className="mb-[16]" style={styles.textSignIn}>
+        <View style={[styles.headerContainer, { width: headerWidth }]}>
+          <Text
+            style={[
+              styles.textSignIn,
+              {
+                fontSize: isSmallScreen ? 26 : isLargeScreen ? 34 : 30,
+                marginBottom: isSmallScreen ? 14 : 16,
+              },
+            ]}
+          >
             Créer un compte
           </Text>
-          <Text style={styles.textSousSignIn}>
+          <Text
+            style={[
+              styles.textSousSignIn,
+              { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+            ]}
+          >
             Remplissez vos informations ci-dessous ou inscrivez-vous avec votre
             compte social.
           </Text>
         </View>
 
-        <View className="mt-[36] mx-5">
-          <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Prénom</Text>
+        <View style={{ marginTop: isSmallScreen ? 30 : 36 }}>
+          <View
+            style={[
+              styles.inputClass,
+              { marginBottom: isSmallScreen ? 14 : 16 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.textlabel,
+                { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+              ]}
+            >
+              Prénom
+            </Text>
             <TextInput
-              style={styles.textInput}
+              style={[
+                styles.textInput,
+                {
+                  height: inputHeight,
+                  borderRadius: isSmallScreen ? 8 : 10,
+                  fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
+                },
+              ]}
               placeholder="Ex. Amine"
               placeholderTextColor="#888888"
               value={firstName}
@@ -174,10 +225,29 @@ const SignUpScreen = () => {
             />
           </View>
 
-          <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Nom de famille</Text>
+          <View
+            style={[
+              styles.inputClass,
+              { marginBottom: isSmallScreen ? 14 : 16 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.textlabel,
+                { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+              ]}
+            >
+              Nom de famille
+            </Text>
             <TextInput
-              style={styles.textInput}
+              style={[
+                styles.textInput,
+                {
+                  height: inputHeight,
+                  borderRadius: isSmallScreen ? 8 : 10,
+                  fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
+                },
+              ]}
               placeholder="Ex. Faroukhi"
               placeholderTextColor="#888888"
               value={lastName}
@@ -186,14 +256,34 @@ const SignUpScreen = () => {
             />
           </View>
 
-          <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Numéro de téléphone</Text>
+          <View
+            style={[
+              styles.inputClass,
+              { marginBottom: isSmallScreen ? 14 : 16 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.textlabel,
+                { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+              ]}
+            >
+              Numéro de téléphone
+            </Text>
             <View
-              className="flex-row items-center"
-              style={styles.passwordContainer}
+              style={[
+                styles.passwordContainer,
+                {
+                  height: inputHeight,
+                  borderRadius: isSmallScreen ? 8 : 10,
+                },
+              ]}
             >
               <TextInput
-                style={styles.textInputPhone}
+                style={[
+                  styles.textInputPhone,
+                  { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+                ]}
                 placeholder="07XXXXXXXX"
                 placeholderTextColor="#888888"
                 value={phone}
@@ -204,14 +294,34 @@ const SignUpScreen = () => {
             </View>
           </View>
 
-          <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Mot de passe</Text>
+          <View
+            style={[
+              styles.inputClass,
+              { marginBottom: isSmallScreen ? 14 : 16 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.textlabel,
+                { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+              ]}
+            >
+              Mot de passe
+            </Text>
             <View
-              className="flex-row items-center justify-between"
-              style={styles.passwordContainer}
+              style={[
+                styles.passwordContainer,
+                {
+                  height: inputHeight,
+                  borderRadius: isSmallScreen ? 8 : 10,
+                },
+              ]}
             >
               <TextInput
-                style={styles.textInputPassword}
+                style={[
+                  styles.textInputPassword,
+                  { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+                ]}
                 placeholder="********"
                 secureTextEntry={!passwordVisible}
                 placeholderTextColor="#888888"
@@ -225,21 +335,41 @@ const SignUpScreen = () => {
               >
                 <EyeIcon
                   name={passwordVisible ? "visibility" : "visibility-off"}
-                  size={20}
+                  size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
                   color="#888888"
                 />
               </TouchableOpacity>
             </View>
           </View>
 
-          <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Confirmer le mot de passe</Text>
+          <View
+            style={[
+              styles.inputClass,
+              { marginBottom: isSmallScreen ? 14 : 16 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.textlabel,
+                { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+              ]}
+            >
+              Confirmer le mot de passe
+            </Text>
             <View
-              className="flex-row items-center justify-between"
-              style={styles.passwordContainer}
+              style={[
+                styles.passwordContainer,
+                {
+                  height: inputHeight,
+                  borderRadius: isSmallScreen ? 8 : 10,
+                },
+              ]}
             >
               <TextInput
-                style={styles.textInputPassword}
+                style={[
+                  styles.textInputPassword,
+                  { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+                ]}
                 placeholder="********"
                 secureTextEntry={!confirmPasswordVisible}
                 placeholderTextColor="#888888"
@@ -257,17 +387,36 @@ const SignUpScreen = () => {
                   name={
                     confirmPasswordVisible ? "visibility" : "visibility-off"
                   }
-                  size={20}
+                  size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
                   color="#888888"
                 />
               </TouchableOpacity>
             </View>
           </View>
 
-          <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>Email</Text>
+          <View
+            style={[
+              styles.inputClass,
+              { marginBottom: isSmallScreen ? 14 : 16 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.textlabel,
+                { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+              ]}
+            >
+              Email
+            </Text>
             <TextInput
-              style={styles.textInput}
+              style={[
+                styles.textInput,
+                {
+                  height: inputHeight,
+                  borderRadius: isSmallScreen ? 8 : 10,
+                  fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
+                },
+              ]}
               placeholder="exemple@gmail.com"
               placeholderTextColor="#888888"
               value={email}
@@ -278,12 +427,29 @@ const SignUpScreen = () => {
             />
           </View>
 
-          <View style={styles.inputClass}>
-            <Text style={styles.textlabel}>
+          <View
+            style={[
+              styles.inputClass,
+              { marginBottom: isSmallScreen ? 14 : 16 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.textlabel,
+                { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+              ]}
+            >
               Numéro d'enregistrement commercial
             </Text>
             <TextInput
-              style={styles.textInput}
+              style={[
+                styles.textInput,
+                {
+                  height: inputHeight,
+                  borderRadius: isSmallScreen ? 8 : 10,
+                  fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
+                },
+              ]}
               placeholder="26052002"
               placeholderTextColor="#888888"
               value={commercialRegister}
@@ -292,17 +458,31 @@ const SignUpScreen = () => {
             />
           </View>
 
-          <View style={styles.row}>
-            <View style={styles.inputClass}>
-              <Text style={styles.textlabel}>Wilaya</Text>
+          <View style={[styles.row, { gap: isSmallScreen ? 8 : 12 }]}>
+            <View style={[styles.inputClass, { flex: 1 }]}>
+              <Text
+                style={[
+                  styles.textlabel,
+                  { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+                ]}
+              >
+                Wilaya
+              </Text>
               <WilayaDropdown
                 data={wilayas}
                 dropDownTitle="Sélectionner la Wilaya"
                 onSelect={(value) => setSelectedWilaya(value)}
               />
             </View>
-            <View style={styles.inputClass}>
-              <Text style={styles.textlabel}>Commune</Text>
+            <View style={[styles.inputClass, { flex: 1 }]}>
+              <Text
+                style={[
+                  styles.textlabel,
+                  { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+                ]}
+              >
+                Commune
+              </Text>
               <WilayaDropdown
                 data={communes}
                 dropDownTitle="Sélectionner la Commune"
@@ -311,22 +491,50 @@ const SignUpScreen = () => {
             </View>
           </View>
 
-          <View className="flex-row ml-1 items-center">
+          <View
+            style={[
+              styles.checkboxContainer,
+              { marginTop: isSmallScreen ? 14 : 16 },
+            ]}
+          >
             <TouchableOpacity
-              style={[styles.checkbox, isChecked && styles.checked]}
+              style={[
+                styles.checkbox,
+                isChecked && styles.checked,
+                {
+                  width: checkboxSize,
+                  height: checkboxSize,
+                  borderRadius: isSmallScreen ? 2 : 3,
+                },
+              ]}
               onPress={() => setIsChecked(!isChecked)}
-              className="mr-1"
             >
-              {isChecked && <CheckIcon name="check" size={14} color="white" />}
+              {isChecked && (
+                <CheckIcon
+                  name="check"
+                  size={checkboxSize * 0.7}
+                  color="white"
+                />
+              )}
             </TouchableOpacity>
-            <View className="flex-row space-x-1">
-              <Text style={styles.text} className="mr-1">
-                Accepter les
+            <View style={styles.termsContainer}>
+              <Text
+                style={[
+                  styles.text,
+                  { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+                ]}
+              >
+                Accepter les{" "}
               </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("SignIn/index")}
               >
-                <Text style={styles.textForgotPassword}>
+                <Text
+                  style={[
+                    styles.textForgotPassword,
+                    { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+                  ]}
+                >
                   Termes et conditions
                 </Text>
               </TouchableOpacity>
@@ -334,24 +542,52 @@ const SignUpScreen = () => {
           </View>
 
           <TouchableOpacity
-            className="mt-[24]"
-            style={styles.loginButton}
+            style={[
+              styles.loginButton,
+              {
+                height: buttonHeight,
+                borderRadius: isSmallScreen ? 8 : 10,
+                marginTop: isSmallScreen ? 20 : 24,
+              },
+            ]}
             onPress={handleSignUp}
             disabled={submissionLoading}
           >
-            <Text style={styles.loginButtonText}>
+            <Text
+              style={[
+                styles.loginButtonText,
+                { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 },
+              ]}
+            >
               {submissionLoading ? "Traitement..." : "S'inscrire"}
             </Text>
           </TouchableOpacity>
 
-          <View className="flex-row justify-center items-center space-x-1 mt-[28] pb-4">
-            <Text style={styles.text} className="mr-1">
-              Vous avez déjà un compte ?
+          <View
+            style={[
+              styles.footerContainer,
+              { marginTop: isSmallScreen ? 24 : 28 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.text,
+                { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+              ]}
+            >
+              Vous avez déjà un compte ?{" "}
             </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("SignIn/index")}
             >
-              <Text style={styles.textForgotPassword}>Se connecter</Text>
+              <Text
+                style={[
+                  styles.textForgotPassword,
+                  { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+                ]}
+              >
+                Se connecter
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -370,121 +606,86 @@ const SignUpScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+  },
   container: {
     flexGrow: 1,
-    gap: 8,
     alignItems: "center",
-    paddingVertical: 24,
+    paddingVertical: Platform.OS === "android" ? 20 : 24,
     flexDirection: "column",
     width: "100%",
   },
+  headerContainer: {
+    alignItems: "center",
+  },
   textSignIn: {
-    fontSize: 30,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
   },
   textSousSignIn: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
     color: "#888888",
   },
   text: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
-    textAlign: "center",
   },
   textlabel: {
     color: "#888888",
-    fontSize: 14,
     fontFamily: "Montserrat-Regular",
   },
   passwordContainer: {
     width: "100%",
-    height: 50,
     backgroundColor: "#F7F7F7",
-    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
     paddingLeft: 15,
     paddingRight: 15,
-    fontSize: 12,
-    fontFamily: "Montserrat-Regular",
     marginTop: 4,
-    alignSelf: "center",
   },
   textInput: {
     width: "100%",
-    height: 50,
     backgroundColor: "#F7F7F7",
-    borderRadius: 10,
     paddingLeft: 15,
     paddingRight: 15,
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
     marginTop: 4,
-    alignSelf: "center",
   },
   textInputPassword: {
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
+    flex: 1,
   },
   textInputPhone: {
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
     width: "100%",
     height: "100%",
   },
+  eyeIcon: {
+    padding: 8,
+  },
   textForgotPassword: {
-    fontSize: 13,
     color: "#26667E",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
   },
   loginButton: {
     backgroundColor: "#26667E",
-    borderRadius: 10,
-    height: 50,
     justifyContent: "center",
     alignItems: "center",
+    // width: "100%",
   },
   loginButtonText: {
     color: "#fff",
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
-  },
-  lineSignup: {
-    width: 60,
-    height: 0.3,
-    backgroundColor: "#000",
-  },
-  textSignUp: {
-    fontSize: 13,
-    color: "#888888",
-    fontFamily: "Montserrat-Regular",
-  },
-  loginButtonFacebook: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    height: 50,
-    borderWidth: 0.5,
-    borderColor: "#C9E4EE",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loginButtonFacebookText: {
-    color: "#000",
-    fontSize: 16,
-    fontFamily: "Montserrat-Regular",
-    textAlign: "center",
   },
   checkbox: {
-    width: 16,
-    height: 16,
     borderWidth: 0.5,
-    // borderColor: "black",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 2,
     backgroundColor: "#fff",
+    borderColor: "#888888",
   },
   checked: {
     backgroundColor: "#26667E",
@@ -492,12 +693,26 @@ const styles = StyleSheet.create({
   },
   inputClass: {
     flexDirection: "column",
-    gap: 8,
-    marginBottom: 16,
+    gap: 4,
   },
   row: {
     flexDirection: "row",
-    gap: 12,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  termsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  footerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 20,
   },
 });
+
 export default SignUpScreen;

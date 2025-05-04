@@ -1,4 +1,12 @@
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
@@ -17,6 +25,19 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { dispatch } = useAuthContext();
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const buttonHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
+  const inputHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
 
   const handleLogin = async () => {
     setError("");
@@ -53,34 +74,73 @@ const SignInScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.SignInScreen} className="bg-white h-full">
-      <View className="flex-col items-center">
-        <Text className="mb-[16]" style={styles.textSignIn}>
+    <SafeAreaView style={styles.SignInScreen}>
+      <View style={styles.headerContainer}>
+        <Text
+          style={[
+            styles.textSignIn,
+            { fontSize: isSmallScreen ? 26 : isLargeScreen ? 34 : 30 },
+          ]}
+        >
           Se connecter
         </Text>
-        <Text style={styles.textSousSignIn}>
+        <Text
+          style={[
+            styles.textSousSignIn,
+            { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+          ]}
+        >
           Bonjour, heureux de vous revoir. Votre présence nous a manqué.
         </Text>
       </View>
-      <View className="mt-[36] mx-5">
-        <View styles={styles.column} className="mb-[16]">
-          <Text style={styles.textlabel}>Numéro de téléphone</Text>
+      <View
+        style={{
+          marginHorizontal: horizontalPadding,
+          marginTop: isSmallScreen ? 30 : 36,
+        }}
+      >
+        <View
+          style={[styles.column, { marginBottom: isSmallScreen ? 14 : 16 }]}
+        >
+          <Text
+            style={[
+              styles.textlabel,
+              { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+            ]}
+          >
+            Numéro de téléphone
+          </Text>
           <TextInput
-            style={styles.textInput}
+            style={[
+              styles.textInput,
+              { height: inputHeight, borderRadius: isSmallScreen ? 8 : 10 },
+            ]}
             placeholder="06 62 81 26 00"
             placeholderTextColor="#888888"
             value={userName}
             onChangeText={setUserName}
           />
         </View>
-        <View styles={styles.column}>
-          <Text style={styles.textlabel}>Mot de passe</Text>
+        <View style={styles.column}>
+          <Text
+            style={[
+              styles.textlabel,
+              { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+            ]}
+          >
+            Mot de passe
+          </Text>
           <View
-            className="flex-row items-center justify-between"
-            style={styles.passwordContainer}
+            style={[
+              styles.passwordContainer,
+              { height: inputHeight, borderRadius: isSmallScreen ? 8 : 10 },
+            ]}
           >
             <TextInput
-              style={styles.textInputPassword}
+              style={[
+                styles.textInputPassword,
+                { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+              ]}
               placeholder="********"
               placeholderTextColor="#888888"
               secureTextEntry={!passwordVisible}
@@ -93,57 +153,130 @@ const SignInScreen = () => {
             >
               <EyeIcon
                 name={passwordVisible ? "visibility" : "visibility-off"}
-                size={20}
+                size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
                 color="#888888"
               />
             </TouchableOpacity>
           </View>
         </View>
         <TouchableOpacity
-          className="mt-[26]"
+          style={{ marginTop: isSmallScreen ? 22 : 26 }}
           onPress={() => navigation.navigate("ResetPassword/index")}
         >
-          <Text style={styles.textForgotPassword} className="text-right">
+          <Text
+            style={[
+              styles.textForgotPassword,
+              { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+            ]}
+          >
             Mot de passe oublié ?
           </Text>
         </TouchableOpacity>
         <Text
-          style={{
-            color: "red",
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={[styles.errorText, { marginTop: isSmallScreen ? 12 : 16 }]}
         >
           {error}
         </Text>
         <TouchableOpacity
-          className="mt-[24]"
-          style={styles.loginButton}
+          style={[
+            styles.loginButton,
+            {
+              height: buttonHeight,
+              borderRadius: isSmallScreen ? 8 : 10,
+              marginTop: isSmallScreen ? 20 : 24,
+            },
+          ]}
           onPress={() => handleLogin()}
         >
-          <Text style={styles.loginButtonText}>Se connecter</Text>
+          <Text
+            style={[
+              styles.loginButtonText,
+              { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 },
+            ]}
+          >
+            Se connecter
+          </Text>
         </TouchableOpacity>
-        <View className="flex-row items-center justify-center space-x-4 mt-[24]">
-          <View style={styles.lineSignup} className="mr-1"></View>
-          <Text style={styles.textSignUp}>Ou inscrivez-vous avec</Text>
-          <View style={styles.lineSignup} className="ml-1"></View>
+        <View
+          style={[
+            styles.dividerContainer,
+            { marginTop: isSmallScreen ? 20 : 24 },
+          ]}
+        >
+          <View
+            style={[
+              styles.lineSignup,
+              { width: isSmallScreen ? 50 : isLargeScreen ? 80 : 60 },
+            ]}
+          />
+          <Text
+            style={[
+              styles.textSignUp,
+              { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+            ]}
+          >
+            Ou inscrivez-vous avec
+          </Text>
+          <View
+            style={[
+              styles.lineSignup,
+              { width: isSmallScreen ? 50 : isLargeScreen ? 80 : 60 },
+            ]}
+          />
         </View>
         <TouchableOpacity
-          className="mt-[24] flex-row items-center space-x-4"
-          style={styles.loginButtonFacebook}
+          style={[
+            styles.loginButtonFacebook,
+            {
+              height: buttonHeight,
+              marginTop: isSmallScreen ? 20 : 24,
+              borderRadius: isSmallScreen ? 8 : 10,
+            },
+          ]}
         >
-          <Image source={FacebookIconVector} className="mr-3" />
-          <Text style={styles.loginButtonFacebookText} className="ml-1">
+          <Image
+            source={FacebookIconVector}
+            style={{
+              width: isSmallScreen ? 18 : isLargeScreen ? 26 : 22,
+              height: isSmallScreen ? 18 : isLargeScreen ? 26 : 22,
+              objectFit: 'contain'
+            }}
+          />
+          <Text
+            style={[
+              styles.loginButtonFacebookText,
+              {
+                fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16,
+                marginLeft: isSmallScreen ? 8 : 12,
+              },
+            ]}
+          >
             Inscrivez-vous avec Facebook
           </Text>
         </TouchableOpacity>
-        <View className="flex-row justify-center items-center space-x-1 mt-[24]">
-          <Text style={styles.textSousSignIn} className="mr-1">
+        <View
+          style={[
+            styles.footerContainer,
+            { marginTop: isSmallScreen ? 20 : 24 },
+          ]}
+        >
+          <Text
+            style={[
+              styles.textSousSignIn,
+              { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+            ]}
+          >
             Vous n'avez pas de compte ?
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignUp/index")}>
-            <Text style={styles.textForgotPassword}>S'inscrire</Text>
+            <Text
+              style={[
+                styles.textForgotPassword,
+                { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+              ]}
+            >
+              S'inscrire
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -153,100 +286,112 @@ const SignInScreen = () => {
 
 const styles = StyleSheet.create({
   SignInScreen: {
+    flex: 1,
+    backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    height: "100%",
+    paddingVertical: Platform.OS === "android" ? 20 : 0,
+  },
+  headerContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: 16,
   },
   textSignIn: {
-    fontSize: 30,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
+    marginBottom: 16,
   },
   textSousSignIn: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
     color: "#888888",
   },
   textlabel: {
     color: "#888888",
-    fontSize: 14,
     fontFamily: "Montserrat-Regular",
   },
   passwordContainer: {
-    height: 50,
     width: "100%",
-
     backgroundColor: "#F7F7F7",
-    borderRadius: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-    fontSize: 12,
-    fontFamily: "Montserrat-Regular",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
     marginTop: 4,
   },
   textInput: {
     width: "100%",
-    height: 50,
     backgroundColor: "#F7F7F7",
-    borderRadius: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingHorizontal: 15,
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
     marginTop: 4,
   },
   textInputPassword: {
-    fontSize: 12,
+    flex: 1,
     fontFamily: "Montserrat-Regular",
   },
+  eyeIcon: {
+    padding: 8,
+  },
   textForgotPassword: {
-    fontSize: 13,
     color: "#26667E",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
+    textAlign: "right",
+  },
+  errorText: {
+    color: "red",
+    width: "100%",
+    textAlign: "center",
   },
   loginButton: {
     backgroundColor: "#26667E",
-    borderRadius: 10,
-    height: 50,
     justifyContent: "center",
     alignItems: "center",
   },
   loginButtonText: {
     color: "#fff",
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
   },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 16,
+  },
   lineSignup: {
-    width: 60,
     height: 0.3,
     backgroundColor: "#000",
   },
   textSignUp: {
-    fontSize: 13,
     color: "#888888",
     fontFamily: "Montserrat-Regular",
   },
   loginButtonFacebook: {
     backgroundColor: "#fff",
-    borderRadius: 10,
-    height: 50,
     borderWidth: 0.5,
     borderColor: "#C9E4EE",
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
   loginButtonFacebookText: {
     color: "#000",
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
   },
+  footerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 4,
+  },
   column: {
     flexDirection: "column",
-    gap: 20,
+    gap: 4,
   },
 });
 

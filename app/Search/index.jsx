@@ -4,6 +4,8 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,6 +25,21 @@ const SearchScreen = () => {
   const { ProductsData, storeId } = route.params;
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProductsData, setFilteredProductsData] = useState([]);
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const searchBarWidth = width * 0.75; // 75% of screen width
+  const searchBarHeight = isSmallScreen ? 36 : isLargeScreen ? 44 : 40;
+  const searchBarRadius = isSmallScreen ? 18 : 20;
+  const searchIconSize = isSmallScreen ? 18 : isLargeScreen ? 22 : 20;
 
   const renderRecentViewItems = (data) => {
     const items = [];
@@ -88,15 +105,40 @@ const SearchScreen = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white pt-3 relative h-full">
-      <View className="flex-row items-center mx-5 justify-between mb-[20]">
+    <SafeAreaView style={styles.safeArea}>
+      <View
+        style={[
+          styles.headerContainer,
+          {
+            marginHorizontal: horizontalPadding,
+            marginBottom: isSmallScreen ? 15 : 20,
+          },
+        ]}
+      >
         <BackButton />
-        <View style={styles.searchBar} className="mx-5">
-          <View className="flex-row items-center gap-x-4">
-            <MagnifyingGlassIcon size={20} color="#26667E" />
+        <View
+          style={[
+            styles.searchBar,
+            {
+              width: searchBarWidth,
+              height: searchBarHeight,
+              borderRadius: searchBarRadius,
+              paddingLeft: isSmallScreen ? 12 : 15,
+              paddingRight: isSmallScreen ? 12 : 15,
+            },
+          ]}
+        >
+          <View style={styles.searchContent}>
+            <MagnifyingGlassIcon size={searchIconSize} color="#26667E" />
             <TextInput
-              style={styles.searchBarItem}
-              placeholder="Rechercher par magasin..."
+              style={[
+                styles.searchBarItem,
+                {
+                  fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
+                  flex: 1,
+                },
+              ]}
+              placeholder="Rechercher un produit..."
               placeholderTextColor="#888888"
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -107,16 +149,26 @@ const SearchScreen = () => {
               onPress={handleClearSearch}
               style={styles.clearButton}
             >
-              <Text style={styles.clearButtonText}>✕</Text>
+              <Text
+                style={[
+                  styles.clearButtonText,
+                  { fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18 },
+                ]}
+              >
+                ✕
+              </Text>
             </TouchableOpacity>
           )}
         </View>
       </View>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 0 }}
+        contentContainerStyle={{
+          paddingHorizontal: horizontalPadding,
+          paddingTop: 0,
+          paddingBottom: Platform.OS === "ios" ? 20 : 10,
+        }}
         vertical
         showsVerticalScrollIndicator={false}
-        className="mx-5 pb-5"
       >
         {renderRecentViewItems(filteredProductsData)}
       </ScrollView>
@@ -125,28 +177,51 @@ const SearchScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: 20,
+    height: "100%",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   titleCategory: {
     fontSize: 18,
     fontFamily: "Montserrat-Regular",
   },
   searchBar: {
-    width: 300,
-    height: 40,
-    borderRadius: 20,
     borderColor: "#26667E",
     borderWidth: 1,
     alignItems: "center",
-    paddingLeft: 15,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: 15,
     gap: 4,
   },
+  searchContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+  },
   searchBarItem: {
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
-    width: 220,
     color: "black",
+  },
+  clearButton: {
+    width: 24,
+    height: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  clearButtonText: {
+    color: "#26667E",
+    textAlign: "center",
+  },
+  row: {
+    width: "100%",
   },
 });
 

@@ -5,7 +5,8 @@ import {
   Image,
   Animated,
   TouchableOpacity,
-  Dimensions,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import React, { useState } from "react";
 import FavoriteButton from "../../components/FavoriteButton";
@@ -19,6 +20,27 @@ const BoxIcon = require("../../assets/icons/CartDark.png");
 const ProductScreen = ({ data, storeId, onclose }) => {
   const { user, dispatch } = useAuthContext();
   const [Product, setProduct] = useState(null);
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const imageSize = {
+    width: isSmallScreen ? 120 : isLargeScreen ? 180 : 150,
+    height: isSmallScreen ? 160 : isLargeScreen ? 240 : 200,
+  };
+  const imageContainerHeight = height * 0.3;
+  const modalHeight = height * 0.9;
+  const borderRadius = isSmallScreen ? 15 : 20;
+  const buttonWidth = width * 0.85;
+  const buttonHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
+
   const handleProductOnChange = (val) => {
     setProduct(val);
   };
@@ -28,12 +50,12 @@ const ProductScreen = ({ data, storeId, onclose }) => {
 
   const handleApplyPress = () => {
     if (data.quantity == 0) {
-      setSnackbarMessage("This product is out of stock.");
+      setSnackbarMessage("Ce produit est en rupture de stock.");
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
     if (Product == null || Product.quantity == 0) {
-      setSnackbarMessage("Please select a valid product quantity.");
+      setSnackbarMessage("Veuillez sélectionner une quantité de produit valide.");
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
@@ -54,21 +76,29 @@ const ProductScreen = ({ data, storeId, onclose }) => {
     setProduct(null);
     onclose();
   };
+
   return (
-    <Animated.View style={styles.modalView}>
+    <Animated.View style={[
+      styles.modalView,
+      {
+        borderTopLeftRadius: borderRadius,
+        borderTopRightRadius: borderRadius,
+        height: modalHeight,
+      }
+    ]}>
       {snackbarKey !== 0 && (
         <Snackbar
           key={snackbarKey}
           message={snackbarMessage}
           duration={2000}
-          actionText="Close"
+          actionText="Fermer"
           backgroundColor="#FF0000"
           textColor="white"
           actionTextColor="yellow"
         />
       )}
 
-      <View className="mx-5 flex-row justify-between">
+      <View style={[styles.headerContainer, { marginHorizontal: horizontalPadding }]}>
         <BackButtonCloseModal handleCloseModal={onclose} />
         <FavoriteButton 
           user={user}
@@ -77,9 +107,9 @@ const ProductScreen = ({ data, storeId, onclose }) => {
           isFavorite={true}
         />
       </View>
-      <View style={styles.imageContainer}>
+      <View style={[styles.imageContainer, { height: imageContainerHeight }]}>
         <Image
-          style={styles.image}
+          style={[styles.image, imageSize]}
           source={{
             uri: `${Config.API_URL.replace("/api", "")}/files/${
               data?.product?.image || ""
@@ -87,29 +117,72 @@ const ProductScreen = ({ data, storeId, onclose }) => {
           }}
         />
       </View>
-      <View style={styles.productDetails} className="flex-col mx-5 mb-[20]">
-        <Text style={styles.ProductNameText}>
+      <View 
+        style={[
+          styles.productDetails, 
+          { 
+            marginHorizontal: horizontalPadding,
+            marginBottom: isSmallScreen ? 15 : 20,
+            gap: isSmallScreen ? 4 : 5,
+          }
+        ]}
+      >
+        <Text style={[
+          styles.ProductNameText,
+          { fontSize: isSmallScreen ? 14 : isLargeScreen ? 17 : 15 }
+        ]}>
           {data?.product?.brand?.name +
             " " +
             data?.product?.name +
             " " +
             data?.product?.size}
         </Text>
-        <Text style={styles.PriceText}>Price per unit: DA {data?.selling}</Text>
-        <Text style={styles.PriceText}>
-          Price per box: DA {data?.selling * data?.product?.boxItems}
+        <Text style={[
+          styles.PriceText,
+          { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 }
+        ]}>
+          Prix par unité: {data?.selling} DA
         </Text>
-        <View
-          style={styles.boxClass}
-          className="flex-row space-x-2 items-center"
-        >
+        <Text style={[
+          styles.PriceText,
+          { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 }
+        ]}>
+          Prix par boîte: {data?.selling * data?.product?.boxItems} DA
+        </Text>
+        <View style={[styles.boxClass, { gap: isSmallScreen ? 2 : 3 }]}>
           <View
-            style={styles.boxClass}
-            className="w-fit h-[20] flex-row items-center justify-center bg-[#EDEDED] rounded-xl pl-3 pr-3"
+            style={[
+              styles.boxContent,
+              { 
+                borderRadius: isSmallScreen ? 10 : 12,
+                paddingLeft: isSmallScreen ? 10 : 12,
+                paddingRight: isSmallScreen ? 10 : 12,
+                gap: isSmallScreen ? 0 : 1,
+              }
+            ]}
           >
-            <Text style={styles.BoxText}>{data?.product?.boxItems}</Text>
-            <Text style={styles.BoxText}>/</Text>
-            <Image style={styles.boxIcon} source={BoxIcon} />
+            <Text style={[
+              styles.BoxText,
+              { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 }
+            ]}>
+              {data?.product?.boxItems}
+            </Text>
+            <Text style={[
+              styles.BoxText,
+              { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 }
+            ]}>
+              /
+            </Text>
+            <Image 
+              style={[
+                styles.boxIcon,
+                { 
+                  width: isSmallScreen ? 13 : isLargeScreen ? 17 : 15,
+                  height: isSmallScreen ? 13 : isLargeScreen ? 17 : 15,
+                }
+              ]} 
+              source={BoxIcon} 
+            />
           </View>
         </View>
       </View>
@@ -121,9 +194,30 @@ const ProductScreen = ({ data, storeId, onclose }) => {
         quantityLimit={data?.quantityLimit}
         handleProductOnChange={handleProductOnChange}
       />
-      <View className="w-full absolute bottom-8 flex-row justify-center mt-[20]">
-        <TouchableOpacity style={styles.loginButton} onPress={handleApplyPress}>
-          <Text style={styles.loginButtonText}>Apply</Text>
+      <View style={[
+        styles.buttonContainer,
+        { 
+          bottom: Platform.OS === "ios" ? 40 : 30,
+          marginTop: isSmallScreen ? 15 : 20,
+        }
+      ]}>
+        <TouchableOpacity 
+          style={[
+            styles.loginButton,
+            { 
+              width: buttonWidth,
+              height: buttonHeight,
+              borderRadius: isSmallScreen ? 8 : 10,
+            }
+          ]} 
+          onPress={handleApplyPress}
+        >
+          <Text style={[
+            styles.loginButtonText,
+            { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 }
+          ]}>
+            Ajouter au panier
+          </Text>
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -133,22 +227,17 @@ const ProductScreen = ({ data, storeId, onclose }) => {
 const styles = StyleSheet.create({
   loginButton: {
     backgroundColor: "#26667E",
-    borderRadius: 10,
-    height: 50,
     justifyContent: "center",
     alignItems: "center",
-    width: 340,
   },
   loginButtonText: {
     color: "#fff",
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
   },
   imageContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    height: Dimensions.get("screen").height * 0.3,
   },
   container: {
     flex: 1,
@@ -157,27 +246,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ProductNameText: {
-    fontSize: 15,
     fontFamily: "Montserrat-SemiBold",
   },
   PriceText: {
-    fontSize: 12,
     fontFamily: "Montserrat-Medium",
     color: "#888888",
   },
   BoxText: {
-    fontSize: 12,
     fontFamily: "Montserrat-Medium",
     color: "#3E9CB9",
   },
   image: {
-    width: 150,
-    height: 200,
     resizeMode: "contain",
   },
   boxIcon: {
-    width: 15,
-    height: 15,
     resizeMode: "contain",
   },
   checkbox: {
@@ -195,16 +277,19 @@ const styles = StyleSheet.create({
   },
   productDetails: {
     flexDirection: "column",
-    gap: 5,
   },
   boxClass: {
     flexDirection: "row",
-    gap: 3,
+  },
+  boxContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EDEDED",
+    height: 20,
   },
   modalView: {
     backgroundColor: "#fff",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
     paddingTop: 20,
     position: "absolute",
     bottom: 0,
@@ -215,7 +300,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    height: Dimensions.get("screen").height * 0.9,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  buttonContainer: {
+    width: "100%",
+    position: "absolute",
+    flexDirection: "row",
+    justifyContent: "center",
   },
 });
 

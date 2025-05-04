@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   FlatList,
   Text,
   View,
   TouchableOpacity,
   StyleSheet,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -28,47 +30,92 @@ const formatDate = (date) => {
 
   const dateObj = new Date(date);
   if (dateObj.toDateString() === today.toDateString()) {
-    return "Today";
+    return "Aujourd'hui";
   } else if (dateObj.toDateString() === yesterday.toDateString()) {
-    return "Yesterday";
+    return "Hier";
   } else {
     const options = { year: "numeric", month: "long", day: "numeric" };
-    return dateObj.toLocaleDateString(undefined, options);
+    return dateObj.toLocaleDateString("fr-FR", options);
   }
 };
 
 // Function to format the time
 const formatTime = (date) => {
   const options = { hour: "2-digit", minute: "2-digit" };
-  return new Date(date).toLocaleTimeString(undefined, options);
+  return new Date(date).toLocaleTimeString("fr-FR", options);
 };
 
-// Component to render each notification item
-const NotificationItem = React.memo(({ item, onDelete }) => {
-  const renderRightActions = () => (
-    <TouchableOpacity
-      style={styles.deleteButton}
-      onPress={() => onDelete(item._id)}
-    >
-      <EyeIcon size={24} color="white" />
-    </TouchableOpacity>
-  );
-
-  return (
-    <Swipeable renderRightActions={renderRightActions}>
-      <TouchableOpacity>
-        <View style={styles.notificationItem}>
-          <Text style={styles.message}>{item.message}</Text>
-          <Text style={styles.time}>{formatTime(item.createdAt)}</Text>
-        </View>
+// Component to render each notification item with responsive design
+const NotificationItem = React.memo(
+  ({ item, onDelete, isSmallScreen, isLargeScreen }) => {
+    const renderRightActions = () => (
+      <TouchableOpacity
+        style={[
+          styles.deleteButton,
+          {
+            width: isSmallScreen ? 70 : 80,
+            borderRadius: isSmallScreen ? 12 : 15,
+          },
+        ]}
+        onPress={() => onDelete(item._id)}
+      >
+        <EyeIcon
+          size={isSmallScreen ? 20 : isLargeScreen ? 28 : 24}
+          color="white"
+        />
       </TouchableOpacity>
-    </Swipeable>
-  );
-});
+    );
 
-// Component to render section headers (date)
-const SectionHeader = React.memo(({ title }) => (
-  <Text style={styles.dateText}>{title}</Text>
+    return (
+      <Swipeable renderRightActions={renderRightActions}>
+        <TouchableOpacity>
+          <View
+            style={[
+              styles.notificationItem,
+              {
+                padding: isSmallScreen ? 12 : 14,
+                marginTop: isSmallScreen ? 8 : 12,
+                borderRadius: isSmallScreen ? 12 : 15,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.message,
+                { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+              ]}
+              numberOfLines={2}
+            >
+              {item.message}
+            </Text>
+            <Text
+              style={[
+                styles.time,
+                { fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 12 },
+              ]}
+            >
+              {formatTime(item.createdAt)}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </Swipeable>
+    );
+  }
+);
+
+// Component to render section headers (date) with responsive design
+const SectionHeader = React.memo(({ title, isSmallScreen, isLargeScreen }) => (
+  <Text
+    style={[
+      styles.dateText,
+      {
+        fontSize: isSmallScreen ? 12 : isLargeScreen ? 16 : 14,
+        marginTop: isSmallScreen ? 14 : 18,
+      },
+    ]}
+  >
+    {title}
+  </Text>
 ));
 
 const NotificationScreen = () => {
@@ -79,6 +126,19 @@ const NotificationScreen = () => {
     NotificationDataLoading,
     NotificationDataRefetch,
   } = route.params;
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const smallSpacing = height * 0.01;
 
   const [notifications, setNotifications] = useState([]);
   const [notificationToDelete, setNotificationToDelete] = useState(null);
@@ -138,7 +198,9 @@ const NotificationScreen = () => {
     } else {
       setSubmitionLoading(false);
       setSnackbarType("error");
-      setSnackbarMessage("You have to select a notification to mark as read");
+      setSnackbarMessage(
+        "Vous devez sélectionner une notification à marquer comme lue"
+      );
       setSnackbarKey((prevKey) => prevKey + 1);
     }
   };
@@ -162,7 +224,7 @@ const NotificationScreen = () => {
       if (!response.ok) {
         setSubmitionLoading(false);
         setSnackbarType("error");
-        setSnackbarMessage(json.message);
+        setSnackbarMessage(json.message || "Erreur lors de la mise à jour");
         setSnackbarKey((prevKey) => prevKey + 1);
         return;
       } else {
@@ -172,7 +234,7 @@ const NotificationScreen = () => {
         );
         setSubmitionLoading(false);
         setSnackbarType("success");
-        setSnackbarMessage(json.message);
+        setSnackbarMessage(json.message || "Notification marquée comme lue");
         setSnackbarKey((prevKey) => prevKey + 1);
         closeConfirmationModal();
       }
@@ -187,10 +249,14 @@ const NotificationScreen = () => {
   // Render loading state
   if (NotificationDataLoading) {
     return (
-      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-        <View className="mx-5" style={styles.containerLoading}>
+      <SafeAreaView style={styles.safeArea}>
+        <View
+          style={[styles.container, { marginHorizontal: horizontalPadding }]}
+        >
           <View style={styles.containerLoadingtextScreen}>
-            <ShimmerPlaceholder style={styles.textScreen} />
+            <ShimmerPlaceholder
+              style={[styles.textScreen, { width: width * 0.6 }]}
+            />
           </View>
           <NotificationsLoading />
         </View>
@@ -200,39 +266,68 @@ const NotificationScreen = () => {
 
   // Render the main content
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView className="bg-white pt-3 pb-10 h-full">
-        <View className="mx-5 flex-row items-center justify-between">
+    <GestureHandlerRootView style={styles.rootView}>
+      <SafeAreaView style={styles.safeArea}>
+        <View
+          style={[
+            styles.headerContainer,
+            {
+              marginHorizontal: horizontalPadding,
+              marginBottom: verticalSpacing,
+            },
+          ]}
+        >
           <BackButton />
-          <Text className="text-center" style={styles.titleScreen}>
+          <Text
+            style={[
+              styles.titleScreen,
+              {
+                fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
+              },
+            ]}
+          >
             Notifications
           </Text>
           <ReadedNotificationButton />
         </View>
 
-        <View className="mx-5">
-          <FlatList
-            data={sections}
-            renderItem={({ item }) => (
-              <View>
-                <SectionHeader title={item.title} />
-                <FlatList
-                  data={item.data}
-                  renderItem={({ item }) => (
-                    <NotificationItem
-                      item={item}
-                      onDelete={openConfirmationModal}
-                    />
-                  )}
-                  keyExtractor={(notification) => notification._id}
-                  showsVerticalScrollIndicator={false}
-                />
-              </View>
-            )}
-            keyExtractor={(section) => section.title}
-            showsVerticalScrollIndicator={false}
-            ListFooterComponent={<View style={{ marginBottom: 30 }} />}
-          />
+        <View style={{ marginHorizontal: horizontalPadding }}>
+          {sections.length > 0 ? (
+            <FlatList
+              data={sections}
+              renderItem={({ item }) => (
+                <View>
+                  <SectionHeader
+                    title={item.title}
+                    isSmallScreen={isSmallScreen}
+                    isLargeScreen={isLargeScreen}
+                  />
+                  <FlatList
+                    data={item.data}
+                    renderItem={({ item }) => (
+                      <NotificationItem
+                        item={item}
+                        onDelete={openConfirmationModal}
+                        isSmallScreen={isSmallScreen}
+                        isLargeScreen={isLargeScreen}
+                      />
+                    )}
+                    keyExtractor={(notification) => notification._id}
+                    showsVerticalScrollIndicator={false}
+                  />
+                </View>
+              )}
+              keyExtractor={(section) => section.title}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingBottom: Platform.OS === "ios" ? 50 : 30,
+              }}
+            />
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Aucune notification</Text>
+            </View>
+          )}
         </View>
       </SafeAreaView>
 
@@ -240,8 +335,8 @@ const NotificationScreen = () => {
         visible={confirmationNotificationModalVisible}
         onCancel={closeConfirmationModal}
         onConfirm={handleMarkAsReadNotification}
-        modalTitle="Mark notification as read"
-        modalSubTitle="Are you sure you want to mark this notification as read?"
+        modalTitle="Marquer comme lue"
+        modalSubTitle="Êtes-vous sûr de vouloir marquer cette notification comme lue ?"
       />
       {snackbarKey !== 0 && (
         <Snackbar
@@ -256,68 +351,28 @@ const NotificationScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  dateText: {
-    fontFamily: "Montserrat-Medium",
-    fontSize: 14,
-    color: "#7C7C7C",
-    marginTop: 18,
-  },
-  message: {
-    fontFamily: "Montserrat-Regular",
-    fontSize: 12,
+  rootView: {
     flex: 1,
   },
-  time: {
-    fontFamily: "Montserrat-Regular",
-    fontSize: 12,
-    textAlign: "right",
-    color: "#7C7C7C",
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+    paddingBottom: 10,
+    height: "100%",
   },
-  titleCategory: {
-    fontSize: 18,
-    fontFamily: "Montserrat-Regular",
-    textAlign: "center",
-  },
-  titleScreen: {
-    fontSize: 20,
-    fontFamily: "Montserrat-Regular",
-    textAlign: "center",
-  },
-  Vide: {
-    width: 40,
-    height: 40,
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   container: {
-    flexGrow: 1,
-    gap: 8,
     flexDirection: "column",
+    gap: 16,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-centre",
-  },
-  notificationItem: {
-    height: 80,
-    padding: 14,
-    marginTop: 12,
-    borderWidth: 0.5,
-    borderColor: "#C9E4EE",
-    borderRadius: 15,
-  },
-  deleteButton: {
-    backgroundColor: "#ff6b6b",
-    justifyContent: "center",
-    alignItems: "center",
-    width: 80,
-    height: 80,
-    marginTop: 12,
-    borderRadius: 15,
-  },
-  loadingText: {
-    fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-    color: "#FF033E",
-    fontWeight: "bold",
+  textScreen: {
+    height: 20,
+    borderRadius: 4,
   },
   containerLoadingtextScreen: {
     flexDirection: "row",
@@ -325,9 +380,55 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     height: 40,
   },
-  containerLoading: {
-    flexDirection: "column",
-    gap: 16,
+  dateText: {
+    fontFamily: "Montserrat-Medium",
+    color: "#7C7C7C",
+  },
+  message: {
+    fontFamily: "Montserrat-Regular",
+    flex: 1,
+  },
+  time: {
+    fontFamily: "Montserrat-Regular",
+    textAlign: "right",
+    color: "#7C7C7C",
+  },
+  titleScreen: {
+    fontFamily: "Montserrat-Regular",
+    textAlign: "center",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-centre",
+  },
+  notificationItem: {
+    minHeight: 80,
+    borderWidth: 0.5,
+    borderColor: "#C9E4EE",
+  },
+  deleteButton: {
+    backgroundColor: "#ff6b6b",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: 80,
+    marginTop: 12,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 300,
+  },
+  emptyText: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#888888",
+  },
+  loadingText: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#FF033E",
+    fontWeight: "bold",
   },
 });
 

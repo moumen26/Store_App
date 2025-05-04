@@ -4,16 +4,13 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  Dimensions,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import StoreCard from "../../components/StoreCard";
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
@@ -40,6 +37,20 @@ const RequestStores = () => {
   const { user } = useAuthContext();
   const route = useRoute();
   const { CategoriesData } = route.params;
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const searchBarHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
+  const searchBarFontSize = isSmallScreen ? 11 : isLargeScreen ? 14 : 12;
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -87,10 +98,10 @@ const RequestStores = () => {
   //--------------------------------------------Rendering--------------------------------------------
   if (AllNonActiveStoresDataLoading) {
     return (
-      <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-        <View className="mx-5" style={styles.containerLoading}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={[styles.containerLoading, { marginHorizontal: horizontalPadding }]}>
           <View style={styles.containerLoadingtextScreen}>
-            <ShimmerPlaceholder style={styles.textScreen} />
+            <ShimmerPlaceholder style={[styles.textScreen, { width: width * 0.6 }]} />
           </View>
           <Search />
           <View style={styles.CategoryStores}>
@@ -102,26 +113,56 @@ const RequestStores = () => {
     );
   }
   return (
-    <SafeAreaView className="bg-white pt-3 pb-12 relative h-full">
-      <View className="mx-5 mb-[20] flex-row items-center justify-between">
+    <SafeAreaView style={styles.safeArea}>
+      <View 
+        style={[
+          styles.headerContainer, 
+          { 
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing 
+          }
+        ]}
+      >
         <BackButton />
-        <Text style={styles.titleScreen}>Request Stores</Text>
-        <View style={styles.Vide}></View>
+        <Text style={[
+          styles.titleScreen,
+          { fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20 }
+        ]}>
+          Demandes de Magasins
+        </Text>
+        <View style={[
+          styles.vide,
+          { 
+            width: isSmallScreen ? 32 : 40,
+            height: isSmallScreen ? 32 : 40 
+          }
+        ]} />
       </View>
       <View
-        style={styles.searchBar}
-        className="flex-row mx-5 items-center space-x-2 mb-[10]"
+        style={[
+          styles.searchBar,
+          { 
+            height: searchBarHeight,
+            borderRadius: isSmallScreen ? 25 : 30,
+            paddingLeft: isSmallScreen ? 12 : 15,
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing * 0.5
+          }
+        ]}
       >
-        <MagnifyingGlassIcon size={20} color="#26667E" />
+        <MagnifyingGlassIcon 
+          size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20} 
+          color="#26667E" 
+        />
         <TextInput
-          style={styles.searchBarItem}
-          placeholder="Search your store.."
+          style={[styles.searchBarItem, { fontSize: searchBarFontSize }]}
+          placeholder="Recherchez votre magasin.."
           placeholderTextColor="#888888"
           // value={searchQuery}
           // onChangeText={setSearchQuery}
         />
       </View>
-      <View className="mx-5" style={styles.container}>
+      <View style={[styles.container, { marginHorizontal: horizontalPadding }]}>
         <RequestStoresCard
           StoresData={AllNonActiveStoresData}
           CategoriesData={CategoriesData}
@@ -132,6 +173,18 @@ const RequestStores = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+    paddingBottom: 12,
+    height: "100%",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   container: {
     flex: 1,
     paddingBottom: 30,
@@ -141,24 +194,20 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   titleScreen: {
-    fontSize: 20,
     fontFamily: "Montserrat-Regular",
+    textAlign: "center",
   },
   searchBar: {
-    height: 50,
     borderColor: "#26667E",
     borderWidth: 1,
     alignItems: "center",
-    paddingLeft: 15,
-    borderRadius: 30,
     flexDirection: "row",
     gap: 4,
   },
   searchBarItem: {
     color: "black",
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
-    width: 220,
+    flex: 1,
   },
   loadingText: {
     fontSize: 14,
@@ -171,6 +220,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 10,
   },
+  textScreen: {
+    height: 20,
+    borderRadius: 4,
+  },
   containerLoading: {
     flexDirection: "column",
     gap: 16,
@@ -180,9 +233,8 @@ const styles = StyleSheet.create({
     gap: 16,
     marginTop: 8,
   },
-  Vide: {
-    width: 40,
-    height: 40,
+  vide: {
+    // Dimensions set dynamically
   },
 });
 

@@ -4,63 +4,168 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
+import { useNavigation } from "@react-navigation/native";
 
 const VerifyCodeScreen = () => {
+  const navigation = useNavigation();
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const buttonWidth = width * 0.85;
+  const buttonHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
+  const codeInputSize = isSmallScreen ? 50 : isLargeScreen ? 70 : 60;
+  const codeInputHeight = isSmallScreen ? 40 : isLargeScreen ? 50 : 45;
+
   return (
-    <SafeAreaView className="bg-white pt-3 h-full">
-      <View className="mx-5">
+    <SafeAreaView style={styles.safeArea}>
+      <View style={{ marginHorizontal: horizontalPadding }}>
         <BackButton />
       </View>
-      <View style={styles.verifyContainer} className="mx-5 mt-[40]">
+      <View
+        style={[
+          styles.verifyContainer,
+          {
+            marginHorizontal: horizontalPadding,
+            marginTop: isSmallScreen ? 30 : 40,
+          },
+        ]}
+      >
         <View style={styles.verifyContainer}>
-          <Text style={styles.titleCategory}>Verify Code</Text>
-          <View className="flex-col items-center">
-            <Text style={styles.sousTitle}>
-              Please enter the code we just sent to email
+          <Text
+            style={[
+              styles.titleCategory,
+              { fontSize: isSmallScreen ? 26 : isLargeScreen ? 34 : 30 },
+            ]}
+          >
+            Vérifier le code
+          </Text>
+          <View style={styles.emailContainer}>
+            <Text
+              style={[
+                styles.sousTitle,
+                { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+              ]}
+            >
+              Veuillez entrer le code que nous venons d'envoyer à votre email
             </Text>
-            <Text className="text-[#62B5CE]" style={styles.sousTitle}>
-              example@gmail.com
+            <Text
+              style={[
+                styles.emailText,
+                { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+              ]}
+            >
+              exemple@gmail.com
             </Text>
           </View>
         </View>
-        <View style={styles.codeInputs}>
+        <View style={[styles.codeInputs, { gap: isSmallScreen ? 8 : 10 }]}>
           <TextInput
-            style={styles.codeInput}
+            style={[
+              styles.codeInput,
+              {
+                width: codeInputSize,
+                height: codeInputHeight,
+                borderRadius: isSmallScreen ? 8 : 10,
+                fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16,
+              },
+            ]}
             placeholder="-"
             placeholderTextColor="#888888"
           />
           <TextInput
-            style={styles.codeInput}
+            style={[
+              styles.codeInput,
+              {
+                width: codeInputSize,
+                height: codeInputHeight,
+                borderRadius: isSmallScreen ? 8 : 10,
+                fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16,
+              },
+            ]}
             placeholder="-"
             placeholderTextColor="#888888"
           />
           <TextInput
-            style={styles.codeInput}
+            style={[
+              styles.codeInput,
+              {
+                width: codeInputSize,
+                height: codeInputHeight,
+                borderRadius: isSmallScreen ? 8 : 10,
+                fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16,
+              },
+            ]}
             placeholder="-"
             placeholderTextColor="#888888"
           />
           <TextInput
-            style={styles.codeInput}
+            style={[
+              styles.codeInput,
+              {
+                width: codeInputSize,
+                height: codeInputHeight,
+                borderRadius: isSmallScreen ? 8 : 10,
+                fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16,
+              },
+            ]}
             placeholder="-"
             placeholderTextColor="#888888"
           />
         </View>
-        <View className="flex-col justify-center items-center">
-          <Text style={styles.textSousSignIn}>Didn't receive OTP?</Text>
+        <View style={styles.resendContainer}>
+          <Text
+            style={[
+              styles.textSousSignIn,
+              { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+            ]}
+          >
+            Vous n'avez pas reçu le code ?
+          </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignUpScreen")}>
-            <Text style={styles.textForgotPassword}>Resend code</Text>
+            <Text
+              style={[
+                styles.textForgotPassword,
+                { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+              ]}
+            >
+              Renvoyer le code
+            </Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          className="mt-[24]"
-          style={styles.loginButton}
+          style={[
+            styles.loginButton,
+            {
+              width: buttonWidth,
+              height: buttonHeight,
+              borderRadius: isSmallScreen ? 8 : 10,
+              marginTop: isSmallScreen ? 20 : 24,
+            },
+          ]}
           onPress={() => navigation.navigate("SignInScreen")}
         >
-          <Text style={styles.loginButtonText}>Verify</Text>
+          <Text
+            style={[
+              styles.loginButtonText,
+              { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 },
+            ]}
+          >
+            Vérifier
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -68,44 +173,43 @@ const VerifyCodeScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+    height: "100%",
+  },
   loginButtonText: {
     color: "#fff",
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
   },
   loginButton: {
     backgroundColor: "#26667E",
-    borderRadius: 10,
-    height: 50,
     justifyContent: "center",
     alignItems: "center",
-    width: 340,
   },
   textSousSignIn: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
     color: "#888888",
   },
   textForgotPassword: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
+    color: "#26667E",
   },
   titleCategory: {
-    fontSize: 30,
     fontFamily: "Montserrat-Regular",
   },
   sousTitle: {
-    fontSize: 13,
+    fontFamily: "Montserrat-Regular",
+  },
+  emailText: {
+    color: "#62B5CE",
     fontFamily: "Montserrat-Regular",
   },
   codeInput: {
-    width: 60,
-    height: 45,
-    borderRadius: 10,
     textAlign: "center",
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
     backgroundColor: "#F7F7F7",
   },
@@ -114,9 +218,17 @@ const styles = StyleSheet.create({
     gap: 12,
     alignItems: "center",
   },
+  emailContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
   codeInputs: {
     flexDirection: "row",
-    gap: 10,
+    alignItems: "center",
+  },
+  resendContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
     alignItems: "center",
   },
 });

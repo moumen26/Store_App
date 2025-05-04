@@ -686,10 +686,10 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     marginHorizontal: 20,
-    borderTopWidth: 1,
-    borderColor: "#F7F7F7",
+    // borderTopWidth: 1,
+    // borderColor: "#F7F7F7",
     paddingTop: 18,
-    height: "60%",
+    height: "70%",
   },
   scrollContent: {
     flexGrow: 1,

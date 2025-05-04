@@ -5,7 +5,8 @@ import {
   TouchableOpacity,
   View,
   Modal,
-  Dimensions,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -46,6 +47,21 @@ const Store = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const { user } = useAuthContext();
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const iconSize = isSmallScreen ? 18 : isLargeScreen ? 22 : 20;
+  const searchHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
+  const sectionGap = isSmallScreen ? 16 : isLargeScreen ? 24 : 20;
 
   //--------------------------------------------handle states--------------------------------------------
   const handleOpenModel = (stock) => {
@@ -231,24 +247,53 @@ const Store = () => {
   });
   //--------------------------------------------RENDERING--------------------------------------------
   return (
-    <SafeAreaView className="bg-white pt-3 h-full">
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="relative h-full"
+        style={styles.scrollView}
+        contentContainerStyle={{
+          paddingBottom: Platform.OS === "ios" ? 20 : 10,
+        }}
       >
         {BrandsDataLoading ? (
-          <View className="mx-5 mb-[20]">
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
             <TopHomeScreen />
           </View>
         ) : BrandsData && BrandsData?.length > 0 ? (
-          <View className="flex-row items-center mx-5 mb-[10] space-x-3">
-            <View className="flex-1 gap-1">
-              <Text style={styles.text} className="text-gray-400">
+          <View
+            style={[
+              styles.headerContainer,
+              { marginHorizontal: horizontalPadding },
+            ]}
+          >
+            <View style={styles.storeInfo}>
+              <Text
+                style={[
+                  styles.storeLabel,
+                  { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+                ]}
+              >
                 Magasin
               </Text>
               <View style={styles.iconText}>
-                <BuildingStorefrontIcon name="cart" size={18} color="#26667E" />
-                <Text style={styles.text}>{storeName}</Text>
+                <BuildingStorefrontIcon
+                  name="cart"
+                  size={iconSize}
+                  color="#26667E"
+                />
+                <Text
+                  style={[
+                    styles.text,
+                    { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+                  ]}
+                >
+                  {storeName}
+                </Text>
               </View>
             </View>
             <TouchableOpacity
@@ -257,9 +302,16 @@ const Store = () => {
                   storeId: storeId,
                 })
               }
-              style={styles.notification}
+              style={[
+                styles.notification,
+                {
+                  width: isSmallScreen ? 36 : 40,
+                  height: isSmallScreen ? 36 : 40,
+                  borderRadius: isSmallScreen ? 18 : 20,
+                },
+              ]}
             >
-              <ShoppingCartIcon size={18} color="#26667E" />
+              <ShoppingCartIcon size={iconSize} color="#26667E" />
             </TouchableOpacity>
           </View>
         ) : (
@@ -267,24 +319,37 @@ const Store = () => {
         )}
 
         {BrandsDataLoading ? (
-          <View className="mx-5 mb-[20]">
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
             <Search />
           </View>
         ) : BrandsData && BrandsData?.length > 0 ? (
           <TouchableOpacity
-            className="flex-row items-center space-x-2 mx-5 mb-[10]"
-            style={styles.searchClass}
-            onPress={() => navigation.navigate("Search/index",{
-              ProductsData: ProductsData,
-              storeId: storeId,
-            })}
+            style={[
+              styles.searchClass,
+              { marginHorizontal: horizontalPadding },
+            ]}
+            onPress={() =>
+              navigation.navigate("Search/index", {
+                ProductsData: ProductsData,
+                storeId: storeId,
+              })
+            }
           >
-            <View
-              style={styles.searchButton}
-              className="flex-1 flex-row items-center space-x-2 pl-5 h-[50px] border-[1px] rounded-3xl"
-            >
-              <MagnifyingGlassIcon color="#888888" size={20} />
-              <Text style={styles.search}>Rechercher par produit...</Text>
+            <View style={[styles.searchButton, { height: searchHeight }]}>
+              <MagnifyingGlassIcon color="#888888" size={iconSize} />
+              <Text
+                style={[
+                  styles.search,
+                  { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+                ]}
+              >
+                Rechercher par produit...
+              </Text>
             </View>
           </TouchableOpacity>
         ) : (
@@ -292,12 +357,29 @@ const Store = () => {
         )}
 
         {PrivatePublicitiesDataLoading ? (
-          <View className="mx-5 mb-[20]">
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
             <SpecialForYou />
           </View>
         ) : PrivatePublicitiesData && PrivatePublicitiesData?.length > 0 ? (
-          <View className="mx-5 mb-[20]">
-            <Text style={styles.titleCategory}>#SpécialPourVous</Text>
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
+            <Text
+              style={[
+                styles.titleCategory,
+                { fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18 },
+              ]}
+            >
+              #SpécialPourVous
+            </Text>
             <SliderStore data={PrivatePublicitiesData} />
           </View>
         ) : (
@@ -305,12 +387,29 @@ const Store = () => {
         )}
 
         {BrandsDataLoading ? (
-          <View className="mx-5 mb-[20]">
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
             <Brands />
           </View>
         ) : BrandsData && BrandsData?.length > 0 ? (
-          <View className="mx-5 mb-[20]">
-            <Text style={styles.titleCategory}>Marques</Text>
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
+            <Text
+              style={[
+                styles.titleCategory,
+                { fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18 },
+              ]}
+            >
+              Marques
+            </Text>
             <ScrollView
               contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
               horizontal
@@ -341,13 +440,30 @@ const Store = () => {
         )}
 
         {ProductsDataLoading ? (
-          <View className="mx-5 mb-3">
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
             <AllProducts />
           </View>
         ) : ProductsData && ProductsData?.length > 0 ? (
-          <View className="mx-5 mb-3">
-            <View className="flex-row items-center justify-between">
-              <Text style={styles.titleCategory}>Tous les produits</Text>
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
+            <View style={styles.sectionHeader}>
+              <Text
+                style={[
+                  styles.titleCategory,
+                  { fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18 },
+                ]}
+              >
+                Tous les produits
+              </Text>
               <TouchableOpacity>
                 <Text
                   onPress={() =>
@@ -356,13 +472,16 @@ const Store = () => {
                       storeId: storeId,
                     })
                   }
-                  style={styles.seeAll}
+                  style={[
+                    styles.seeAll,
+                    { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+                  ]}
                 >
                   Voir tout
                 </Text>
               </TouchableOpacity>
             </View>
-            <View className="flex-row items-center justify-around mt-4">
+            <View style={styles.productsContainer}>
               <FlatList
                 data={ProductsData}
                 horizontal
@@ -395,21 +514,47 @@ const Store = () => {
             </View>
           </View>
         ) : (
-          <SafeAreaView className="bg-white pt-3 h-full">
-            <View style={styles.imageContainer}>
-              <Image style={styles.image} source={COMING_SOON} />
+          <SafeAreaView style={styles.emptyState}>
+            <View style={[styles.imageContainer, { height: height * 0.3 }]}>
+              <Image
+                style={[
+                  styles.image,
+                  {
+                    width: isSmallScreen ? 120 : isLargeScreen ? 180 : 150,
+                    height: isSmallScreen ? 160 : isLargeScreen ? 240 : 200,
+                  },
+                ]}
+                source={COMING_SOON}
+              />
             </View>
           </SafeAreaView>
         )}
 
         {PopularProductsDataLoading ? (
-          <View className="mx-5 mb-[20]">
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
             <AllProducts />
           </View>
         ) : PopularProductsData && PopularProductsData?.length > 0 ? (
-          <View className="mx-5 mb-[20]">
-            <View className="flex-row items-center justify-between">
-              <Text style={styles.titleCategory}>Produits populaires</Text>
+          <View
+            style={{
+              marginHorizontal: horizontalPadding,
+              marginBottom: sectionGap,
+            }}
+          >
+            <View style={styles.sectionHeader}>
+              <Text
+                style={[
+                  styles.titleCategory,
+                  { fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18 },
+                ]}
+              >
+                Produits populaires
+              </Text>
               <TouchableOpacity>
                 <Text
                   onPress={() =>
@@ -418,13 +563,16 @@ const Store = () => {
                       storeId: storeId,
                     })
                   }
-                  style={styles.seeAll}
+                  style={[
+                    styles.seeAll,
+                    { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+                  ]}
                 >
                   Voir tout
                 </Text>
               </TouchableOpacity>
             </View>
-            <View className="flex-row items-center justify-around mt-4">
+            <View style={styles.productsContainer}>
               <FlatList
                 data={PopularProductsData}
                 horizontal
@@ -471,38 +619,95 @@ const Store = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    gap: 12,
+  },
+  storeInfo: {
+    flex: 1,
+    gap: 4,
+  },
+  storeLabel: {
+    color: "#888888",
+    fontFamily: "Montserrat-Regular",
+  },
   iconText: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
   },
   text: {
-    fontSize: 14,
     fontFamily: "Montserrat-Regular",
   },
   notification: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     borderColor: "#3E9CB9",
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
   },
+  searchClass: {
+    marginBottom: 10,
+  },
+  searchButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingLeft: 15,
+    borderWidth: 1,
+    borderColor: "#26667E",
+    borderRadius: 30,
+  },
   search: {
     color: "#888888",
-    borderColor: "#26667E",
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
   },
   titleCategory: {
-    fontSize: 18,
     fontFamily: "Montserrat-Regular",
   },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  productsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    marginTop: 16,
+  },
   seeAll: {
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
     color: "#26667E",
+  },
+  emptyState: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: 12,
+  },
+  imageContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    resizeMode: "contain",
+  },
+  modalView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(201, 228, 238, 0.4)",
   },
   navigationClass: {
     borderColor: "#888888",
@@ -514,36 +719,6 @@ const styles = StyleSheet.create({
   navigationText: {
     fontSize: 10,
     fontFamily: "Montserrat-Regular",
-  },
-  searchClass: {
-    marginBottom: 10,
-  },
-  searchButton: {
-    flex: 1,
-    gap: 4,
-    paddingLeft: 15,
-    height: 50,
-    borderWidth: 1,
-    borderColor: "#26667E",
-    borderRadius: 30,
-    alignItems: "center",
-  },
-  modalView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(201, 228, 238, 0.4)",
-  },
-  image: {
-    width: 150,
-    height: 200,
-    resizeMode: "contain",
-  },
-  imageContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    height: Dimensions.get("screen").height * 0.3,
   },
 });
 

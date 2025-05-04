@@ -4,28 +4,85 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../../components/BackButton";
+import { useNavigation } from "@react-navigation/native";
 
 const ResetPassword = () => {
+  const navigation = useNavigation();
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const topMargin = isSmallScreen ? 30 : isLargeScreen ? 50 : 40;
+  const buttonHeight = isSmallScreen ? 45 : isLargeScreen ? 55 : 50;
+
   return (
-    <SafeAreaView className="bg-white pt-3 h-full">
-      <View className="mx-5">
+    <SafeAreaView style={styles.safeArea}>
+      <View style={{ marginHorizontal: horizontalPadding }}>
         <BackButton />
       </View>
-      <View style={styles.verifyContainer} className="mx-5 mt-[40]">
-        <Text style={styles.titleCategory}>Reset Password</Text>
-        <Text style={styles.sousTitle}>
-          Enter your phone number to receive a code
+      <View
+        style={[
+          styles.verifyContainer,
+          {
+            marginHorizontal: horizontalPadding,
+            marginTop: topMargin,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.titleCategory,
+            { fontSize: isSmallScreen ? 26 : isLargeScreen ? 34 : 30 },
+          ]}
+        >
+          Réinitialiser le mot de passe
+        </Text>
+        <Text
+          style={[
+            styles.sousTitle,
+            { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+          ]}
+        >
+          Entrez votre numéro de téléphone pour recevoir un code
         </Text>
 
-        <View styles={styles.column} className="mt-[26] w-full">
-          <Text style={styles.textlabel}>Phone Number</Text>
+        <View
+          style={[styles.column, { marginTop: verticalSpacing, width: "100%" }]}
+        >
+          <Text
+            style={[
+              styles.textlabel,
+              { fontSize: isSmallScreen ? 13 : isLargeScreen ? 16 : 14 },
+            ]}
+          >
+            Numéro de téléphone
+          </Text>
           <TextInput
-            style={styles.textInput}
-            placeholder="Phone number"
+            style={[
+              styles.textInput,
+              {
+                height: buttonHeight,
+                borderRadius: isSmallScreen ? 8 : 10,
+                paddingLeft: isSmallScreen ? 12 : 15,
+                paddingRight: isSmallScreen ? 12 : 15,
+                fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
+              },
+            ]}
+            placeholder="Numéro de téléphone"
             placeholderTextColor="#888888"
             // value={}
             // onChangeText={}
@@ -33,18 +90,45 @@ const ResetPassword = () => {
         </View>
 
         <TouchableOpacity
-          className="mt-[24]"
-          style={styles.loginButton}
+          style={[
+            styles.loginButton,
+            {
+              marginTop: verticalSpacing,
+              height: buttonHeight,
+              borderRadius: isSmallScreen ? 8 : 10,
+            },
+          ]}
           onPress={() => navigation.navigate("SignInScreen")}
         >
-          <Text style={styles.loginButtonText}>Send Rest Password</Text>
+          <Text
+            style={[
+              styles.loginButtonText,
+              { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 },
+            ]}
+          >
+            Envoyer le code de réinitialisation
+          </Text>
         </TouchableOpacity>
-        <View className="flex-row justify-center items-center space-x-1 mt-[12]">
-          <Text style={styles.textSousSignIn} className="mr-1">
-            You remember your password ?
+        <View
+          style={[styles.linkContainer, { marginTop: verticalSpacing * 0.5 }]}
+        >
+          <Text
+            style={[
+              styles.textSousSignIn,
+              { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+            ]}
+          >
+            Vous vous souvenez de votre mot de passe ?
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate("SignUp/index")}>
-            <Text style={styles.textForgotPassword}>Sign In</Text>
+            <Text
+              style={[
+                styles.textForgotPassword,
+                { fontSize: isSmallScreen ? 12 : isLargeScreen ? 15 : 13 },
+              ]}
+            >
+              Se connecter
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -53,6 +137,12 @@ const ResetPassword = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
+    height: "100%",
+  },
   resetPassword: {
     width: "100%",
     flexDirection: "column",
@@ -60,35 +150,25 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     color: "#fff",
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
   },
   loginButton: {
     backgroundColor: "#26667E",
-    borderRadius: 10,
-    height: 50,
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
   },
   textSousSignIn: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
     color: "#888888",
-  },
-  textForgotPassword: {
-    fontSize: 13,
-    fontFamily: "Montserrat-Regular",
-    textDecorationLine: "underline",
+    marginRight: 4,
   },
   titleCategory: {
     textAlign: "left",
-    fontSize: 30,
     fontFamily: "Montserrat-Regular",
   },
   sousTitle: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
   },
   verifyContainer: {
@@ -103,26 +183,24 @@ const styles = StyleSheet.create({
   },
   textlabel: {
     color: "#888888",
-    fontSize: 14,
     fontFamily: "Montserrat-Regular",
   },
   textInput: {
     width: "100%",
-    height: 50,
     backgroundColor: "#F7F7F7",
-    borderRadius: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-    fontSize: 12,
     fontFamily: "Montserrat-Regular",
-    marginTop: 4,
   },
   column: {
     flexDirection: "column",
     gap: 20,
   },
+  linkContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
   textForgotPassword: {
-    fontSize: 13,
     color: "#26667E",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",

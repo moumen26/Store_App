@@ -5,6 +5,8 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CartRow from "../../components/CartRow";
@@ -22,18 +24,30 @@ const TrackOrder = () => {
   const navigation = useNavigation();
   const { user } = useAuthContext();
   const route = useRoute();
-  const { 
-    recieptData,
-    OrderDataRefetch
-  } = route.params;
+  const { recieptData, OrderDataRefetch } = route.params;
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("");
   const [submitionLoading, setSubmitionLoading] = useState(false);
   const [scanedData, setScanedData] = useState({ type: null, data: null });
-  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
-  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] = useState(false);
-  const [reason, setReason] = useState(""); 
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] =
+    useState(false);
+  const [reason, setReason] = useState("");
+
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const verticalSpacing = height * 0.025;
+  const sectionGap = isSmallScreen ? 16 : isLargeScreen ? 24 : 20;
 
   const handleOpenNotAllConfirmationModal = () => {
     setConfirmationModalVisible(false);
@@ -42,16 +56,18 @@ const TrackOrder = () => {
 
   const handleCloseNotAllConfirmationModal = () => {
     setScanedData({ type: null, data: null });
-    setNotAllConfirmationModalVisible(false); 
+    setNotAllConfirmationModalVisible(false);
   };
   const handleScanComplete = async (val) => {
     setSubmitionLoading(true);
-    
+
     try {
       // Check if the scanned barcode matches
       if (scanedData?.data != recieptData.reciept._id) {
         setSnackbarType("error");
-        setSnackbarMessage("The scanned barcode does not match the receipt you are tracking");
+        setSnackbarMessage(
+          "Le code-barres scanné ne correspond pas au reçu que vous suivez"
+        );
         setSnackbarKey((prevKey) => prevKey + 1);
         setSubmitionLoading(false);
         return;
@@ -68,13 +84,13 @@ const TrackOrder = () => {
           body: JSON.stringify({
             reciept: scanedData?.data,
             status: val,
-            raison: reason
+            raison: reason,
           }),
         }
       );
 
       const json = await response.json();
-      
+
       if (!response.ok) {
         setSnackbarType("error");
         setSnackbarMessage(json.message);
@@ -89,7 +105,9 @@ const TrackOrder = () => {
     } catch (err) {
       console.error(err);
       setSnackbarType("error");
-      setSnackbarMessage("An error occurred while submitting the receipt validation");
+      setSnackbarMessage(
+        "Une erreur s'est produite lors de la soumission de la validation du reçu"
+      );
       setSnackbarKey((prevKey) => prevKey + 1);
     } finally {
       setSubmitionLoading(false);
@@ -99,51 +117,156 @@ const TrackOrder = () => {
     <SafeAreaView style={styles.safeArea}>
       <FlatList
         ListHeaderComponent={
-          <View style={styles.header}>
+          <View
+            style={[styles.header, { marginHorizontal: horizontalPadding }]}
+          >
             <BackButton />
-            <Text style={styles.titleScreen}>Track Order</Text>
-            {!(recieptData?.reciept?.status == 10 && recieptData?.reciept?.delivered == true) ?
-              <ScanButton onScanComplete={({ type, data }) => {
-                setScanedData({ type, data });
-                setConfirmationModalVisible(true)
-              }} />
-              :
-              <View></View>
-            }
-            
+            <Text
+              style={[
+                styles.titleScreen,
+                { fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20 },
+              ]}
+            >
+              Suivi de commande
+            </Text>
+            {!(
+              recieptData?.reciept?.status == 10 &&
+              recieptData?.reciept?.delivered == true
+            ) ? (
+              <ScanButton
+                onScanComplete={({ type, data }) => {
+                  setScanedData({ type, data });
+                  setConfirmationModalVisible(true);
+                }}
+              />
+            ) : (
+              <View style={{ width: 40, height: 40 }} />
+            )}
           </View>
         }
         ListFooterComponent={
-          <View className="mx-5">
-            <View style={styles.commandeContainer}>
-              <Text style={styles.titleCategory}>Order Details</Text>
-              <View className="flex-row items-center justify-between w-full">
-                <Text style={styles.text}>Order Id</Text>
-                <Text style={styles.textDescription}>{recieptData?.reciept?._id}</Text>
+          <View style={{ marginHorizontal: horizontalPadding }}>
+            <View
+              style={[
+                styles.commandeContainer,
+                { gap: isSmallScreen ? 8 : 12 },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.titleCategory,
+                  {
+                    fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
+                    marginBottom: isSmallScreen ? 8 : 10,
+                  },
+                ]}
+              >
+                Détails de la commande
+              </Text>
+              <View style={styles.detailRow}>
+                <Text
+                  style={[
+                    styles.text,
+                    { fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 11 },
+                  ]}
+                >
+                  ID de commande
+                </Text>
+                <Text
+                  style={[
+                    styles.textDescription,
+                    { fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 11 },
+                  ]}
+                >
+                  {recieptData?.reciept?._id}
+                </Text>
               </View>
-              <View className="flex-row items-center justify-between w-full">
-                <Text style={styles.text}>Expected Delivery Date</Text>
+              <View style={styles.detailRow}>
+                <Text
+                  style={[
+                    styles.text,
+                    { fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 11 },
+                  ]}
+                >
+                  Date de livraison prévue
+                </Text>
                 {recieptData?.reciept?.expextedDeliveryDate ? (
-                  <Text style={styles.textDescription}>
+                  <Text
+                    style={[
+                      styles.textDescription,
+                      {
+                        fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 11,
+                      },
+                    ]}
+                  >
                     {recieptData?.reciept?.expextedDeliveryDate}
                   </Text>
                 ) : (
-                  <Text style={styles.textDescription}>not available yet</Text>
+                  <Text
+                    style={[
+                      styles.textDescription,
+                      {
+                        fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 11,
+                      },
+                    ]}
+                  >
+                    pas encore disponible
+                  </Text>
                 )}
               </View>
-              <View className="flex-row items-center justify-between w-full">
-                <Text style={styles.text}>Remaining Amount</Text>
+              <View style={styles.detailRow}>
+                <Text
+                  style={[
+                    styles.text,
+                    { fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 11 },
+                  ]}
+                >
+                  Montant restant
+                </Text>
                 {recieptData?.reciept?.total ? (
-                  <Text style={styles.textDescription}>
-                    {(recieptData?.reciept?.total - recieptData?.reciept?.payment.reduce((sum, pay) => sum + pay.amount, 0)).toFixed(2)} DA
+                  <Text
+                    style={[
+                      styles.textDescription,
+                      {
+                        fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 11,
+                      },
+                    ]}
+                  >
+                    {(
+                      recieptData?.reciept?.total -
+                      recieptData?.reciept?.payment.reduce(
+                        (sum, pay) => sum + pay.amount,
+                        0
+                      )
+                    ).toFixed(2)}{" "}
+                    DA
                   </Text>
                 ) : (
-                  <Text style={styles.textDescription}>not available yet</Text>
+                  <Text
+                    style={[
+                      styles.textDescription,
+                      {
+                        fontSize: isSmallScreen ? 10 : isLargeScreen ? 13 : 11,
+                      },
+                    ]}
+                  >
+                    pas encore disponible
+                  </Text>
                 )}
               </View>
             </View>
-            <View style={styles.OrderStatus}>
-              <Text style={styles.titleCategory}>Order Status</Text>
+            <View style={[styles.OrderStatus, { marginTop: sectionGap }]}>
+              <Text
+                style={[
+                  styles.titleCategory,
+                  {
+                    fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
+                    marginBottom: isSmallScreen ? 8 : 10,
+                  },
+                ]}
+              >
+                État de la commande
+              </Text>
               <OrderStatus
                 type={recieptData?.reciept?.type}
                 status={recieptData?.reciept?.status}
@@ -151,12 +274,15 @@ const TrackOrder = () => {
             </View>
           </View>
         }
+        contentContainerStyle={{
+          paddingBottom: Platform.OS === "ios" ? 20 : 10,
+        }}
       />
       <SubmitOrderModal
         visible={confirmationModalVisible}
         onCancel={handleOpenNotAllConfirmationModal}
-        modalTitle="Submit Order Confirmation"
-        modalSubTitle="Do you want to submit all the scanned orders now?"
+        modalTitle="Confirmation de soumission de commande"
+        modalSubTitle="Voulez-vous soumettre toutes les commandes scannées maintenant?"
         onConfirm={() => handleScanComplete(3)}
         isloading={submitionLoading}
       />
@@ -164,8 +290,8 @@ const TrackOrder = () => {
       <SubmitOderModalReason
         visible={notAllConfirmationModalVisible}
         onCancel={handleCloseNotAllConfirmationModal}
-        modalTitle="Partial Submission"
-        modalSubTitle="Are you sure you don't want to submit all orders?"
+        modalTitle="Soumission partielle"
+        modalSubTitle="Êtes-vous sûr de ne pas vouloir soumettre toutes les commandes?"
         onConfirm={() => handleScanComplete(4)}
         isloading={submitionLoading}
         setReason={setReason}
@@ -187,44 +313,42 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: Platform.OS === "android" ? 10 : 0,
+    paddingBottom: Platform.OS === "android" ? 10 : 0,
   },
   OrderStatus: {
-    marginTop: 20,
+    // Margin set dynamically
   },
   titleCategory: {
-    fontSize: 18,
     fontFamily: "Montserrat-Regular",
-    marginBottom: 10,
   },
   commandeContainer: {
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingVertical: 10,
     flexDirection: "column",
-    gap: 4,
     borderColor: "#F7F7F7",
   },
+  detailRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
   text: {
-    fontSize: 11,
     color: "#888888",
     fontFamily: "Montserrat-Regular",
   },
   textDescription: {
-    fontSize: 11,
     fontFamily: "Montserrat-Medium",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginHorizontal: 20,
     marginBottom: 20,
   },
   titleScreen: {
-    fontSize: 20,
     fontFamily: "Montserrat-Regular",
   },
   containerNoAvailable: {

@@ -1,5 +1,13 @@
 import React, { useState, useCallback, memo } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import FavoriteButton from "../../components/FavoriteButton";
@@ -21,6 +29,22 @@ const Product = memo(() => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("");
 
+  // Get screen dimensions
+  const { width, height } = useWindowDimensions();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
+
+  // Responsive spacing calculations
+  const horizontalPadding = width * 0.05;
+  const imageSize = {
+    width: isSmallScreen ? 120 : isLargeScreen ? 180 : 150,
+    height: isSmallScreen ? 160 : isLargeScreen ? 240 : 200,
+  };
+  const buttonWidth = width * 0.85;
+
   const handleProductOnChange = useCallback((val) => {
     setProduct(val);
   }, []);
@@ -28,13 +52,15 @@ const Product = memo(() => {
   const handleApplyPress = useCallback(() => {
     if (data.quantity === 0) {
       setSnackbarType("error");
-      setSnackbarMessage("This product is out of stock.");
+      setSnackbarMessage("Ce produit est en rupture de stock.");
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
     if (!product || product.quantity === 0) {
       setSnackbarType("error");
-      setSnackbarMessage("Please select a valid product quantity.");
+      setSnackbarMessage(
+        "Veuillez sélectionner une quantité de produit valide."
+      );
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
@@ -71,7 +97,7 @@ const Product = memo(() => {
           snackbarType={snackbarType}
         />
       )}
-      <View style={styles.header}>
+      <View style={[styles.header, { marginHorizontal: horizontalPadding }]}>
         <BackButton />
         <FavoriteButton
           user={user}
@@ -84,21 +110,72 @@ const Product = memo(() => {
         />
       </View>
       <View style={styles.imageContainer}>
-        <Image style={styles.image} source={{ uri: imageUri }} />
+        <Image style={[styles.image, imageSize]} source={{ uri: imageUri }} />
       </View>
-      <View style={styles.productDetails}>
-        <Text style={styles.productNameText}>
+      <View
+        style={[styles.productDetails, { marginHorizontal: horizontalPadding }]}
+      >
+        <Text
+          style={[
+            styles.productNameText,
+            { fontSize: isSmallScreen ? 14 : isLargeScreen ? 17 : 15 },
+          ]}
+        >
           {`${data?.product?.brand?.name} ${data?.product?.name} ${data?.product?.size}`}
         </Text>
-        <Text style={styles.priceText}>Prix par unité: {data?.selling} DA</Text>
-        <Text style={styles.priceText}>
+        <Text
+          style={[
+            styles.priceText,
+            { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+          ]}
+        >
+          Prix par unité: {data?.selling} DA
+        </Text>
+        <Text
+          style={[
+            styles.priceText,
+            { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+          ]}
+        >
           Prix par boîte: {data?.selling * data?.product?.boxItems} DA
         </Text>
         <View style={styles.boxContainer}>
-          <View style={styles.boxContent}>
-            <Text style={styles.boxText}>{data?.product?.boxItems}</Text>
-            <Text style={styles.boxText}>/</Text>
-            <Image style={styles.boxIcon} source={BoxIcon} />
+          <View
+            style={[
+              styles.boxContent,
+              {
+                borderRadius: isSmallScreen ? 10 : 12,
+                paddingHorizontal: isSmallScreen ? 10 : 12,
+                paddingVertical: isSmallScreen ? 3 : 4,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.boxText,
+                { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+              ]}
+            >
+              {data?.product?.boxItems}
+            </Text>
+            <Text
+              style={[
+                styles.boxText,
+                { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+              ]}
+            >
+              /
+            </Text>
+            <Image
+              style={[
+                styles.boxIcon,
+                {
+                  width: isSmallScreen ? 13 : isLargeScreen ? 17 : 15,
+                  height: isSmallScreen ? 13 : isLargeScreen ? 17 : 15,
+                },
+              ]}
+              source={BoxIcon}
+            />
           </View>
         </View>
       </View>
@@ -110,9 +187,31 @@ const Product = memo(() => {
         quantityLimit={data?.quantityLimit}
         handleProductOnChange={handleProductOnChange}
       />
-      <View style={styles.applyButtonContainer}>
-        <TouchableOpacity style={styles.loginButton} onPress={handleApplyPress}>
-          <Text style={styles.loginButtonText}>Ajouter au panier</Text>
+      <View
+        style={[
+          styles.applyButtonContainer,
+          { bottom: Platform.OS === "ios" ? 30 : 20 },
+        ]}
+      >
+        <TouchableOpacity
+          style={[
+            styles.loginButton,
+            {
+              width: buttonWidth,
+              height: isSmallScreen ? 45 : isLargeScreen ? 55 : 50,
+              borderRadius: isSmallScreen ? 8 : 10,
+            },
+          ]}
+          onPress={handleApplyPress}
+        >
+          <Text
+            style={[
+              styles.loginButtonText,
+              { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 },
+            ]}
+          >
+            Ajouter au panier
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -129,7 +228,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginHorizontal: 20,
   },
   imageContainer: {
     width: "100%",
@@ -138,21 +236,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   image: {
-    width: 150,
-    height: 200,
     resizeMode: "contain",
   },
   productDetails: {
-    marginHorizontal: 20,
     marginBottom: 20,
     gap: 5,
   },
   productNameText: {
-    fontSize: 15,
     fontFamily: "Montserrat-SemiBold",
   },
   priceText: {
-    fontSize: 12,
     fontFamily: "Montserrat-Medium",
     color: "#888888",
   },
@@ -165,37 +258,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#EDEDED",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
     gap: 2,
   },
   boxText: {
-    fontSize: 12,
     fontFamily: "Montserrat-Medium",
     color: "#3E9CB9",
   },
   boxIcon: {
-    width: 15,
-    height: 15,
     resizeMode: "contain",
   },
   loginButton: {
     backgroundColor: "#26667E",
-    borderRadius: 10,
-    height: 50,
     justifyContent: "center",
     alignItems: "center",
-    width: 340,
   },
   loginButtonText: {
     color: "#fff",
-    fontSize: 16,
     fontFamily: "Montserrat-Regular",
   },
   applyButtonContainer: {
     position: "absolute",
-    bottom: 20,
     width: "100%",
     alignItems: "center",
   },
