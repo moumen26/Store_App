@@ -666,12 +666,12 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   textForgotPassword: {
-    color: "#26667E",
+    color: "#63BBF5",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
   },
   loginButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     justifyContent: "center",
     alignItems: "center",
     // width: "100%",
@@ -688,8 +688,8 @@ const styles = StyleSheet.create({
     borderColor: "#888888",
   },
   checked: {
-    backgroundColor: "#26667E",
-    borderColor: "#26667E",
+    backgroundColor: "#63BBF5",
+    borderColor: "#63BBF5",
   },
   inputClass: {
     flexDirection: "column",

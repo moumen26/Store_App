@@ -36,15 +36,15 @@ const Saved = () => {
   const { user } = useAuthContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredFavoriteData, setFilteredFavoriteData] = useState([]);
-  
+
   // Get screen dimensions
   const { width, height } = useWindowDimensions();
-  
+
   // Calculate responsive values
   const isSmallScreen = width < 375;
   const isMediumScreen = width >= 375 && width < 768;
   const isLargeScreen = width >= 768;
-  
+
   // Responsive spacing calculations
   const horizontalPadding = width * 0.05;
   const verticalSpacing = height * 0.025;
@@ -79,7 +79,7 @@ const Saved = () => {
       throw new Error(error?.message || "Network error");
     }
   };
-  
+
   const {
     data: FavoriteData,
     error: FavoriteDataError,
@@ -135,10 +135,12 @@ const Saved = () => {
   if (FavoriteDataLoading) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={[styles.container, { marginHorizontal: horizontalPadding }]}>
+        <View
+          style={[styles.container, { marginHorizontal: horizontalPadding }]}
+        >
           <View style={styles.containerLoadingtextScreen}>
-            <ShimmerPlaceholder 
-              style={[styles.textScreen, { width: width * 0.6 }]} 
+            <ShimmerPlaceholder
+              style={[styles.textScreen, { width: width * 0.6 }]}
             />
           </View>
           <Search />
@@ -150,56 +152,68 @@ const Saved = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={[
-        styles.headerContainer, 
-        { 
-          marginHorizontal: horizontalPadding, 
-          marginBottom: isSmallScreen ? smallSpacing : verticalSpacing 
-        }
-      ]}>
-        <View style={[
-          styles.vide, 
-          { 
-            width: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
-            height: isSmallScreen ? 32 : isLargeScreen ? 48 : 40 
-          }
-        ]}></View>
-        <Text style={[
-          styles.titleScreen,
+      <View
+        style={[
+          styles.headerContainer,
           {
-            fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20
-          }
-        ]}>
+            marginHorizontal: horizontalPadding,
+            marginBottom: isSmallScreen ? smallSpacing : verticalSpacing,
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.vide,
+            {
+              width: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
+              height: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
+            },
+          ]}
+        ></View>
+        <Text
+          style={[
+            styles.titleScreen,
+            {
+              fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
+            },
+          ]}
+        >
           Magasins Enregistrés
         </Text>
-        <View style={[
-          styles.vide, 
-          { 
-            width: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
-            height: isSmallScreen ? 32 : isLargeScreen ? 48 : 40 
-          }
-        ]}></View>
+        <View
+          style={[
+            styles.vide,
+            {
+              width: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
+              height: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
+            },
+          ]}
+        ></View>
       </View>
 
-      <View style={[
-        styles.searchBar, 
-        { 
-          marginHorizontal: horizontalPadding, 
-          marginBottom: verticalSpacing,
-          height: Math.max(45, height * 0.06)
-        }
-      ]}>
+      <View
+        style={[
+          styles.searchBar,
+          {
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing,
+            height: Math.max(45, height * 0.06),
+          },
+        ]}
+      >
         <View style={styles.searchInputContainer}>
-          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#26667E" />
+          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#63BBF5" />
           <TextInput
             style={[
               styles.searchBarItem,
-              { 
-                width: isSmallScreen ? width * 0.6 : 
-                       isLargeScreen ? width * 0.7 : 
-                       width * 0.65,
-                fontSize: isSmallScreen ? 11 : 12
-              }
+              {
+                width: isSmallScreen
+                  ? width * 0.6
+                  : isLargeScreen
+                  ? width * 0.7
+                  : width * 0.65,
+                fontSize: isSmallScreen ? 11 : 12,
+              },
             ]}
             placeholder="Rechercher par magasin..."
             placeholderTextColor="#888888"
@@ -216,14 +230,16 @@ const Saved = () => {
           </TouchableOpacity>
         )}
       </View>
-      
-      <View style={[
-        styles.listContainer,
-        { 
-          paddingHorizontal: width * 0.05,
-          paddingBottom: height * 0.03
-        }
-      ]}>
+
+      <View
+        style={[
+          styles.listContainer,
+          {
+            paddingHorizontal: width * 0.05,
+            paddingBottom: height * 0.03,
+          },
+        ]}
+      >
         {filteredFavoriteData?.length > 0 ? (
           <FlatList
             data={filteredFavoriteData}
@@ -244,17 +260,15 @@ const Saved = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.containerScroll,
-              { 
+              {
                 gap: height * 0.02,
-                paddingBottom: height * 0.05 
-              }
+                paddingBottom: height * 0.05,
+              },
             ]}
           />
         ) : (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              Aucun magasin trouvé
-            </Text>
+            <Text style={styles.emptyText}>Aucun magasin trouvé</Text>
           </View>
         )}
       </View>
@@ -265,10 +279,10 @@ const Saved = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? 10 : 3,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
     paddingBottom: 12,
-    height: '100%',
+    height: "100%",
   },
   container: {
     flexDirection: "column",
@@ -293,14 +307,14 @@ const styles = StyleSheet.create({
   },
   titleScreen: {
     fontFamily: "Montserrat-Regular",
-    textAlign: 'center',
+    textAlign: "center",
   },
   textScreen: {
     height: 20,
     borderRadius: 4,
   },
   searchBar: {
-    borderColor: "#26667E",
+    borderColor: "#63BBF5",
     borderWidth: 1,
     alignItems: "center",
     paddingHorizontal: 15,

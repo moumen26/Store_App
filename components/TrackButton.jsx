@@ -17,7 +17,7 @@ const TrackButton = ({data, OrderDataRefetch}) => {
         }
       )}
     >
-      <TruckIcon size={20} color="#26667E" />
+      <TruckIcon size={20} color="#63BBF5" />
     </TouchableOpacity>
   );
 };
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    borderColor: "#3E9CB9",
+    borderColor: "#63BBF5",
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",

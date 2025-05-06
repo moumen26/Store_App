@@ -55,7 +55,9 @@ const ProductScreen = ({ data, storeId, onclose }) => {
       return;
     }
     if (Product == null || Product.quantity == 0) {
-      setSnackbarMessage("Veuillez sélectionner une quantité de produit valide.");
+      setSnackbarMessage(
+        "Veuillez sélectionner une quantité de produit valide."
+      );
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
@@ -78,14 +80,16 @@ const ProductScreen = ({ data, storeId, onclose }) => {
   };
 
   return (
-    <Animated.View style={[
-      styles.modalView,
-      {
-        borderTopLeftRadius: borderRadius,
-        borderTopRightRadius: borderRadius,
-        height: modalHeight,
-      }
-    ]}>
+    <Animated.View
+      style={[
+        styles.modalView,
+        {
+          borderTopLeftRadius: borderRadius,
+          borderTopRightRadius: borderRadius,
+          height: modalHeight,
+        },
+      ]}
+    >
       {snackbarKey !== 0 && (
         <Snackbar
           key={snackbarKey}
@@ -98,9 +102,14 @@ const ProductScreen = ({ data, storeId, onclose }) => {
         />
       )}
 
-      <View style={[styles.headerContainer, { marginHorizontal: horizontalPadding }]}>
+      <View
+        style={[
+          styles.headerContainer,
+          { marginHorizontal: horizontalPadding },
+        ]}
+      >
         <BackButtonCloseModal handleCloseModal={onclose} />
-        <FavoriteButton 
+        <FavoriteButton
           user={user}
           storeId={storeId}
           productId={data?.product?._id}
@@ -117,71 +126,81 @@ const ProductScreen = ({ data, storeId, onclose }) => {
           }}
         />
       </View>
-      <View 
+      <View
         style={[
-          styles.productDetails, 
-          { 
+          styles.productDetails,
+          {
             marginHorizontal: horizontalPadding,
             marginBottom: isSmallScreen ? 15 : 20,
             gap: isSmallScreen ? 4 : 5,
-          }
+          },
         ]}
       >
-        <Text style={[
-          styles.ProductNameText,
-          { fontSize: isSmallScreen ? 14 : isLargeScreen ? 17 : 15 }
-        ]}>
+        <Text
+          style={[
+            styles.ProductNameText,
+            { fontSize: isSmallScreen ? 14 : isLargeScreen ? 17 : 15 },
+          ]}
+        >
           {data?.product?.brand?.name +
             " " +
             data?.product?.name +
             " " +
             data?.product?.size}
         </Text>
-        <Text style={[
-          styles.PriceText,
-          { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 }
-        ]}>
+        <Text
+          style={[
+            styles.PriceText,
+            { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+          ]}
+        >
           Prix par unité: {data?.selling} DA
         </Text>
-        <Text style={[
-          styles.PriceText,
-          { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 }
-        ]}>
+        <Text
+          style={[
+            styles.PriceText,
+            { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+          ]}
+        >
           Prix par boîte: {data?.selling * data?.product?.boxItems} DA
         </Text>
         <View style={[styles.boxClass, { gap: isSmallScreen ? 2 : 3 }]}>
           <View
             style={[
               styles.boxContent,
-              { 
+              {
                 borderRadius: isSmallScreen ? 10 : 12,
                 paddingLeft: isSmallScreen ? 10 : 12,
                 paddingRight: isSmallScreen ? 10 : 12,
                 gap: isSmallScreen ? 0 : 1,
-              }
+              },
             ]}
           >
-            <Text style={[
-              styles.BoxText,
-              { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 }
-            ]}>
+            <Text
+              style={[
+                styles.BoxText,
+                { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+              ]}
+            >
               {data?.product?.boxItems}
             </Text>
-            <Text style={[
-              styles.BoxText,
-              { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 }
-            ]}>
+            <Text
+              style={[
+                styles.BoxText,
+                { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
+              ]}
+            >
               /
             </Text>
-            <Image 
+            <Image
               style={[
                 styles.boxIcon,
-                { 
+                {
                   width: isSmallScreen ? 13 : isLargeScreen ? 17 : 15,
                   height: isSmallScreen ? 13 : isLargeScreen ? 17 : 15,
-                }
-              ]} 
-              source={BoxIcon} 
+                },
+              ]}
+              source={BoxIcon}
             />
           </View>
         </View>
@@ -194,28 +213,32 @@ const ProductScreen = ({ data, storeId, onclose }) => {
         quantityLimit={data?.quantityLimit}
         handleProductOnChange={handleProductOnChange}
       />
-      <View style={[
-        styles.buttonContainer,
-        { 
-          bottom: Platform.OS === "ios" ? 40 : 30,
-          marginTop: isSmallScreen ? 15 : 20,
-        }
-      ]}>
-        <TouchableOpacity 
+      <View
+        style={[
+          styles.buttonContainer,
+          {
+            bottom: Platform.OS === "ios" ? 40 : 30,
+            marginTop: isSmallScreen ? 15 : 20,
+          },
+        ]}
+      >
+        <TouchableOpacity
           style={[
             styles.loginButton,
-            { 
+            {
               width: buttonWidth,
               height: buttonHeight,
               borderRadius: isSmallScreen ? 8 : 10,
-            }
-          ]} 
+            },
+          ]}
           onPress={handleApplyPress}
         >
-          <Text style={[
-            styles.loginButtonText,
-            { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 }
-          ]}>
+          <Text
+            style={[
+              styles.loginButtonText,
+              { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 },
+            ]}
+          >
             Ajouter au panier
           </Text>
         </TouchableOpacity>
@@ -226,7 +249,7 @@ const ProductScreen = ({ data, storeId, onclose }) => {
 
 const styles = StyleSheet.create({
   loginButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -254,7 +277,7 @@ const styles = StyleSheet.create({
   },
   BoxText: {
     fontFamily: "Montserrat-Medium",
-    color: "#3E9CB9",
+    color: "#63BBF5",
   },
   image: {
     resizeMode: "contain",
@@ -273,7 +296,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   checked: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
   },
   productDetails: {
     flexDirection: "column",

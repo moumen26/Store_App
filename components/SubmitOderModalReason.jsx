@@ -65,7 +65,7 @@ const SubmitOderModalReason = ({
           <View style={styles.confirmationModal}>
             <Text style={styles.modalTitle}>{modalTitle}</Text>
             <Text style={styles.modalSubtitle}>{modalSubTitle}</Text>
-            <ActivityIndicator size="large" color="#26667E" />
+            <ActivityIndicator size="large" color="#63BBF5" />
           </View>
         )}
       </View>
@@ -121,14 +121,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confirmButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
   },
   modalButtonText: {
     color: "#fff",
     fontSize: 16,
   },
   modalButtonTextColor: {
-    color: "#26667E",
+    color: "#63BBF5",
     fontSize: 16,
   },
 });

@@ -16,7 +16,12 @@ import BackButton from "../../components/BackButton";
 import ShippingAddressCard from "../../components/ShippingAddressCard";
 import useAuthContext from "../hooks/useAuthContext";
 import Snackbar from "../../components/Snackbar";
-import { UserIcon, MapPinIcon, MapIcon, PencilIcon } from "react-native-heroicons/outline";
+import {
+  UserIcon,
+  MapPinIcon,
+  MapIcon,
+  PencilIcon,
+} from "react-native-heroicons/outline";
 import Config from "../config";
 
 const ShippingAddressScreen = memo(() => {
@@ -100,7 +105,7 @@ const ShippingAddressScreen = memo(() => {
     const addressToEdit = user?.info?.storeAddresses?.find(
       (address) => address._id === addressId
     );
-    
+
     if (addressToEdit) {
       setAddressToEdit(addressToEdit);
       setNewAddress({
@@ -177,8 +182,8 @@ const ShippingAddressScreen = memo(() => {
       console.error("Error saving address:", error);
       setSnackbarType("error");
       setSnackbarMessage(
-        error.response?.data?.message || 
-        "Échec de l'opération. Veuillez réessayer."
+        error.response?.data?.message ||
+          "Échec de l'opération. Veuillez réessayer."
       );
       setSnackbarKey((prevKey) => prevKey + 1);
     } finally {
@@ -211,9 +216,9 @@ const ShippingAddressScreen = memo(() => {
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
-    
+
     const newAddressAdded = json.address;
-    
+
     // Update locally with an estimated structure
     const updatedAddresses = [
       ...(user?.info?.storeAddresses || []),
@@ -224,7 +229,7 @@ const ShippingAddressScreen = memo(() => {
         location: newAddressAdded.location,
       },
     ];
-    
+
     dispatch({
       type: "UPDATE_USER",
       payload: {
@@ -268,10 +273,10 @@ const ShippingAddressScreen = memo(() => {
       setSnackbarKey((prevKey) => prevKey + 1);
       return;
     }
-    
+
     // Update the address in the local state
-    const updatedAddresses = user?.info?.storeAddresses.map(address => 
-      address._id === addressToEdit._id 
+    const updatedAddresses = user?.info?.storeAddresses.map((address) =>
+      address._id === addressToEdit._id
         ? {
             ...address,
             name: newAddress.name,
@@ -280,7 +285,7 @@ const ShippingAddressScreen = memo(() => {
           }
         : address
     );
-    
+
     dispatch({
       type: "UPDATE_USER",
       payload: {
@@ -305,13 +310,13 @@ const ShippingAddressScreen = memo(() => {
       [
         {
           text: "Annuler",
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Supprimer",
           style: "destructive",
-          onPress: () => confirmDeleteAddress(addressId)
-        }
+          onPress: () => confirmDeleteAddress(addressId),
+        },
       ]
     );
   };
@@ -331,7 +336,7 @@ const ShippingAddressScreen = memo(() => {
           }),
         }
       );
-  
+
       const json = await response.json();
       if (!response.ok) {
         setSnackbarType("error");
@@ -339,12 +344,12 @@ const ShippingAddressScreen = memo(() => {
         setSnackbarKey((prevKey) => prevKey + 1);
         return;
       }
-  
+
       // Update local state
       const updatedAddresses = user?.info?.storeAddresses.filter(
-        address => address._id !== addressId
+        (address) => address._id !== addressId
       );
-      
+
       dispatch({
         type: "UPDATE_USER",
         payload: {
@@ -355,11 +360,11 @@ const ShippingAddressScreen = memo(() => {
           },
         },
       });
-  
+
       setSnackbarType("success");
       setSnackbarMessage(json.message || "Adresse supprimée avec succès");
       setSnackbarKey((prevKey) => prevKey + 1);
-      
+
       // Clear selection if the deleted address was selected
       if (selectedIndex === addressId) {
         setSelectedIndex(null);
@@ -385,15 +390,15 @@ const ShippingAddressScreen = memo(() => {
             onSelect={handleSelectItem}
           />
           <View style={styles.addressActions}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.editButton}
               onPress={() => handleEditAddress(item?._id)}
             >
-              <PencilIcon size={18} color="#26667E" />
+              <PencilIcon size={18} color="#63BBF5" />
               <Text style={styles.editButtonText}>Modifier</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => handleDeleteAddress(item?._id)}
             >
@@ -467,7 +472,9 @@ const ShippingAddressScreen = memo(() => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              {addressToEdit ? "Modifier l'adresse" : "Ajouter une nouvelle adresse"}
+              {addressToEdit
+                ? "Modifier l'adresse"
+                : "Ajouter une nouvelle adresse"}
             </Text>
 
             <View style={styles.modalContentContainer}>
@@ -506,7 +513,7 @@ const ShippingAddressScreen = memo(() => {
                 onPress={openLocationPicker}
                 activeOpacity={0.7}
               >
-                <MapIcon size={20} color="#26667E" />
+                <MapIcon size={20} color="#63BBF5" />
                 <Text
                   style={[
                     styles.locationText,
@@ -598,7 +605,7 @@ const ShippingAddressScreen = memo(() => {
                 })
               }
             >
-              <MapPinIcon size={20} color="#26667E" />
+              <MapPinIcon size={20} color="#63BBF5" />
               <View style={styles.locationOptionTextContainer}>
                 <Text style={styles.locationOptionName}>Domicile</Text>
                 <Text style={styles.locationOptionAddress}>
@@ -616,7 +623,7 @@ const ShippingAddressScreen = memo(() => {
                 })
               }
             >
-              <MapPinIcon size={20} color="#26667E" />
+              <MapPinIcon size={20} color="#63BBF5" />
               <View style={styles.locationOptionTextContainer}>
                 <Text style={styles.locationOptionName}>Travail</Text>
                 <Text style={styles.locationOptionAddress}>
@@ -634,7 +641,7 @@ const ShippingAddressScreen = memo(() => {
                 })
               }
             >
-              <MapPinIcon size={20} color="#26667E" />
+              <MapPinIcon size={20} color="#63BBF5" />
               <View style={styles.locationOptionTextContainer}>
                 <Text style={styles.locationOptionName}>À proximité</Text>
                 <Text style={styles.locationOptionAddress}>
@@ -715,7 +722,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   editButtonText: {
-    color: "#26667E",
+    color: "#63BBF5",
     fontSize: 12,
     fontFamily: "Montserrat-Medium",
     marginLeft: 5,
@@ -747,7 +754,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   applyButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     borderRadius: 10,
     height: 50,
     justifyContent: "center",
@@ -799,7 +806,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Medium",
     marginBottom: 15,
     textAlign: "center",
-    color: "#26667E",
+    color: "#63BBF5",
   },
   modalLabel: {
     fontSize: 14,
@@ -846,7 +853,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: 45,
-    borderColor: "#3E9CB9",
+    borderColor: "#63BBF5",
     marginTop: 5,
     borderWidth: 1,
     paddingLeft: 10,
@@ -866,7 +873,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   mapButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
@@ -885,7 +892,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confirmButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
   },
   // Map modal styles
   mapModalContainer: {
@@ -905,7 +912,7 @@ const styles = StyleSheet.create({
     width: 70,
   },
   closeButtonText: {
-    color: "#26667E",
+    color: "#63BBF5",
     fontSize: 16,
     fontFamily: "Montserrat-Medium",
   },
@@ -924,7 +931,7 @@ const styles = StyleSheet.create({
   mapPlaceholderText: {
     fontSize: 18,
     fontFamily: "Montserrat-Medium",
-    color: "#26667E",
+    color: "#63BBF5",
     marginBottom: 10,
   },
   mapInstructionText: {

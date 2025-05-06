@@ -19,7 +19,7 @@ const StepIntoScreen = () => {
       <View className="mx-5 mt-[24] flex justify-center">
         <View className="flex h-[90] items-center justify-center">
           <Text style={styles.title}>Step into our World</Text>
-          <Text style={styles.title} className="text-[#26667E]">
+          <Text style={styles.title} className="text-[#63BBF5]">
             of Stores
           </Text>
         </View>
@@ -51,7 +51,7 @@ const StepIntoScreen = () => {
 const styles = StyleSheet.create({
   textForgotPassword: {
     fontSize: 13,
-    color: "#26667E",
+    color: "#63BBF5",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
   },
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   loginButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     borderRadius: 10,
     height: 50,
     justifyContent: "center",

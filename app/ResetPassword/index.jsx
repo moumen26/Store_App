@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   loginButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   textForgotPassword: {
-    color: "#26667E",
+    color: "#63BBF5",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
   },

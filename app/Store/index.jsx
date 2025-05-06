@@ -284,7 +284,7 @@ const Store = () => {
                 <BuildingStorefrontIcon
                   name="cart"
                   size={iconSize}
-                  color="#26667E"
+                  color="#63BBF5"
                 />
                 <Text
                   style={[
@@ -311,7 +311,7 @@ const Store = () => {
                 },
               ]}
             >
-              <ShoppingCartIcon size={iconSize} color="#26667E" />
+              <ShoppingCartIcon size={iconSize} color="#63BBF5" />
             </TouchableOpacity>
           </View>
         ) : (
@@ -341,7 +341,7 @@ const Store = () => {
             }
           >
             <View style={[styles.searchButton, { height: searchHeight }]}>
-              <MagnifyingGlassIcon color="#888888" size={iconSize} />
+              <MagnifyingGlassIcon color="#63BBF5" size={iconSize} />
               <Text
                 style={[
                   styles.search,
@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   notification: {
-    borderColor: "#3E9CB9",
+    borderColor: "#E3EFFF",
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingLeft: 15,
     borderWidth: 1,
-    borderColor: "#26667E",
+    borderColor: "#E3EFFF",
     borderRadius: 30,
   },
   search: {
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
   },
   seeAll: {
     fontFamily: "Montserrat-Regular",
-    color: "#26667E",
+    color: "#63BBF5",
   },
   emptyState: {
     flex: 1,

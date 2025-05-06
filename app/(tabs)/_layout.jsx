@@ -14,12 +14,12 @@ const TabLayout = () => {
     <ProtectedScreen>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: "#26667E",
+          tabBarActiveTintColor: "#63BBF5",
           tabBarInactiveTintColor: "gray",
           tabBarStyle: {
             backgroundColor: "white",
             borderWidth: 1,
-            borderTopColor: "#888888",
+            borderTopColor: "#E3EFFF",
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             position: "absolute",

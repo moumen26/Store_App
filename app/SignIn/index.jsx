@@ -239,7 +239,7 @@ const SignInScreen = () => {
             style={{
               width: isSmallScreen ? 18 : isLargeScreen ? 26 : 22,
               height: isSmallScreen ? 18 : isLargeScreen ? 26 : 22,
-              objectFit: 'contain'
+              objectFit: "contain",
             }}
           />
           <Text
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   textForgotPassword: {
-    color: "#26667E",
+    color: "#63BBF5",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
     textAlign: "right",
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   loginButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     justifyContent: "center",
     alignItems: "center",
   },

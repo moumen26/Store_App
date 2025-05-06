@@ -7,7 +7,7 @@ import { TouchableOpacity } from "react-native";
 const BackButtonCloseModal = ({ handleCloseModal }) => {
   return (
     <TouchableOpacity style={styles.BackButton} onPress={handleCloseModal}>
-      <ArrowLeftIcon color="#26667E" size={18} />
+      <ArrowLeftIcon color="#63BBF5" size={18} />
     </TouchableOpacity>
   );
 };
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    borderColor: "#26667E",
+    borderColor: "#E3EFFF",
     borderWidth: 1,
   },
 });

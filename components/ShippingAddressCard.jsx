@@ -64,7 +64,7 @@ const ShippingAddressCard = ({
           style={styles.editButton}
           onPress={() => onEdit(index)}
         >
-          <PencilIcon size={iconSize} color="#26667E" />
+          <PencilIcon size={iconSize} color="#63BBF5" />
           <Text
             style={[
               styles.editButtonText,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   locationIcon: {
     width: 20,
     height: 20,
-    tintColor: "#26667E",
+    tintColor: "#63BBF5",
   },
   textContainer: {
     flexDirection: "column",
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   shippingItemSelected: {
-    borderColor: "#26667E",
+    borderColor: "#63BBF5",
     backgroundColor: "#F8FBFC",
   },
   rightSection: {
@@ -175,10 +175,10 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
   },
   checkedContainer: {
-    borderColor: "#26667E",
+    borderColor: "#63BBF5",
     backgroundColor: "#FFFFFF",
   },
   // Action buttons styles
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EFF7FA",
   },
   editButtonText: {
-    color: "#26667E",
+    color: "#63BBF5",
     fontFamily: "Montserrat-Medium",
     marginLeft: 6,
   },

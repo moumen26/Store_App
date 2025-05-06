@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   notificationItem: {
     minHeight: 80,
     borderWidth: 0.5,
-    borderColor: "#C9E4EE",
+    borderColor: "#E3EFFF",
   },
   deleteButton: {
     backgroundColor: "#ff6b6b",

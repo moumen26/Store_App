@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   loginButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   textForgotPassword: {
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
-    color: "#26667E",
+    color: "#63BBF5",
   },
   titleCategory: {
     fontFamily: "Montserrat-Regular",

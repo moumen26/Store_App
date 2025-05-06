@@ -40,7 +40,7 @@ export default function Index() {
   }, [router]);
   return (
     <View
-      className="bg-[#26667E] h-full"
+      className="bg-[#63BBF5] h-full"
       style={{
         flex: 1,
         alignItems: "center",

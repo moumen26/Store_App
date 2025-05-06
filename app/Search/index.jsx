@@ -129,7 +129,7 @@ const SearchScreen = () => {
           ]}
         >
           <View style={styles.searchContent}>
-            <MagnifyingGlassIcon size={searchIconSize} color="#26667E" />
+            <MagnifyingGlassIcon size={searchIconSize} color="#63BBF5" />
             <TextInput
               style={[
                 styles.searchBarItem,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   searchBar: {
-    borderColor: "#26667E",
+    borderColor: "#63BBF5",
     borderWidth: 1,
     alignItems: "center",
     flexDirection: "row",
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   clearButtonText: {
-    color: "#26667E",
+    color: "#63BBF5",
     textAlign: "center",
   },
   row: {

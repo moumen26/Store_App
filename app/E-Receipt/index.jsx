@@ -131,7 +131,7 @@ const EReceiptScreen = () => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 40px;
-          border-bottom: 2px solid #26667E;
+          border-bottom: 2px solid #63BBF5;
           padding-bottom: 20px;
         }
         .company-info {
@@ -140,7 +140,7 @@ const EReceiptScreen = () => {
         .company-info h1 {
           margin: 0;
           font-size: 32px;
-          color: #26667E;
+          color: #63BBF5;
           font-weight: 700;
         }
         .company-info p {
@@ -185,7 +185,7 @@ const EReceiptScreen = () => {
           margin-bottom: 10px;
           font-size: 16px;
           font-weight: 600;
-          color: #26667E;
+          color: #63BBF5;
           border-bottom: 1px solid #ddd;
           padding-bottom: 5px;
         }
@@ -199,7 +199,7 @@ const EReceiptScreen = () => {
           margin-bottom: 30px;
         }
         .product-table th {
-          background-color: #26667E;
+          background-color: #63BBF5;
           color: white;
           padding: 12px;
           text-align: left;
@@ -257,15 +257,15 @@ const EReceiptScreen = () => {
           color: #333;
         }
         .total-table .grand-total {
-          border-top: 2px solid #26667E;
+          border-top: 2px solid #63BBF5;
           padding-top: 8px;
           font-size: 18px;
         }
         .total-table .grand-total .label {
-          color: #26667E;
+          color: #63BBF5;
         }
         .total-table .grand-total .value {
-          color: #26667E;
+          color: #63BBF5;
         }
         .footer {
           margin-top: 50px;
@@ -280,7 +280,7 @@ const EReceiptScreen = () => {
           text-align: center;
         }
         .thank-you h3 {
-          color: #26667E;
+          color: #63BBF5;
           font-size: 18px;
           margin-bottom: 10px;
         }
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   downloadButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",

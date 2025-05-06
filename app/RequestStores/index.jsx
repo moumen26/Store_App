@@ -99,9 +99,16 @@ const RequestStores = () => {
   if (AllNonActiveStoresDataLoading) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={[styles.containerLoading, { marginHorizontal: horizontalPadding }]}>
+        <View
+          style={[
+            styles.containerLoading,
+            { marginHorizontal: horizontalPadding },
+          ]}
+        >
           <View style={styles.containerLoadingtextScreen}>
-            <ShimmerPlaceholder style={[styles.textScreen, { width: width * 0.6 }]} />
+            <ShimmerPlaceholder
+              style={[styles.textScreen, { width: width * 0.6 }]}
+            />
           </View>
           <Search />
           <View style={styles.CategoryStores}>
@@ -114,45 +121,49 @@ const RequestStores = () => {
   }
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View 
+      <View
         style={[
-          styles.headerContainer, 
-          { 
+          styles.headerContainer,
+          {
             marginHorizontal: horizontalPadding,
-            marginBottom: verticalSpacing 
-          }
+            marginBottom: verticalSpacing,
+          },
         ]}
       >
         <BackButton />
-        <Text style={[
-          styles.titleScreen,
-          { fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20 }
-        ]}>
+        <Text
+          style={[
+            styles.titleScreen,
+            { fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20 },
+          ]}
+        >
           Demandes de Magasins
         </Text>
-        <View style={[
-          styles.vide,
-          { 
-            width: isSmallScreen ? 32 : 40,
-            height: isSmallScreen ? 32 : 40 
-          }
-        ]} />
+        <View
+          style={[
+            styles.vide,
+            {
+              width: isSmallScreen ? 32 : 40,
+              height: isSmallScreen ? 32 : 40,
+            },
+          ]}
+        />
       </View>
       <View
         style={[
           styles.searchBar,
-          { 
+          {
             height: searchBarHeight,
             borderRadius: isSmallScreen ? 25 : 30,
             paddingLeft: isSmallScreen ? 12 : 15,
             marginHorizontal: horizontalPadding,
-            marginBottom: verticalSpacing * 0.5
-          }
+            marginBottom: verticalSpacing * 0.5,
+          },
         ]}
       >
-        <MagnifyingGlassIcon 
-          size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20} 
-          color="#26667E" 
+        <MagnifyingGlassIcon
+          size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
+          color="#63BBF5"
         />
         <TextInput
           style={[styles.searchBarItem, { fontSize: searchBarFontSize }]}
@@ -198,7 +209,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   searchBar: {
-    borderColor: "#26667E",
+    borderColor: "#63BBF5",
     borderWidth: 1,
     alignItems: "center",
     flexDirection: "row",

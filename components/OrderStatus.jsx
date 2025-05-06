@@ -38,10 +38,10 @@ const OrderScreen = ({ type, status }) => {
     currentStepIndicatorSize: 40,
     separatorStrokeWidth: 3,
     currentStepStrokeWidth: 2,
-    stepStrokeCurrentColor: "#3E9CB9",
-    separatorFinishedColor: "#3E9CB9",
+    stepStrokeCurrentColor: "#63BBF5",
+    separatorFinishedColor: "#63BBF5",
     separatorUnFinishedColor: "#C9E4EE",
-    stepIndicatorFinishedColor: "#3E9CB9",
+    stepIndicatorFinishedColor: "#63BBF5",
     stepIndicatorUnFinishedColor: "#C9E4EE",
     stepIndicatorCurrentColor: "#ffffff",
     stepIndicatorLabelFontSize: 15,
@@ -51,7 +51,7 @@ const OrderScreen = ({ type, status }) => {
     stepIndicatorLabelUnFinishedColor: "rgba(255,255,255,255)",
     labelColor: "#000",
     labelSize: 15,
-    currentStepLabelColor: "#3E9CB9",
+    currentStepLabelColor: "#63BBF5",
   };
 
   const renderStepIndicator = ({ position, stepStatus }) => {
@@ -59,9 +59,9 @@ const OrderScreen = ({ type, status }) => {
     if (stepStatus === "finished") {
       iconColor = "#FFFFFF";
     } else if (stepStatus === "current") {
-      iconColor = "#3E9CB9";
+      iconColor = "#63BBF5";
     } else {
-      iconColor = "#3E9CB9";
+      iconColor = "#63BBF5";
       return <XMarkIcon size={18} color={iconColor} />;
     }
 

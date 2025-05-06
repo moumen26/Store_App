@@ -318,7 +318,7 @@ const home = () => {
               Emplacement
             </Text>
             <View style={styles.iconText}>
-              <MapPinIcon size={isSmallScreen ? 16 : 18} color="#26667E" />
+              <MapPinIcon size={isSmallScreen ? 16 : 18} color="#63BBF5" />
               <Text
                 style={[styles.text, { fontSize: isSmallScreen ? 12 : 14 }]}
               >
@@ -346,7 +346,7 @@ const home = () => {
               }
             >
               <View style={styles.bellContainer}>
-                <BellIcon size={isSmallScreen ? 18 : 20} color="#26667E" />
+                <BellIcon size={isSmallScreen ? 18 : 20} color="#63BBF5" />
                 {NotificationData?.length > 0 && (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>
@@ -388,7 +388,7 @@ const home = () => {
           <View style={styles.searchInput}>
             <MagnifyingGlassIcon
               size={isSmallScreen ? 18 : 20}
-              color="#26667E"
+              color="#63BBF5"
             />
             <TextInput
               style={[
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   searchBar: {
-    borderColor: "#26667E",
+    borderColor: "#E3EFFF",
     borderWidth: 1,
     alignItems: "center",
     paddingLeft: 15,
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   notification: {
-    borderColor: "#3E9CB9",
+    borderColor: "#E3EFFF",
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",

@@ -262,13 +262,13 @@ const styles = StyleSheet.create({
   },
   boxText: {
     fontFamily: "Montserrat-Medium",
-    color: "#3E9CB9",
+    color: "#63BBF5",
   },
   boxIcon: {
     resizeMode: "contain",
   },
   loginButton: {
-    backgroundColor: "#26667E",
+    backgroundColor: "#63BBF5",
     justifyContent: "center",
     alignItems: "center",
   },

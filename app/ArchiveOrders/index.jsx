@@ -178,7 +178,7 @@ const ArchiveOrder = () => {
         }
       ]}>
         <View style={styles.searchInputContainer}>
-          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#26667E" />
+          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#63BBF5" />
           <TextInput
             style={[
               styles.searchBarItem,
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   searchBar: {
-    borderColor: "#26667E",
+    borderColor: "#63BBF5",
     borderWidth: 1,
     alignItems: "center",
     paddingHorizontal: 15,

@@ -28,10 +28,10 @@ const Snackbar = ({
   }, [isVisible, duration]);
 
   const backgroundColors = {
-    success: "#3E9CB9",
+    success: "#63BBF5",
     error: "#dc3545",
     warning: "#ffc107",
-    info: "#26667E", // Added default info color
+    info: "#63BBF5", // Added default info color
   };
 
   return isVisible ? (

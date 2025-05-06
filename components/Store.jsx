@@ -141,13 +141,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-    borderColor: "#C9E4EE",
+    borderColor: "#E3EFFF",
     borderWidth: 0.5,
     marginRight: 4,
   },
   storeToggle: {
-    backgroundColor: "#C9E4EE",
-    color: "#26667E",
+    backgroundColor: "#63BBF5",
+    color: "#fff",
   },
 });
 

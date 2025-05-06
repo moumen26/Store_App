@@ -6,7 +6,7 @@ import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 const SearchItem = ({ placeholder }) => {
   return (
     <View style={styles.searchBar} className="flex-row items-center space-x-2">
-      <MagnifyingGlassIcon size={20} color="#26667E" />
+      <MagnifyingGlassIcon size={20} color="#63BBF5" />
       <TextInput
         style={styles.searchBarItem}
         placeholder={placeholder}
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 40,
     borderRadius: 20,
-    borderColor: "#26667E",
+    borderColor: "#63BBF5",
     borderWidth: 1,
     alignItems: "center",
     paddingLeft: 15,

@@ -29,7 +29,7 @@ const YourCartScreen = () => {
         <View className="mx-5 mt-[24] flex justify-center">
           <View className="flex h-[90] items-center justify-center">
             <Text style={styles.title}>Your Shopping</Text>
-            <Text style={styles.title} className="text-[#26667E]">
+            <Text style={styles.title} className="text-[#63BBF5]">
               Cart
             </Text>
           </View>
@@ -42,7 +42,7 @@ const YourCartScreen = () => {
             <BackButton />
             <View className="flex-row space-x-2 items-center">
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
-              <View className="w-[10] h-[10] rounded bg-[#26667E] mr-1"></View>
+              <View className="w-[10] h-[10] rounded bg-[#63BBF5] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
             </View>
 
@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    borderColor: "#26667E",
-    backgroundColor: "#26667E",
+    borderColor: "#63BBF5",
+    backgroundColor: "#63BBF5",
     borderWidth: 1,
   },
   ImageContainer: {
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
-    color: "#26667E",
+    color: "#63BBF5",
   },
   title: {
     fontFamily: "Montserrat-Regular",

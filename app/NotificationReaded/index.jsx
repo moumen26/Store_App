@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   notificationItem: {
     minHeight: 80,
     borderWidth: 0.5,
-    borderColor: "#C9E4EE",
+    borderColor: "#E3EFFF",
   },
   emptyContainer: {
     flex: 1,
