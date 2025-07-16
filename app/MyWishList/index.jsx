@@ -150,7 +150,7 @@ const MyWishListScreen = () => {
             <PopularProductCard
               key={item._id}
               ProductName={item?.product?.name + " " + item?.product?.size}
-              imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+              imgUrl={`${Config.FILES_URL}/${
                 item?.product?.image
               }`}
               onPress={() =>

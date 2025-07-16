@@ -154,7 +154,7 @@ const BrandScreen = () => {
                       }
                       ProductBrand={item?.product?.brand?.name}
                       ProductPrice={item.selling}
-                      imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+                      imgUrl={`${Config.FILES_URL}/${
                         item?.product?.image
                       }`}
                       onPress={() =>
@@ -195,7 +195,7 @@ const BrandScreen = () => {
                 ProductName={item?.product?.name + " " + item?.product?.size}
                 ProductBrand={item?.product?.brand?.name}
                 ProductPrice={item.selling}
-                imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+                imgUrl={`${Config.FILES_URL}/${
                   item?.product?.image
                 }`}
                 onPress={() =>

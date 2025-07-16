@@ -132,7 +132,7 @@ const SignUpScreen = () => {
           R_Commerce: commercialRegister,
         }),
       });
-
+      
       const json = await response.json();
 
       if (!response.ok) {

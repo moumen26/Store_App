@@ -361,10 +361,7 @@ const EReceiptScreen = () => {
               <tr>
                 <td>
                   <div class="product-details">
-                    <img class="product-image" src="${Config.API_URL.replace(
-                      "/api",
-                      ""
-                    )}/files/${product?.product?.image}" />
+                    <img class="product-image" src="${Config.FILES_URL}/${product?.product?.image}" />
                     <div>
                       <div class="product-name">${product?.product?.name}</div>
                       <div class="product-brand">${
@@ -519,7 +516,7 @@ const EReceiptScreen = () => {
               ProductName={item?.product?.name}
               ProductBrand={item?.product?.brand?.name}
               ProductImage={`${
-                `${Config.API_URL.replace("/api", "")}/files/${
+                `${Config.FILES_URL}/${
                   item?.product?.image
                 }` || ""
               }`}

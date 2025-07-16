@@ -70,7 +70,7 @@ const Product = memo(() => {
       ...product,
       stock: data?._id,
       product: {
-        image: `${Config.API_URL.replace("/api", "")}/files/${
+        image: `${Config.FILES_URL}/${
           data?.product?.image
         }`,
         name: `${data?.product?.name} ${data?.product?.size}`,
@@ -83,7 +83,7 @@ const Product = memo(() => {
     navigator.goBack();
   }, [data, product, storeId, dispatch, navigator]);
 
-  const imageUri = `${Config.API_URL.replace("/api", "")}/files/${
+  const imageUri = `${Config.FILES_URL}/${
     data?.product?.image
   }`;
 

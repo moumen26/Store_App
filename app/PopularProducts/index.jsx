@@ -82,7 +82,7 @@ const PopularProductScreen = () => {
             }
             ProductBrand={item?.stock?.product?.brand?.name}
             ProductPrice={item?.stock.selling}
-            imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+            imgUrl={`${Config.FILES_URL}/${
               item?.stock?.product?.image
             }`}
             onPress={() =>

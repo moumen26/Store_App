@@ -67,7 +67,7 @@ const ProductScreen = ({ data, storeId, onclose }) => {
       ...Product,
       stock: data?._id,
       product: {
-        image: `${Config.API_URL.replace("/api", "")}/files/${
+        image: `${Config.FILES_URL}/${
           data?.product?.image || ""
         }`,
         name: data?.product?.name + " " + data?.product?.size,
@@ -120,7 +120,7 @@ const ProductScreen = ({ data, storeId, onclose }) => {
         <Image
           style={[styles.image, imageSize]}
           source={{
-            uri: `${Config.API_URL.replace("/api", "")}/files/${
+            uri: `${Config.FILES_URL}/${
               data?.product?.image || ""
             }`,
           }}

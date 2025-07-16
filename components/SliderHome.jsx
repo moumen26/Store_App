@@ -17,10 +17,7 @@ const SliderHome = ({PublicPublicitiesData}) => {
         renderItem={({ item }) => (
           <View>
             <Image
-              source={{ uri: `${Config.API_URL.replace(
-                "/api",
-                ""
-              )}/files/${item.image}` }}
+              source={{ uri: `${Config.FILES_URL}/${item.image}` }}
               style={styles.sliderImage}
             />
           </View>

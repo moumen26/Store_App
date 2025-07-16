@@ -418,13 +418,13 @@ const Store = () => {
               {BrandsData.map((brand) => (
                 <BrandsCard
                   key={brand?._id}
-                  imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+                  imgUrl={`${Config.FILES_URL}/${
                     brand?.image
                   }`}
                   onPress={() =>
                     navigation.navigate("Brand/index", {
                       brandId: brand?._id,
-                      brandIMG: `${Config.API_URL.replace("/api", "")}/files/${
+                      brandIMG: `${Config.FILES_URL}/${
                         brand?.image
                       }`,
                       ProductsData: ProductsData,
@@ -490,7 +490,7 @@ const Store = () => {
                 renderItem={({ item }) => (
                   <PopularProductCard
                     key={item?._id}
-                    imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+                    imgUrl={`${Config.FILES_URL}/${
                       item?.product?.image
                     }`}
                     ProductName={
@@ -581,7 +581,7 @@ const Store = () => {
                 renderItem={({ item }) => (
                   <PopularProductCard
                     key={item?._id}
-                    imgUrl={`${Config.API_URL.replace("/api", "")}/files/${
+                    imgUrl={`${Config.FILES_URL}/${
                       item?.stock?.product?.image
                     }`}
                     ProductName={item?.stock?.product?.name}
