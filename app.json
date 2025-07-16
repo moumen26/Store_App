@@ -17,7 +17,11 @@
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["CAMERA"]
+      "permissions": [
+        "CAMERA",
+        "android.permission.CAMERA"
+      ],
+      "package": "com.mosagro.clientapplication"
     },
     "web": {
       "bundler": "metro",
@@ -41,6 +45,14 @@
     "experiments": {
       "typedRoutes": true,
       "newArchEnabled": false
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e1bf7685-660f-4fac-9ae2-169b81577a60"
+      }
     }
   }
 }
