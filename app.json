@@ -1,9 +1,10 @@
 {
   "expo": {
-    "name": "Store_App",
-    "slug": "Store_App",
+    "name": "Mosagro",
+    "slug": "Mosagro",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/Logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,18 +16,16 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/Dark.png",
+        "backgroundColor": "#19213"
       },
-      "permissions": [
-        "CAMERA",
-        "android.permission.CAMERA"
-      ],
+      "permissions": ["CAMERA", "android.permission.CAMERA"],
       "package": "com.mosagro.clientapplication"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/Logo.png"
     },
     "plugins": [
       "expo-router",
@@ -34,10 +33,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/Dark.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#19213"
         }
       ],
       "expo-font"
