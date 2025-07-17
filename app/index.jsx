@@ -13,6 +13,9 @@ export default function Index() {
     const timer = setTimeout(async () => {
       try {
         const userData = await AsyncStorage.getItem("user");
+        console.log("Checking user authentication...");
+        console.log("User data:", userData);
+        
         if (userData) {
           console.log("User authenticated, redirecting to protected screen.");
           navigation.reset({

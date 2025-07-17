@@ -197,7 +197,7 @@ const SignInScreen = () => {
             Se connecter
           </Text>
         </TouchableOpacity>
-        <View
+        {/* <View
           style={[
             styles.dividerContainer,
             { marginTop: isSmallScreen ? 20 : 24 },
@@ -253,7 +253,7 @@ const SignInScreen = () => {
           >
             Inscrivez-vous avec Facebook
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View
           style={[
             styles.footerContainer,

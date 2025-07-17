@@ -17,9 +17,11 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/Dark.png",
-        "backgroundColor": "#19213"
+        "backgroundColor": "#192130"
       },
-      "permissions": ["CAMERA", "android.permission.CAMERA"],
+      "permissions": [
+        "CAMERA"
+      ],
       "package": "com.mosagro.clientapplication"
     },
     "web": {
@@ -29,28 +31,32 @@
     },
     "plugins": [
       "expo-router",
-      "expo-barcode-scanner",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "We need access to your camera to scan barcodes."
+        }
+      ],
       [
         "expo-splash-screen",
         {
           "image": "./assets/Dark.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#19213"
+          "backgroundColor": "#192130"
         }
       ],
       "expo-font"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "newArchEnabled": false
+      "typedRoutes": true
     },
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "e1bf7685-660f-4fac-9ae2-169b81577a60"
+        "projectId": "ef90c33b-3b50-416b-a45f-5ee1b067f395"
       }
     }
   }
