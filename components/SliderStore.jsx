@@ -3,13 +3,7 @@ import React from "react";
 import Config from "../app/config";
 import { ActivityIndicator, Text } from "react-native";
 
-const SpecialForYouCardImg1 = require("../assets/images/SpecialForYouCevital.jpg");
-const SpecialForYouCardImg2 = require("../assets/images/SpecialForYouMama.jpg");
-const SpecialForYouCardImg3 = require("../assets/images/SpecialForYouLesieur.jpg");
-
-const SliderStore = ({
-  data,
-}) => {
+const SliderStore = ({ data }) => {
   //--------------------------------------------RENDERING--------------------------------------------
   return (
     <View style={styles.sliderContainer}>

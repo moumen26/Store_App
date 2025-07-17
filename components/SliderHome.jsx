@@ -2,9 +2,6 @@ import { View, StyleSheet, Image, FlatList, Dimensions } from "react-native";
 import React from "react";
 import Config from "../app/config";
 
-const SpecialForYouCardImg1 = require("../assets/images/SpecialForYouBingo.jpg");
-const SpecialForYouCardImg2 = require("../assets/images/SpecialForYouAigle.jpg");
-const SpecialForYouCardImg3 = require("../assets/images/SpecialForYouAmir.jpg");
 
 const SliderHome = ({PublicPublicitiesData}) => {
   return (
