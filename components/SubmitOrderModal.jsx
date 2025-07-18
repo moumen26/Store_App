@@ -32,14 +32,14 @@ const SubmitOrderModal = ({
             <Text style={styles.modalSubtitle}>{modalSubTitle}</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.modalButton} onPress={onCancel}>
-                <Text style={styles.modalButtonTextColor}>Not All</Text>
+                <Text style={styles.modalButtonTextColor}>Pas tous</Text>
               </TouchableOpacity>
               {showButton && (
                 <TouchableOpacity
                   style={[styles.modalButton, styles.confirmButton]}
                   onPress={onConfirm}
                 >
-                  <Text style={styles.modalButtonText}>Confirm</Text>
+                  <Text style={styles.modalButtonText}>Confirmer</Text>
                 </TouchableOpacity>
               )}
             </View>

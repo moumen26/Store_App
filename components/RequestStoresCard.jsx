@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Animated, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import ConfirmationModal from "./ConfirmationModal";
@@ -12,6 +19,12 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalSubTitle, setModalSubTitle] = useState("");
+
+  const { width, height } = useWindowDimensions();
+
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
 
   useEffect(() => {
     Animated.parallel([
@@ -100,6 +113,10 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
                 style={[
                   styles.text,
                   activeTab === item._id && styles.storeToggle,
+
+                  {
+                    fontSize: isSmallScreen ? 11 : isLargeScreen ? 15 : 11,
+                  },
                 ]}
               >
                 {item.name}
@@ -151,9 +168,11 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   buttonStore: {
-    width: 120,
+    minWidth: 120,
+    width: "auto",
     height: 42,
     borderRadius: 40,
+    paddingInline: 14,
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
@@ -162,8 +181,8 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   storeToggle: {
-    backgroundColor: "#C9E4EE",
-    color: "#19213D",
+    backgroundColor: "#19213D",
+    color: "#fff",
   },
   allTransparent: {
     backgroundColor: "transparent",

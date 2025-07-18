@@ -32,14 +32,14 @@ const ConfirmationModal = ({
             <Text style={styles.modalSubtitle}>{modalSubTitle}</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.modalButton} onPress={onCancel}>
-                <Text style={styles.modalButtonTextColor}>Cancel</Text>
+                <Text style={styles.modalButtonTextColor}>Annuler</Text>
               </TouchableOpacity>
               {showButton && (
                 <TouchableOpacity
                   style={[styles.modalButton, styles.confirmButton]}
                   onPress={onConfirm}
                 >
-                  <Text style={styles.modalButtonText}>Confirm</Text>
+                  <Text style={styles.modalButtonText}>Confirmer</Text>
                 </TouchableOpacity>
               )}
             </View>

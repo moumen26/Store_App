@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Animated, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import { useNavigation } from "expo-router";
@@ -9,6 +16,12 @@ const Store = ({ StoresData, CategoriesData }) => {
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const { width, height } = useWindowDimensions();
+
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
 
   useEffect(() => {
     Animated.parallel([
@@ -56,7 +69,7 @@ const Store = ({ StoresData, CategoriesData }) => {
       key={item._id}
       title={item.store.storeName}
       sousTitle={`${item.store.wilaya}, ${item.store.commune}`}
-      buttonText="Shop"
+      buttonText="Acheter"
       onPress={() =>
         navigation.navigate("Store/index", {
           storeId: item.store._id,
@@ -90,6 +103,9 @@ const Store = ({ StoresData, CategoriesData }) => {
             <Text
               style={[
                 styles.text,
+                {
+                  fontSize: isSmallScreen ? 11 : isLargeScreen ? 15 : 11,
+                },
                 activeTab === item._id && styles.storeToggle,
               ]}
             >
@@ -131,12 +147,13 @@ const styles = StyleSheet.create({
     color: "#888888",
   },
   text: {
-    fontSize: 13,
     fontFamily: "Montserrat-Regular",
   },
   buttonStore: {
-    width: 120,
+    minWidth: 120,
+    width: "auto",
     height: 42,
+    paddingInline: 14,
     borderRadius: 40,
     backgroundColor: "#fff",
     justifyContent: "center",

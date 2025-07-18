@@ -12,9 +12,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { CheckIcon, EyeIcon } from "react-native-heroicons/outline";
+import {
+  CheckIcon,
+  EyeIcon,
+  EyeSlashIcon,
+} from "react-native-heroicons/outline";
 import { useNavigation } from "expo-router";
-import WilayaDropdown from "../../components/DropDown";
+import WilayaModalDropdown from "../../components/DropDown";
 import useAuthContext from "../hooks/useAuthContext";
 import { useQuery } from "@tanstack/react-query";
 import Config from "../config";
@@ -284,7 +288,7 @@ const SignUpScreen = () => {
                   styles.textInputPhone,
                   { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
                 ]}
-                placeholder="07XXXXXXXX"
+                placeholder="+213 000 00 00 00"
                 placeholderTextColor="#888888"
                 value={phone}
                 onChangeText={setPhone}
@@ -333,11 +337,17 @@ const SignUpScreen = () => {
                 onPress={() => setPasswordVisible(!passwordVisible)}
                 style={styles.eyeIcon}
               >
-                <EyeIcon
-                  name={passwordVisible ? "visibility" : "visibility-off"}
-                  size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
-                  color="#888888"
-                />
+                {passwordVisible ? (
+                  <EyeSlashIcon
+                    size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
+                    color="#888888"
+                  />
+                ) : (
+                  <EyeIcon
+                    size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
+                    color="#888888"
+                  />
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -383,13 +393,17 @@ const SignUpScreen = () => {
                 }
                 style={styles.eyeIcon}
               >
-                <EyeIcon
-                  name={
-                    confirmPasswordVisible ? "visibility" : "visibility-off"
-                  }
-                  size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
-                  color="#888888"
-                />
+                {confirmPasswordVisible ? (
+                  <EyeSlashIcon
+                    size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
+                    color="#888888"
+                  />
+                ) : (
+                  <EyeIcon
+                    size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
+                    color="#888888"
+                  />
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -427,7 +441,7 @@ const SignUpScreen = () => {
             />
           </View>
 
-          <View
+          {/* <View
             style={[
               styles.inputClass,
               { marginBottom: isSmallScreen ? 14 : 16 },
@@ -456,7 +470,7 @@ const SignUpScreen = () => {
               onChangeText={setCommercialRegister}
               returnKeyType="next"
             />
-          </View>
+          </View> */}
 
           <View style={[styles.row, { gap: isSmallScreen ? 8 : 12 }]}>
             <View style={[styles.inputClass, { flex: 1 }]}>
@@ -468,7 +482,7 @@ const SignUpScreen = () => {
               >
                 Wilaya
               </Text>
-              <WilayaDropdown
+              <WilayaModalDropdown
                 data={wilayas}
                 dropDownTitle="Sélectionner la Wilaya"
                 onSelect={(value) => setSelectedWilaya(value)}
@@ -483,7 +497,7 @@ const SignUpScreen = () => {
               >
                 Commune
               </Text>
-              <WilayaDropdown
+              <WilayaModalDropdown
                 data={communes}
                 dropDownTitle="Sélectionner la Commune"
                 onSelect={(value) => setSelectedCommune(value)}

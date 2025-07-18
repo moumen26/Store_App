@@ -82,7 +82,7 @@ const ResetPassword = () => {
                 fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
               },
             ]}
-            placeholder="Numéro de téléphone"
+            placeholder="+213 000 000 000"
             placeholderTextColor="#888888"
             // value={}
             // onChangeText={}
@@ -106,7 +106,7 @@ const ResetPassword = () => {
               { fontSize: isSmallScreen ? 14 : isLargeScreen ? 18 : 16 },
             ]}
           >
-            Envoyer le code de réinitialisation
+            Envoyer le code
           </Text>
         </TouchableOpacity>
         <View
@@ -120,7 +120,7 @@ const ResetPassword = () => {
           >
             Vous vous souvenez de votre mot de passe ?
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignUp/index")}>
+          <TouchableOpacity onPress={() => navigation.navigate("SignIn/index")}>
             <Text
               style={[
                 styles.textForgotPassword,
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
   },
   sousTitle: {
     fontFamily: "Montserrat-Regular",
+    textAlign: "center",
   },
   verifyContainer: {
     flexDirection: "column",
@@ -202,6 +203,7 @@ const styles = StyleSheet.create({
   },
   textForgotPassword: {
     color: "#19213D",
+    marginTop: 12,
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
   },

@@ -48,14 +48,14 @@ const SubmitOderModalReason = ({
                 style={styles.modalButton}
                 onPress={() => onCancel(reason)}
               >
-                <Text style={styles.modalButtonTextColor}>Cancel</Text>
+                <Text style={styles.modalButtonTextColor}>Annuler</Text>
               </TouchableOpacity>
               {showButton && (
                 <TouchableOpacity
                   style={[styles.modalButton, styles.confirmButton]}
                   onPress={onConfirm}
                 >
-                  <Text style={styles.modalButtonText}>Confirm</Text>
+                  <Text style={styles.modalButtonText}>Confirmer</Text>
                 </TouchableOpacity>
               )}
             </View>

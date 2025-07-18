@@ -51,14 +51,11 @@ export default function Index() {
         justifyContent: "center",
       }}
     >
-      <Link href={"/StepInto"}>
-        <Image
-          source={require("../assets/Light.png")}
-          style={styles.image}
-          resizeMode="contain"
-        />
-        <Text style={styles.text}>Mosagro</Text>
-      </Link>
+      <Image
+        source={require("../assets/index.png")}
+        style={styles.image}
+        resizeMode="contain"
+      />
     </View>
   );
 }
@@ -69,8 +66,8 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 280,
+    height: 220,
     marginBottom: 10,
   },
 });

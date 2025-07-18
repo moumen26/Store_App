@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   searchBar: {
-    borderColor: "#19213D",
+    borderColor: "#E3EFFF",
     borderWidth: 1,
     alignItems: "center",
     paddingHorizontal: 15,

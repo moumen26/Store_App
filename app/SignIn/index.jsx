@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "expo-router";
-import { EyeIcon } from "react-native-heroicons/outline";
+import { EyeIcon, EyeSlashIcon } from "react-native-heroicons/outline";
 import { useAuthContext } from "../hooks/useAuthContext.jsx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Config from "../config.jsx";
@@ -115,7 +115,7 @@ const SignInScreen = () => {
               styles.textInput,
               { height: inputHeight, borderRadius: isSmallScreen ? 8 : 10 },
             ]}
-            placeholder="06 62 81 26 00"
+            placeholder="+213 000 00 00 00"
             placeholderTextColor="#888888"
             value={userName}
             onChangeText={setUserName}
@@ -151,11 +151,17 @@ const SignInScreen = () => {
               onPress={() => setPasswordVisible(!passwordVisible)}
               style={styles.eyeIcon}
             >
-              <EyeIcon
-                name={passwordVisible ? "visibility" : "visibility-off"}
-                size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
-                color="#888888"
-              />
+              {passwordVisible ? (
+                <EyeSlashIcon
+                  size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
+                  color="#888888"
+                />
+              ) : (
+                <EyeIcon
+                  size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
+                  color="#888888"
+                />
+              )}
             </TouchableOpacity>
           </View>
         </View>

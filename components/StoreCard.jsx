@@ -44,9 +44,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   shopItem: {
-    width: 70,
+    width: 80,
     height: 25,
     borderRadius: 15,
+    paddingInline: 8,
     borderColor: "#000",
     borderWidth: 0.3,
     justifyContent: "center",

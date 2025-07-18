@@ -299,7 +299,7 @@ const home = () => {
         >
           <TopHomeScreen />
         </View>
-      ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
+      ) : (
         <View
           style={{
             flexDirection: "row",
@@ -360,8 +360,6 @@ const home = () => {
             </TouchableOpacity>
           )}
         </View>
-      ) : (
-        <></>
       )}
 
       {PublicPublicitiesDataLoading ? (
@@ -373,7 +371,7 @@ const home = () => {
         >
           <Search />
         </View>
-      ) : PublicPublicitiesData && PublicPublicitiesData?.length > 0 ? (
+      ) : (
         <View
           style={[
             styles.searchBar,
@@ -417,8 +415,6 @@ const home = () => {
             </TouchableOpacity>
           )}
         </View>
-      ) : (
-        <></>
       )}
 
       {PublicPublicitiesDataLoading ? (
@@ -481,7 +477,7 @@ const home = () => {
               },
             ]}
           >
-            My Stores
+            Mes Magasins
           </Text>
           <Store StoresData={filteredStores} CategoriesData={CategoriesData} />
         </View>

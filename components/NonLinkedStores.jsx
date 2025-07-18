@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Animated, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import ConfirmationModal from "./ConfirmationModal";
@@ -23,6 +30,12 @@ const NonLinkedStores = ({
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const { width, height } = useWindowDimensions();
+
+  const isSmallScreen = width < 375;
+  const isMediumScreen = width >= 375 && width < 768;
+  const isLargeScreen = width >= 768;
 
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
@@ -85,7 +98,15 @@ const NonLinkedStores = ({
       style={[styles.buttonStore, activeTab === item._id && styles.storeToggle]}
       onPress={() => handleMenuClick(item._id)}
     >
-      <Text style={[styles.text, activeTab === item._id && styles.storeToggle]}>
+      <Text
+        style={[
+          styles.text,
+          activeTab === item._id && styles.storeToggle,
+          {
+            fontSize: isSmallScreen ? 11 : isLargeScreen ? 15 : 11,
+          },
+        ]}
+      >
         {item.name}
       </Text>
     </TouchableOpacity>
@@ -210,7 +231,9 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   buttonStore: {
-    width: 120,
+    minWidth: 120,
+    paddingInline: 14,
+    width: "auto",
     height: 42,
     borderRadius: 40,
     backgroundColor: "#fff",
@@ -229,8 +252,8 @@ const styles = StyleSheet.create({
     paddingBottom: 38,
   },
   storeToggle: {
-    backgroundColor: "#C9E4EE",
-    color: "#19213D",
+    backgroundColor: "#19213D",
+    color: "#fff",
   },
 });
 
