@@ -42,7 +42,7 @@ const api = axios.create({
 
 const Store = () => {
   const route = useRoute();
-  const { storeId, storeName } = route.params;
+  const { storeId, storeName, storeAddress } = route.params;  
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -115,46 +115,6 @@ const Store = () => {
     queryFn: fetchPrivatePublicitiesData, // Pass token to the fetch function
     enabled: !!user?.token, // Only run the query if user is authenticated
     refetchInterval: 10000, // Refetch every 10 seconds
-    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
-  });
-  // Function to fetch brands data
-  const fetchBrandsData = async () => {
-    try {
-      const response = await api.get(`/Brand`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
-
-      // Check if the response is valid
-      if (response.status !== 200) {
-        const errorData = await response.data;
-        if (errorData.error.statusCode == 404) {
-          return []; // Return an empty array for 404 errors
-        } else {
-          throw new Error("Error receiving brands data");
-        }
-      }
-
-      // Return the data from the response
-      return await response.data;
-    } catch (error) {
-      // Handle if the request fails with status code 401 or 404
-      if (error?.response?.status === 401 || error?.response?.status === 404) {
-        return []; // Return an empty array for 401 and 404 errors
-      }
-      throw new Error(error?.message || "Network error");
-    }
-  };
-  const {
-    data: BrandsData,
-    error: BrandsDataError,
-    isLoading: BrandsDataLoading,
-    refetch: BrandsDataRefetch,
-  } = useQuery({
-    queryKey: ["BrandsData", user?.token, storeId], // Ensure token is part of the query key
-    queryFn: fetchBrandsData, // Pass token to the fetch function
-    enabled: !!user?.token, // Only run the query if user is authenticated
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
   // Function to fetch brands data
@@ -245,6 +205,22 @@ const Store = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+  const extractBrandDataFromProductsData = (productsData) => {
+    if (!productsData || productsData.length === 0) {
+      return [];
+    }
+    const brandsData = productsData.reduce((acc, product) => {      
+      if (product?.product?.brand && !acc.some((b) => b._id === product.product.brand._id)) {
+        acc.push({
+          _id: product.product.brand._id,
+          name: product.product.brand.name,
+          image: product.product.brand.image,
+        });
+      }      
+      return acc;
+    }, []);
+    return brandsData;
+  } 
   //--------------------------------------------RENDERING--------------------------------------------
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -255,7 +231,7 @@ const Store = () => {
           paddingBottom: Platform.OS === "ios" ? 20 : 10,
         }}
       >
-        {BrandsDataLoading ? (
+        {ProductsDataLoading ? (
           <View
             style={{
               marginHorizontal: horizontalPadding,
@@ -264,7 +240,7 @@ const Store = () => {
           >
             <TopHomeScreen />
           </View>
-        ) : BrandsData && BrandsData?.length > 0 ? (
+        ) : ProductsData && ProductsData?.length > 0 ? (
           <View
             style={[
               styles.headerContainer,
@@ -300,6 +276,7 @@ const Store = () => {
               onPress={() =>
                 navigation.navigate("MyCart/index", {
                   storeId: storeId,
+                  storeAddress: storeAddress,
                 })
               }
               style={[
@@ -318,7 +295,7 @@ const Store = () => {
           <></>
         )}
 
-        {BrandsDataLoading ? (
+        {ProductsDataLoading ? (
           <View
             style={{
               marginHorizontal: horizontalPadding,
@@ -327,7 +304,7 @@ const Store = () => {
           >
             <Search />
           </View>
-        ) : BrandsData && BrandsData?.length > 0 ? (
+        ) : ProductsData && ProductsData?.length > 0 ? (
           <TouchableOpacity
             style={[
               styles.searchClass,
@@ -386,7 +363,7 @@ const Store = () => {
           <></>
         )}
 
-        {BrandsDataLoading ? (
+        {ProductsDataLoading ? (
           <View
             style={{
               marginHorizontal: horizontalPadding,
@@ -395,7 +372,7 @@ const Store = () => {
           >
             <Brands />
           </View>
-        ) : BrandsData && BrandsData?.length > 0 ? (
+        ) : ProductsData && ProductsData?.length > 0 ? (
           <View
             style={{
               marginHorizontal: horizontalPadding,
@@ -415,7 +392,7 @@ const Store = () => {
               horizontal
               showsHorizontalScrollIndicator={false}
             >
-              {BrandsData.map((brand) => (
+              {extractBrandDataFromProductsData(ProductsData).map((brand) => (
                 <BrandsCard
                   key={brand?._id}
                   imgUrl={`${Config.FILES_URL}/${brand?.image}`}

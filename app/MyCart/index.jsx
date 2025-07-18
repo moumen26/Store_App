@@ -27,7 +27,7 @@ import ConfirmationModal from "../../components/ConfirmationModal.jsx";
 const MyCartScreen = () => {
   const { cart, user, dispatch } = useAuthContext();
   const route = useRoute();
-  const { storeId } = route.params;
+  const { storeId, storeAddress } = route.params;  
   const navigation = useNavigation();
 
   // Get screen dimensions
@@ -354,6 +354,7 @@ const MyCartScreen = () => {
                   storeCart={storeCart}
                   handleChangeType={setType}
                   navigation={navigation}
+                  storeAddress={storeAddress}
                 />
               </View>
             </ScrollView>

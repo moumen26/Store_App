@@ -65,6 +65,7 @@ const Store = ({ StoresData, CategoriesData }) => {
   );
 
   const renderStoreCard = ({ item }) => (
+    
     <StoreCard
       key={item._id}
       title={item.store.storeName}
@@ -74,6 +75,7 @@ const Store = ({ StoresData, CategoriesData }) => {
         navigation.navigate("Store/index", {
           storeId: item.store._id,
           storeName: item.store.storeName,
+          storeAddress: item.store.storeAddress,
         })
       }
     />

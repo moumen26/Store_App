@@ -15,7 +15,7 @@ import {
 const LocationIcon = require("../assets/icons/Location.png");
 
 const OrderType = memo(
-  ({ storeId, storeCart, navigation, handleChangeType }) => {
+  ({ storeId, storeAddress, storeCart, navigation, handleChangeType }) => {
     const [activeTab, setActiveTab] = useState("");
     const opacityAnim = useRef(new Animated.Value(1)).current;
     const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -109,16 +109,16 @@ const OrderType = memo(
               <BuildingStorefrontIcon color="#19213D" size={20} />
             </View>
             <View style={styles.gapColumn}>
-              <Text style={styles.textPlace}>The Daily Grind Hub</Text>
-              <Text style={styles.textdescription}>
-                Rue Douid Mohamed, Beni Tamou
-              </Text>
-              <View style={styles.timeContainer}>
+              <Text style={styles.textPlace}>{storeAddress || "Aucune adresse fournie"}</Text>
+              {/* <Text style={styles.textdescription}>
+                {storeAddress || "Aucune adresse fournie"}
+              </Text> */}
+              {/* <View style={styles.timeContainer}>
                 <ClockIcon size={16} color="#888888" />
                 <Text style={styles.textdescription}>
                   1.5 km away from your location
                 </Text>
-              </View>
+              </View> */}
             </View>
           </View>
         </View>
