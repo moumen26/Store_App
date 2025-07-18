@@ -8,7 +8,7 @@ const WilayaDropdown = ({ data, dropDownTitle, onSelect }) => {
 
   return (
     <Dropdown
-      style={[styles.dropdown, isFocused && { borderColor: "#63BBF5" }]}
+      style={[styles.dropdown, isFocused && { borderColor: "#19213D" }]}
       placeholderStyle={styles.placeholderStyle}
       selectedTextStyle={styles.selectedTextStyle}
       data={data}
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   dropdown: {
     width: 170,
     height: 50,
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     borderWidth: 0.5,
     borderRadius: 10,
     paddingHorizontal: 16,

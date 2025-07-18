@@ -51,9 +51,7 @@ const SearchScreen = () => {
           ProductName={item?.product?.name + " " + item?.product?.size}
           ProductBrand={item?.product?.brand?.name}
           ProductPrice={item.selling}
-          imgUrl={`${Config.FILES_URL}/${
-            item?.product?.image
-          }`}
+          imgUrl={`${Config.FILES_URL}/${item?.product?.image}`}
           onPress={() =>
             navigation.navigate("Product/index", {
               data: item,
@@ -129,7 +127,7 @@ const SearchScreen = () => {
           ]}
         >
           <View style={styles.searchContent}>
-            <MagnifyingGlassIcon size={searchIconSize} color="#63BBF5" />
+            <MagnifyingGlassIcon size={searchIconSize} color="#19213D" />
             <TextInput
               style={[
                 styles.searchBarItem,
@@ -193,7 +191,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   searchBar: {
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     borderWidth: 1,
     alignItems: "center",
     flexDirection: "row",
@@ -217,7 +215,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   clearButtonText: {
-    color: "#63BBF5",
+    color: "#19213D",
     textAlign: "center",
   },
   row: {

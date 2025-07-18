@@ -70,9 +70,7 @@ const Product = memo(() => {
       ...product,
       stock: data?._id,
       product: {
-        image: `${Config.FILES_URL}/${
-          data?.product?.image
-        }`,
+        image: `${Config.FILES_URL}/${data?.product?.image}`,
         name: `${data?.product?.name} ${data?.product?.size}`,
         brand: data?.product?.brand?.name,
       },
@@ -83,9 +81,7 @@ const Product = memo(() => {
     navigator.goBack();
   }, [data, product, storeId, dispatch, navigator]);
 
-  const imageUri = `${Config.FILES_URL}/${
-    data?.product?.image
-  }`;
+  const imageUri = `${Config.FILES_URL}/${data?.product?.image}`;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -262,13 +258,13 @@ const styles = StyleSheet.create({
   },
   boxText: {
     fontFamily: "Montserrat-Medium",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   boxIcon: {
     resizeMode: "contain",
   },
   loginButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     justifyContent: "center",
     alignItems: "center",
   },

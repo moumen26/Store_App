@@ -14,7 +14,7 @@ const ScanButton = ({ onScanComplete }) => {
 
   return (
     <TouchableOpacity style={styles.scanButton} onPress={handlePress}>
-      <AntDesign name="scan1" color="#63BBF5" size={20} />
+      <AntDesign name="scan1" color="#19213D" size={20} />
     </TouchableOpacity>
   );
 };

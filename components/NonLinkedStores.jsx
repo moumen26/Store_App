@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   },
   storeToggle: {
     backgroundColor: "#C9E4EE",
-    color: "#63BBF5",
+    color: "#19213D",
   },
 });
 

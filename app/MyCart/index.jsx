@@ -241,7 +241,7 @@ const MyCartScreen = () => {
                 </Text>
                 {storeCart.length > 0 && (
                   <TouchableOpacity onPress={() => setModalVisible(true)}>
-                    <PencilSquareIcon size={iconSize} color="#63BBF5" />
+                    <PencilSquareIcon size={iconSize} color="#19213D" />
                   </TouchableOpacity>
                 )}
               </View>
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   orderButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",

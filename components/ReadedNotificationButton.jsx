@@ -15,7 +15,7 @@ const ReadedNotificationButton = () => {
       style={styles.BackButton}
       onPress={() => navigation.navigate("NotificationReaded/index")}
     >
-      <ArchiveBoxIcon size={20} color="#63BBF5" />
+      <ArchiveBoxIcon size={20} color="#19213D" />
     </TouchableOpacity>
   );
 };

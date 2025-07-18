@@ -132,7 +132,7 @@ const SignUpScreen = () => {
           R_Commerce: commercialRegister,
         }),
       });
-      
+
       const json = await response.json();
 
       if (!response.ok) {
@@ -666,12 +666,12 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   textForgotPassword: {
-    color: "#63BBF5",
+    color: "#19213D",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
   },
   loginButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     justifyContent: "center",
     alignItems: "center",
     // width: "100%",
@@ -688,8 +688,8 @@ const styles = StyleSheet.create({
     borderColor: "#888888",
   },
   checked: {
-    backgroundColor: "#63BBF5",
-    borderColor: "#63BBF5",
+    backgroundColor: "#19213D",
+    borderColor: "#19213D",
   },
   inputClass: {
     flexDirection: "column",

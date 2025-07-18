@@ -380,36 +380,26 @@ const ShippingAddressScreen = memo(() => {
   const renderItems = useCallback(
     () =>
       user?.info?.storeAddresses?.map((item) => (
-        <View key={item?._id} style={styles.row}>
-          <ShippingAddressCard
-            index={item?._id}
-            AddressTitle={item?.name}
-            AddressPlace={item?.address}
-            AddressTime={`${25} minutes estimate arrived`}
-            isSelected={item?._id === selectedIndex}
-            onSelect={handleSelectItem}
-          />
-          <View style={styles.addressActions}>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => handleEditAddress(item?._id)}
-            >
-              <PencilIcon size={18} color="#63BBF5" />
-              <Text style={styles.editButtonText}>Modifier</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDeleteAddress(item?._id)}
-            >
-              <Text style={styles.deleteButtonText}>Supprimer</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <ShippingAddressCard
+          key={item?._id}
+          index={item?._id}
+          AddressTitle={item?.name}
+          AddressPlace={item?.address}
+          AddressTime={`${25} minutes estimate arrived`}
+          isSelected={item?._id === selectedIndex}
+          onSelect={handleSelectItem}
+          onEdit={handleEditAddress}
+          onDelete={handleDeleteAddress}
+        />
       )),
-    [user, selectedIndex, handleSelectItem]
+    [
+      user,
+      selectedIndex,
+      handleSelectItem,
+      handleEditAddress,
+      handleDeleteAddress,
+    ]
   );
-
   return (
     <View style={{ flex: 1, position: "relative" }}>
       {/* Snackbar with proper positioning - higher z-index than modal */}
@@ -513,7 +503,7 @@ const ShippingAddressScreen = memo(() => {
                 onPress={openLocationPicker}
                 activeOpacity={0.7}
               >
-                <MapIcon size={20} color="#63BBF5" />
+                <MapIcon size={20} color="#19213D" />
                 <Text
                   style={[
                     styles.locationText,
@@ -605,7 +595,7 @@ const ShippingAddressScreen = memo(() => {
                 })
               }
             >
-              <MapPinIcon size={20} color="#63BBF5" />
+              <MapPinIcon size={20} color="#19213D" />
               <View style={styles.locationOptionTextContainer}>
                 <Text style={styles.locationOptionName}>Domicile</Text>
                 <Text style={styles.locationOptionAddress}>
@@ -623,7 +613,7 @@ const ShippingAddressScreen = memo(() => {
                 })
               }
             >
-              <MapPinIcon size={20} color="#63BBF5" />
+              <MapPinIcon size={20} color="#19213D" />
               <View style={styles.locationOptionTextContainer}>
                 <Text style={styles.locationOptionName}>Travail</Text>
                 <Text style={styles.locationOptionAddress}>
@@ -641,7 +631,7 @@ const ShippingAddressScreen = memo(() => {
                 })
               }
             >
-              <MapPinIcon size={20} color="#63BBF5" />
+              <MapPinIcon size={20} color="#19213D" />
               <View style={styles.locationOptionTextContainer}>
                 <Text style={styles.locationOptionName}>À proximité</Text>
                 <Text style={styles.locationOptionAddress}>
@@ -722,7 +712,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   editButtonText: {
-    color: "#63BBF5",
+    color: "#19213D",
     fontSize: 12,
     fontFamily: "Montserrat-Medium",
     marginLeft: 5,
@@ -754,7 +744,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   applyButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     borderRadius: 10,
     height: 50,
     justifyContent: "center",
@@ -806,7 +796,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Medium",
     marginBottom: 15,
     textAlign: "center",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   modalLabel: {
     fontSize: 14,
@@ -853,7 +843,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: 45,
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     marginTop: 5,
     borderWidth: 1,
     paddingLeft: 10,
@@ -873,7 +863,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   mapButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
@@ -892,7 +882,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confirmButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
   },
   // Map modal styles
   mapModalContainer: {
@@ -912,7 +902,7 @@ const styles = StyleSheet.create({
     width: 70,
   },
   closeButtonText: {
-    color: "#63BBF5",
+    color: "#19213D",
     fontSize: 16,
     fontFamily: "Montserrat-Medium",
   },
@@ -931,7 +921,7 @@ const styles = StyleSheet.create({
   mapPlaceholderText: {
     fontSize: 18,
     fontFamily: "Montserrat-Medium",
-    color: "#63BBF5",
+    color: "#19213D",
     marginBottom: 10,
   },
   mapInstructionText: {

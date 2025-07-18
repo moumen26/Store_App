@@ -4,20 +4,20 @@ import { StyleSheet } from "react-native";
 import { TruckIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
 
-const TrackButton = ({data, OrderDataRefetch}) => {
+const TrackButton = ({ data, OrderDataRefetch }) => {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       style={styles.BackButton}
-      onPress={() => navigation.navigate("TrackOrder/index",
-        { 
+      onPress={() =>
+        navigation.navigate("TrackOrder/index", {
           recieptData: data,
-          OrderDataRefetch: OrderDataRefetch
-        }
-      )}
+          OrderDataRefetch: OrderDataRefetch,
+        })
+      }
     >
-      <TruckIcon size={20} color="#63BBF5" />
+      <TruckIcon size={20} color="#19213D" />
     </TouchableOpacity>
   );
 };
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",

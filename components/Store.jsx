@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   storeToggle: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     color: "#fff",
   },
 });

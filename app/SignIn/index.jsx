@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   textForgotPassword: {
-    color: "#63BBF5",
+    color: "#19213D",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
     textAlign: "right",
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   loginButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     justifyContent: "center",
     alignItems: "center",
   },

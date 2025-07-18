@@ -19,22 +19,25 @@ export default function ScanBarCode() {
     getCameraPermissions();
   }, []);
 
-  const handleBarCodeScanned = useCallback(async (scanResult) => {
-    if (isProcessing) return; // Prevent multiple scans
-    
-    setIsProcessing(true);
-    try {
-      if (onScanComplete) {
-        await onScanComplete(scanResult);
+  const handleBarCodeScanned = useCallback(
+    async (scanResult) => {
+      if (isProcessing) return; // Prevent multiple scans
+
+      setIsProcessing(true);
+      try {
+        if (onScanComplete) {
+          await onScanComplete(scanResult);
+        }
+        // Use replace instead of goBack to ensure we only navigate once
+        navigation.canGoBack() && navigation.goBack();
+      } catch (error) {
+        console.error("Scan processing error:", error);
+      } finally {
+        setIsProcessing(false);
       }
-      // Use replace instead of goBack to ensure we only navigate once
-      navigation.canGoBack() && navigation.goBack();
-    } catch (error) {
-      console.error('Scan processing error:', error);
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [onScanComplete, navigation, isProcessing]);
+    },
+    [onScanComplete, navigation, isProcessing]
+  );
 
   if (hasPermission === null) {
     return (
@@ -48,8 +51,8 @@ export default function ScanBarCode() {
     return (
       <View style={styles.permissionContainer}>
         <Text style={styles.text}>No access to camera</Text>
-        <TouchableOpacity 
-          style={styles.button} 
+        <TouchableOpacity
+          style={styles.button}
           onPress={() => Camera.requestCameraPermissionsAsync()}
         >
           <Text style={styles.buttonText}>Allow Camera</Text>
@@ -97,7 +100,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     borderRadius: 5,
   },
   buttonText: {
@@ -106,13 +109,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   processingOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

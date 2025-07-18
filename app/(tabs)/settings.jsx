@@ -77,35 +77,35 @@ const Settings = () => {
   const [settings, setSettings] = useState(() => [
     {
       id: "name",
-      icon: <UserIcon color="#63BBF5" size={isSmallScreen ? 16 : 18} />,
+      icon: <UserIcon color="#19213D" size={isSmallScreen ? 16 : 18} />,
       label: "Nom",
       value: `${user.info.firstName} ${user.info.lastName}`,
       type: "fullname",
     },
     {
       id: "email",
-      icon: <EnvelopeIcon color="#63BBF5" size={isSmallScreen ? 16 : 18} />,
+      icon: <EnvelopeIcon color="#19213D" size={isSmallScreen ? 16 : 18} />,
       label: "Email",
       value: user.info.email,
       type: "email",
     },
     {
       id: "password",
-      icon: <LockClosedIcon color="#63BBF5" size={isSmallScreen ? 16 : 18} />,
+      icon: <LockClosedIcon color="#19213D" size={isSmallScreen ? 16 : 18} />,
       label: "Mot de passe",
       value: "••••••••",
       type: "password",
     },
     {
       id: "phone",
-      icon: <PhoneIcon color="#63BBF5" size={isSmallScreen ? 16 : 18} />,
+      icon: <PhoneIcon color="#19213D" size={isSmallScreen ? 16 : 18} />,
       label: "Numero de téléphone",
       value: user.info.phoneNumber,
       type: "phone",
     },
     {
       id: "delete",
-      icon: <TrashIcon color="#63BBF5" size={isSmallScreen ? 16 : 18} />,
+      icon: <TrashIcon color="#19213D" size={isSmallScreen ? 16 : 18} />,
       label: "Supprimer le compte",
       value: "Continuer",
       type: "delete",
@@ -561,7 +561,7 @@ const Settings = () => {
                       {setting.value}
                     </Text>
                     <ArrowRightIcon
-                      color="#63BBF5"
+                      color="#19213D"
                       size={isSmallScreen ? 16 : 18}
                     />
                   </View>
@@ -831,7 +831,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Medium",
   },
   settingItem: {
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -881,7 +881,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontFamily: "Montserrat-Medium",
     textAlign: "center",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   modalLabel: {
     fontFamily: "Montserrat-Medium",
@@ -951,7 +951,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
     borderLeftWidth: 3,
-    borderLeftColor: "#63BBF5",
+    borderLeftColor: "#19213D",
   },
   eyeIcon: {
     padding: 5,
@@ -963,7 +963,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   confirmButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
   },
   deleteButton: {
     backgroundColor: "#FF033E",

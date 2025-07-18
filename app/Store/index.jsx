@@ -284,7 +284,7 @@ const Store = () => {
                 <BuildingStorefrontIcon
                   name="cart"
                   size={iconSize}
-                  color="#63BBF5"
+                  color="#19213D"
                 />
                 <Text
                   style={[
@@ -311,7 +311,7 @@ const Store = () => {
                 },
               ]}
             >
-              <ShoppingCartIcon size={iconSize} color="#63BBF5" />
+              <ShoppingCartIcon size={iconSize} color="#19213D" />
             </TouchableOpacity>
           </View>
         ) : (
@@ -341,7 +341,7 @@ const Store = () => {
             }
           >
             <View style={[styles.searchButton, { height: searchHeight }]}>
-              <MagnifyingGlassIcon color="#63BBF5" size={iconSize} />
+              <MagnifyingGlassIcon color="#19213D" size={iconSize} />
               <Text
                 style={[
                   styles.search,
@@ -387,57 +387,51 @@ const Store = () => {
         )}
 
         {BrandsDataLoading ? (
-          <View
-            style={{
-              marginHorizontal: horizontalPadding,
-              marginBottom: sectionGap,
-            }}
-          >
-            <Brands />
-          </View>
-        ) : BrandsData && BrandsData?.length > 0 ? (
-          <View
-            style={{
-              marginHorizontal: horizontalPadding,
-              marginBottom: sectionGap,
-            }}
-          >
-            <Text
-              style={[
-                styles.titleCategory,
-                { fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18 },
-              ]}
-            >
-              Marques
-            </Text>
-            <ScrollView
-              contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-            >
-              {BrandsData.map((brand) => (
-                <BrandsCard
-                  key={brand?._id}
-                  imgUrl={`${Config.FILES_URL}/${
-                    brand?.image
-                  }`}
-                  onPress={() =>
-                    navigation.navigate("Brand/index", {
-                      brandId: brand?._id,
-                      brandIMG: `${Config.FILES_URL}/${
-                        brand?.image
-                      }`,
-                      ProductsData: ProductsData,
-                      storeId: storeId,
-                    })
-                  }
-                />
-              ))}
-            </ScrollView>
-          </View>
-        ) : (
-          <></>
-        )}
+  <View
+    style={{
+      marginHorizontal: horizontalPadding,
+      marginBottom: sectionGap,
+    }}
+  >
+    <Brands />
+  </View>
+) : BrandsData && BrandsData?.length > 0 ? (
+  <View
+    style={{
+      marginHorizontal: horizontalPadding,
+      marginBottom: sectionGap,
+    }}
+  >
+    <Text
+      style={[
+        styles.titleCategory,
+        { fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18 },
+      ]}
+    >
+      Marques
+    </Text>
+    <ScrollView
+      contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+    >
+      {BrandsData.map((brand) => (
+        <BrandsCard
+          key={brand?._id}
+          imgUrl={`${Config.FILES_URL}/${brand?.image}`}
+          onPress={() =>
+            navigation.navigate("Brand/index", {
+              brandId: brand?._id,
+              brandIMG: `${Config.FILES_URL}/${brand?.image}`,
+              ProductsData: ProductsData,
+              storeId: storeId,
+            })
+          }
+        />
+      ))}
+    </ScrollView>
+  </View>
+) : null}
 
         {ProductsDataLoading ? (
           <View
@@ -490,9 +484,7 @@ const Store = () => {
                 renderItem={({ item }) => (
                   <PopularProductCard
                     key={item?._id}
-                    imgUrl={`${Config.FILES_URL}/${
-                      item?.product?.image
-                    }`}
+                    imgUrl={`${Config.FILES_URL}/${item?.product?.image}`}
                     ProductName={
                       item?.product?.brand?.name +
                       " " +
@@ -581,9 +573,7 @@ const Store = () => {
                 renderItem={({ item }) => (
                   <PopularProductCard
                     key={item?._id}
-                    imgUrl={`${Config.FILES_URL}/${
-                      item?.stock?.product?.image
-                    }`}
+                    imgUrl={`${Config.FILES_URL}/${item?.stock?.product?.image}`}
                     ProductName={item?.stock?.product?.name}
                     onPress={() =>
                       navigation.navigate("Product/index", {
@@ -688,7 +678,7 @@ const styles = StyleSheet.create({
   },
   seeAll: {
     fontFamily: "Montserrat-Regular",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   emptyState: {
     flex: 1,

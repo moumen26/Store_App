@@ -99,7 +99,7 @@ const DiscoverScreen = () => {
               styles.title,
               {
                 fontSize: isSmallScreen ? 24 : isLargeScreen ? 36 : 30,
-                color: "#63BBF5",
+                color: "#19213D",
               },
             ]}
           >
@@ -178,8 +178,8 @@ const styles = StyleSheet.create({
   nextButton: {
     alignItems: "center",
     justifyContent: "center",
-    borderColor: "#63BBF5",
-    backgroundColor: "#63BBF5",
+    borderColor: "#19213D",
+    backgroundColor: "#19213D",
     borderWidth: 1,
   },
   imageContainer: {
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   contentContainer: {
     justifyContent: "center",
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     marginRight: 4,
   },
   inactiveIndicator: {

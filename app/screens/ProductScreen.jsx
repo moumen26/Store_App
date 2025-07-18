@@ -67,9 +67,7 @@ const ProductScreen = ({ data, storeId, onclose }) => {
       ...Product,
       stock: data?._id,
       product: {
-        image: `${Config.FILES_URL}/${
-          data?.product?.image || ""
-        }`,
+        image: `${Config.FILES_URL}/${data?.product?.image || ""}`,
         name: data?.product?.name + " " + data?.product?.size,
         brand: data?.product?.brand?.name,
       },
@@ -120,9 +118,7 @@ const ProductScreen = ({ data, storeId, onclose }) => {
         <Image
           style={[styles.image, imageSize]}
           source={{
-            uri: `${Config.FILES_URL}/${
-              data?.product?.image || ""
-            }`,
+            uri: `${Config.FILES_URL}/${data?.product?.image || ""}`,
           }}
         />
       </View>
@@ -249,7 +245,7 @@ const ProductScreen = ({ data, storeId, onclose }) => {
 
 const styles = StyleSheet.create({
   loginButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -277,7 +273,7 @@ const styles = StyleSheet.create({
   },
   BoxText: {
     fontFamily: "Montserrat-Medium",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   image: {
     resizeMode: "contain",
@@ -296,7 +292,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   checked: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
   },
   productDetails: {
     flexDirection: "column",

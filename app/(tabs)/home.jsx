@@ -318,7 +318,7 @@ const home = () => {
               Emplacement
             </Text>
             <View style={styles.iconText}>
-              <MapPinIcon size={isSmallScreen ? 16 : 18} color="#63BBF5" />
+              <MapPinIcon size={isSmallScreen ? 16 : 18} color="#19213D" />
               <Text
                 style={[styles.text, { fontSize: isSmallScreen ? 12 : 14 }]}
               >
@@ -346,7 +346,7 @@ const home = () => {
               }
             >
               <View style={styles.bellContainer}>
-                <BellIcon size={isSmallScreen ? 18 : 20} color="#63BBF5" />
+                <BellIcon size={isSmallScreen ? 18 : 20} color="#19213D" />
                 {NotificationData?.length > 0 && (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>
@@ -388,7 +388,7 @@ const home = () => {
           <View style={styles.searchInput}>
             <MagnifyingGlassIcon
               size={isSmallScreen ? 18 : 20}
-              color="#63BBF5"
+              color="#19213D"
             />
             <TextInput
               style={[

@@ -102,17 +102,17 @@ const FavoriteButton = ({
           onPress={favorite ? submitUnFavorite : submitFavorite}
         >
           {favorite ? (
-            <SolidHeartIcon color="#63BBF5" size={18} />
+            <SolidHeartIcon color="#19213D" size={18} />
           ) : (
-            <OutlineHeartIcon color="#63BBF5" size={18} />
+            <OutlineHeartIcon color="#19213D" size={18} />
           )}
         </TouchableOpacity>
       ) : (
         <TouchableOpacity style={styles.BackButton}>
           {favorite ? (
-            <SolidHeartIcon color="#63BBF5" size={18} />
+            <SolidHeartIcon color="#19213D" size={18} />
           ) : (
-            <OutlineHeartIcon color="#63BBF5" size={18} />
+            <OutlineHeartIcon color="#19213D" size={18} />
           )}
         </TouchableOpacity>
       )}

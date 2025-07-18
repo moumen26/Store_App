@@ -30,7 +30,6 @@ import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
 import TrackButton from "../../components/TrackButton";
 
-
 // Axios instance for base URL configuration
 const api = axios.create({
   baseURL: Config.API_URL,
@@ -131,7 +130,7 @@ const EReceiptScreen = () => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 40px;
-          border-bottom: 2px solid #63BBF5;
+          border-bottom: 2px solid #19213D;
           padding-bottom: 20px;
         }
         .company-info {
@@ -140,7 +139,7 @@ const EReceiptScreen = () => {
         .company-info h1 {
           margin: 0;
           font-size: 32px;
-          color: #63BBF5;
+          color: #19213D;
           font-weight: 700;
         }
         .company-info p {
@@ -185,7 +184,7 @@ const EReceiptScreen = () => {
           margin-bottom: 10px;
           font-size: 16px;
           font-weight: 600;
-          color: #63BBF5;
+          color: #19213D;
           border-bottom: 1px solid #ddd;
           padding-bottom: 5px;
         }
@@ -199,7 +198,7 @@ const EReceiptScreen = () => {
           margin-bottom: 30px;
         }
         .product-table th {
-          background-color: #63BBF5;
+          background-color: #19213D;
           color: white;
           padding: 12px;
           text-align: left;
@@ -257,15 +256,15 @@ const EReceiptScreen = () => {
           color: #333;
         }
         .total-table .grand-total {
-          border-top: 2px solid #63BBF5;
+          border-top: 2px solid #19213D;
           padding-top: 8px;
           font-size: 18px;
         }
         .total-table .grand-total .label {
-          color: #63BBF5;
+          color: #19213D;
         }
         .total-table .grand-total .value {
-          color: #63BBF5;
+          color: #19213D;
         }
         .footer {
           margin-top: 50px;
@@ -280,7 +279,7 @@ const EReceiptScreen = () => {
           text-align: center;
         }
         .thank-you h3 {
-          color: #63BBF5;
+          color: #19213D;
           font-size: 18px;
           margin-bottom: 10px;
         }
@@ -361,7 +360,9 @@ const EReceiptScreen = () => {
               <tr>
                 <td>
                   <div class="product-details">
-                    <img class="product-image" src="${Config.FILES_URL}/${product?.product?.image}" />
+                    <img class="product-image" src="${Config.FILES_URL}/${
+                product?.product?.image
+              }" />
                     <div>
                       <div class="product-name">${product?.product?.name}</div>
                       <div class="product-brand">${
@@ -516,9 +517,7 @@ const EReceiptScreen = () => {
               ProductName={item?.product?.name}
               ProductBrand={item?.product?.brand?.name}
               ProductImage={`${
-                `${Config.FILES_URL}/${
-                  item?.product?.image
-                }` || ""
+                `${Config.FILES_URL}/${item?.product?.image}` || ""
               }`}
               BoxItems={item?.product?.boxItems}
             />
@@ -644,7 +643,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   downloadButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",

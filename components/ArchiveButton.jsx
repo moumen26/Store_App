@@ -15,7 +15,7 @@ const ArchiveButton = () => {
       style={styles.BackButton}
       onPress={() => navigation.navigate("ArchiveOrders/index")}
     >
-      <ArchiveBoxIcon size={20} color="#63BBF5" />
+      <ArchiveBoxIcon size={20} color="#19213D" />
     </TouchableOpacity>
   );
 };

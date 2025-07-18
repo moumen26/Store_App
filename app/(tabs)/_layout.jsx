@@ -14,7 +14,7 @@ const TabLayout = () => {
     <ProtectedScreen>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: "#63BBF5",
+          tabBarActiveTintColor: "#19213D",
           tabBarInactiveTintColor: "gray",
           tabBarStyle: {
             backgroundColor: "white",

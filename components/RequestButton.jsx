@@ -4,17 +4,19 @@ import { StyleSheet } from "react-native";
 import { ClipboardDocumentIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "expo-router";
 
-const RequestButton = ({CategoriesData}) => {
+const RequestButton = ({ CategoriesData }) => {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       style={styles.BackButton}
-      onPress={() => navigation.navigate("RequestStores/index", {
-        CategoriesData: CategoriesData
-      })}
+      onPress={() =>
+        navigation.navigate("RequestStores/index", {
+          CategoriesData: CategoriesData,
+        })
+      }
     >
-      <ClipboardDocumentIcon size={20} color="#63BBF5" />
+      <ClipboardDocumentIcon size={20} color="#19213D" />
     </TouchableOpacity>
   );
 };

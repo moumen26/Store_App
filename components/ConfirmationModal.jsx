@@ -48,7 +48,7 @@ const ConfirmationModal = ({
           <View style={styles.confirmationModal}>
             <Text style={styles.modalTitle}>{modalTitle}</Text>
             <Text style={styles.modalSubtitle}>{modalSubTitle}</Text>
-            <ActivityIndicator size="large" color="#63BBF5" />
+            <ActivityIndicator size="large" color="#19213D" />
           </View>
         )}
       </View>
@@ -93,14 +93,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confirmButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
   },
   modalButtonText: {
     color: "#fff",
     fontSize: 16,
   },
   modalButtonTextColor: {
-    color: "#63BBF5",
+    color: "#19213D",
     fontSize: 16,
   },
 });

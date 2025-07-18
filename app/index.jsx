@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,7 +15,7 @@ export default function Index() {
         const userData = await AsyncStorage.getItem("user");
         console.log("Checking user authentication...");
         console.log("User data:", userData);
-        
+
         if (userData) {
           console.log("User authenticated, redirecting to protected screen.");
           navigation.reset({
@@ -35,15 +35,16 @@ export default function Index() {
         navigation.reset({
           index: 0,
           routes: [{ name: "StepInto" }],
-        }); 
+        });
       }
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, [router]);
+
   return (
     <View
-      className="bg-[#63BBF5] h-full"
+      className="bg-[#19213D] h-full"
       style={{
         flex: 1,
         alignItems: "center",
@@ -51,7 +52,12 @@ export default function Index() {
       }}
     >
       <Link href={"/StepInto"}>
-        <Text style={styles.text}>Store</Text>
+        <Image
+          source={require("../assets/Light.png")}
+          style={styles.image}
+          resizeMode="contain"
+        />
+        <Text style={styles.text}>Mosagro</Text>
       </Link>
     </View>
   );
@@ -61,5 +67,10 @@ const styles = StyleSheet.create({
   text: {
     color: "#fff",
     fontSize: 32,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
   },
 });

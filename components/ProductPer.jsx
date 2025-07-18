@@ -151,7 +151,7 @@ const ProductPer = memo(
                   >
                     <MinusIcon
                       size={20}
-                      color={itemQuantity > 0 ? "#63BBF5" : "#888888"}
+                      color={itemQuantity > 0 ? "#19213D" : "#888888"}
                     />
                   </TouchableOpacity>
                   <Text style={styles.textQuantity}>{itemQuantity}</Text>
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   textSubTotal: {
-    color: "#63BBF5",
+    color: "#19213D",
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
   },
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 5,
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   checkboxChecked: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     borderWidth: 0,
   },
   OutOfStock: {

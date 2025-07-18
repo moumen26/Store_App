@@ -33,21 +33,23 @@ const api = axios.create({
 const ArchiveOrder = () => {
   const { user } = useAuthContext();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredArchiveOrdersData, setFilteredArchiveOrdersData] = useState([]);
-  
+  const [filteredArchiveOrdersData, setFilteredArchiveOrdersData] = useState(
+    []
+  );
+
   // Get screen dimensions
   const { width, height } = useWindowDimensions();
-  
+
   // Calculate responsive values
   const isSmallScreen = width < 375;
   const isMediumScreen = width >= 375 && width < 768;
   const isLargeScreen = width >= 768;
-  
+
   // Responsive spacing calculations
   const horizontalPadding = width * 0.05;
   const verticalSpacing = height * 0.025;
   const smallSpacing = height * 0.01;
-  
+
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchArchiveOrdersData = async () => {
@@ -71,7 +73,7 @@ const ArchiveOrder = () => {
       throw new Error(error?.message || "Network error");
     }
   };
-  
+
   const {
     data: ArchiveOrdersData,
     error: ArchiveOrdersDataError,
@@ -124,15 +126,17 @@ const ArchiveOrder = () => {
   const handleClearSearch = () => {
     setSearchQuery("");
   };
-  
+
   //--------------------------------------------Rendering--------------------------------------------
   if (ArchiveOrdersDataLoading) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={[styles.container, { marginHorizontal: horizontalPadding }]}>
+        <View
+          style={[styles.container, { marginHorizontal: horizontalPadding }]}
+        >
           <View style={styles.containerLoadingtextScreen}>
-            <ShimmerPlaceholder 
-              style={[styles.textScreen, { width: width * 0.6 }]} 
+            <ShimmerPlaceholder
+              style={[styles.textScreen, { width: width * 0.6 }]}
             />
           </View>
           <Search />
@@ -141,53 +145,63 @@ const ArchiveOrder = () => {
       </SafeAreaView>
     );
   }
-  
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={[
-        styles.headerContainer, 
-        { 
-          marginHorizontal: horizontalPadding, 
-          marginBottom: isSmallScreen ? smallSpacing : verticalSpacing * 0.7 
-        }
-      ]}>
-        <BackButton />
-        <Text style={[
-          styles.titleScreen,
+      <View
+        style={[
+          styles.headerContainer,
           {
-            fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20
-          }
-        ]}>
+            marginHorizontal: horizontalPadding,
+            marginBottom: isSmallScreen ? smallSpacing : verticalSpacing * 0.7,
+          },
+        ]}
+      >
+        <BackButton />
+        <Text
+          style={[
+            styles.titleScreen,
+            {
+              fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
+            },
+          ]}
+        >
           Mes commandes archivées
         </Text>
-        <View style={[
-          styles.vide, 
-          {
-            width: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
-            height: isSmallScreen ? 32 : isLargeScreen ? 48 : 40
-          }
-        ]}></View>
+        <View
+          style={[
+            styles.vide,
+            {
+              width: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
+              height: isSmallScreen ? 32 : isLargeScreen ? 48 : 40,
+            },
+          ]}
+        ></View>
       </View>
-      
-      <View style={[
-        styles.searchBar, 
-        { 
-          marginHorizontal: horizontalPadding, 
-          marginBottom: verticalSpacing,
-          height: Math.max(45, height * 0.06)
-        }
-      ]}>
+
+      <View
+        style={[
+          styles.searchBar,
+          {
+            marginHorizontal: horizontalPadding,
+            marginBottom: verticalSpacing,
+            height: Math.max(45, height * 0.06),
+          },
+        ]}
+      >
         <View style={styles.searchInputContainer}>
-          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#63BBF5" />
+          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#19213D" />
           <TextInput
             style={[
               styles.searchBarItem,
-              { 
-                width: isSmallScreen ? width * 0.6 : 
-                       isLargeScreen ? width * 0.7 : 
-                       width * 0.65,
-                fontSize: isSmallScreen ? 11 : 12
-              }
+              {
+                width: isSmallScreen
+                  ? width * 0.6
+                  : isLargeScreen
+                  ? width * 0.7
+                  : width * 0.65,
+                fontSize: isSmallScreen ? 11 : 12,
+              },
             ]}
             placeholder="Rechercher par magasin..."
             placeholderTextColor="#888888"
@@ -204,13 +218,15 @@ const ArchiveOrder = () => {
           </TouchableOpacity>
         )}
       </View>
-      
-      <View style={[
-        styles.ordersContainer,
-        { 
-          paddingHorizontal: horizontalPadding,
-        }
-      ]}>
+
+      <View
+        style={[
+          styles.ordersContainer,
+          {
+            paddingHorizontal: horizontalPadding,
+          },
+        ]}
+      >
         {filteredArchiveOrdersData?.length > 0 ? (
           <FlatList
             data={filteredArchiveOrdersData?.reverse()}
@@ -230,17 +246,16 @@ const ArchiveOrder = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.containerScroll,
-              { 
+              {
                 gap: height * 0.02,
-                paddingBottom: Platform.OS === 'ios' ? height * 0.08 : height * 0.05
-              }
+                paddingBottom:
+                  Platform.OS === "ios" ? height * 0.08 : height * 0.05,
+              },
             ]}
           />
         ) : (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              Aucune commande trouvée
-            </Text>
+            <Text style={styles.emptyText}>Aucune commande trouvée</Text>
           </View>
         )}
       </View>
@@ -251,10 +266,10 @@ const ArchiveOrder = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? 10 : 3,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? 10 : 3,
     paddingBottom: 12,
-    height: '100%',
+    height: "100%",
   },
   container: {
     flexDirection: "column",
@@ -282,7 +297,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   searchBar: {
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     borderWidth: 1,
     alignItems: "center",
     paddingHorizontal: 15,

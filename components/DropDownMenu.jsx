@@ -16,7 +16,7 @@ const DropDownMenu = () => {
         anchor={
           <EllipsisVerticalIcon
             size={32}
-            color="#63BBF5"
+            color="#19213D"
             onPress={() => setVisible(true)}
           />
         }

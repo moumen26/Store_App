@@ -202,7 +202,7 @@ const Saved = () => {
         ]}
       >
         <View style={styles.searchInputContainer}>
-          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#63BBF5" />
+          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#19213D" />
           <TextInput
             style={[
               styles.searchBarItem,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   searchBar: {
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     borderWidth: 1,
     alignItems: "center",
     paddingHorizontal: 15,

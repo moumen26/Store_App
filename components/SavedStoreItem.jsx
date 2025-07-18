@@ -10,7 +10,7 @@ const SavedStoreItem = ({ StoreName, onPress }) => {
       className="w-full flex-row items-center justify-between"
     >
       <Text style={styles.textItemRegular}>{StoreName}</Text>
-      <ArrowRightIcon color="#63BBF5" size={18} />
+      <ArrowRightIcon color="#19213D" size={18} />
     </TouchableOpacity>
   );
 };
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   settingItem: {
     height: 45,
     borderBottomWidth: 0.5,
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     marginBottom: 10,
   },
 });

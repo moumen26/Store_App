@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import ConfirmationModal from "./ConfirmationModal";
 
-const RequestStoresCard = ({ StoresData, CategoriesData }) => { 
+const RequestStoresCard = ({ StoresData, CategoriesData }) => {
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -90,10 +90,18 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
           renderItem={({ item }) => (
             <TouchableOpacity
               key={item._id}
-              style={[styles.buttonStore, activeTab === item._id && styles.storeToggle]}
+              style={[
+                styles.buttonStore,
+                activeTab === item._id && styles.storeToggle,
+              ]}
               onPress={() => handleMenuClick(item._id)}
             >
-              <Text style={[styles.text, activeTab === item._id && styles.storeToggle]}>
+              <Text
+                style={[
+                  styles.text,
+                  activeTab === item._id && styles.storeToggle,
+                ]}
+              >
                 {item.name}
               </Text>
             </TouchableOpacity>
@@ -155,7 +163,7 @@ const styles = StyleSheet.create({
   },
   storeToggle: {
     backgroundColor: "#C9E4EE",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   allTransparent: {
     backgroundColor: "transparent",

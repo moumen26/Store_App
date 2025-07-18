@@ -177,7 +177,7 @@ const cart = () => {
         ]}
       >
         <View style={styles.searchInputContainer}>
-          <MagnifyingGlassIcon size={isSmallDevice ? 16 : 20} color="#63BBF5" />
+          <MagnifyingGlassIcon size={isSmallDevice ? 16 : 20} color="#19213D" />
           <TextInput
             style={[
               styles.searchBarItem,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   searchBar: {
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     borderWidth: 1,
     alignItems: "center",
     paddingHorizontal: 15,

@@ -106,7 +106,7 @@ const OrderType = memo(
         <View style={styles.addressContainer}>
           <View style={styles.gapRow}>
             <View style={styles.iconClass}>
-              <BuildingStorefrontIcon color="#63BBF5" size={20} />
+              <BuildingStorefrontIcon color="#19213D" size={20} />
             </View>
             <View style={styles.gapColumn}>
               <Text style={styles.textPlace}>The Daily Grind Hub</Text>
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   buttonOrderType: {
     width: 160,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   orderTypeToggle: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
   },
   orderTypeToggleText: {
     color: "#fff",
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   textChange: {
     fontFamily: "Montserrat-Regular",
     fontSize: 11,
-    color: "#63BBF5",
+    color: "#19213D",
   },
   tabContent: {
     paddingTop: 12,

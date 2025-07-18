@@ -39,10 +39,10 @@ const ShippingAddressCard = ({
             <Text style={styles.textdescription} numberOfLines={1}>
               {AddressPlace}
             </Text>
-            <View style={styles.timeContainer}>
+            {/* <View style={styles.timeContainer}>
               <ClockIcon size={14} color="#888888" />
               <Text style={styles.textdescription}>{AddressTime}</Text>
-            </View>
+            </View> */}
           </View>
         </View>
 
@@ -58,35 +58,21 @@ const ShippingAddressCard = ({
         </View>
       </View>
 
-      {/* Action buttons placed at the bottom of the card */}
+      {/* Action buttons */}
       <View style={styles.actionContainer}>
         <TouchableOpacity
           style={styles.editButton}
           onPress={() => onEdit(index)}
         >
-          <PencilIcon size={iconSize} color="#63BBF5" />
-          <Text
-            style={[
-              styles.editButtonText,
-              { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
-            ]}
-          >
-            Modifier
-          </Text>
+          <PencilIcon size={18} color="#19213D" />
+          <Text style={styles.editButtonText}>Modifier</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={() => onDelete(index)}
         >
-          <Text
-            style={[
-              styles.deleteButtonText,
-              { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
-            ]}
-          >
-            Supprimer
-          </Text>
+          <Text style={styles.deleteButtonText}>Supprimer</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -118,7 +104,7 @@ const styles = StyleSheet.create({
   locationIcon: {
     width: 20,
     height: 20,
-    tintColor: "#63BBF5",
+    tintColor: "#19213D",
   },
   textContainer: {
     flexDirection: "column",
@@ -155,7 +141,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   shippingItemSelected: {
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     backgroundColor: "#F8FBFC",
   },
   rightSection: {
@@ -175,10 +161,10 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
   },
   checkedContainer: {
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     backgroundColor: "#FFFFFF",
   },
   // Action buttons styles
@@ -190,6 +176,7 @@ const styles = StyleSheet.create({
     borderTopColor: "#F0F0F0",
     marginTop: 12,
     paddingTop: 12,
+    marginBottom: 12,
     gap: 12,
   },
   editButton: {
@@ -201,8 +188,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#EFF7FA",
   },
   editButtonText: {
-    color: "#63BBF5",
+    color: "#19213D",
     fontFamily: "Montserrat-Medium",
+    fontSize: 12,
     marginLeft: 6,
   },
   deleteButton: {
@@ -216,6 +204,7 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: "#FF6B6B",
     fontFamily: "Montserrat-Medium",
+    fontSize: 12,
   },
 });
 

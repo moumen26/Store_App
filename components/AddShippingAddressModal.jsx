@@ -149,7 +149,7 @@ const AddShippingAddressModal = ({
           <View style={styles.mapHeader}>
             <Text style={styles.mapTitle}>Sélectionner un emplacement</Text>
             <TouchableOpacity onPress={() => setShowMapSelector(false)}>
-              <XMarkIcon size={24} color="#63BBF5" />
+              <XMarkIcon size={24} color="#19213D" />
             </TouchableOpacity>
           </View>
 
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontFamily: "Montserrat-Medium",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   modalLabel: {
     fontSize: 14,
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   confirmButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
   },
   disabledButton: {
     opacity: 0.7,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   mapTitle: {
     fontSize: 18,
     fontFamily: "Montserrat-Medium",
-    color: "#63BBF5",
+    color: "#19213D",
   },
   mapPlaceholder: {
     flex: 1,
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   mockLocationButton: {
-    backgroundColor: "#63BBF5",
+    backgroundColor: "#19213D",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,

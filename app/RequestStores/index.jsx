@@ -163,7 +163,7 @@ const RequestStores = () => {
       >
         <MagnifyingGlassIcon
           size={isSmallScreen ? 18 : isLargeScreen ? 22 : 20}
-          color="#63BBF5"
+          color="#19213D"
         />
         <TextInput
           style={[styles.searchBarItem, { fontSize: searchBarFontSize }]}
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   searchBar: {
-    borderColor: "#63BBF5",
+    borderColor: "#19213D",
     borderWidth: 1,
     alignItems: "center",
     flexDirection: "row",
