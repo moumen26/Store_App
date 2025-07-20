@@ -1,13 +1,35 @@
+
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "expo-router";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Cart = require("../../assets/images/Cart.png");
 
 const YourCartScreen = () => {
   const navigation = useNavigation();
+  const { markYourCartAsSeen, completeAllOnboarding } = useAuthContext();
+
+  const handleNextPress = async () => {
+    try {
+      await markYourCartAsSeen();
+      navigation.navigate("YourOrders/index");
+    } catch (error) {
+      console.error("Error marking YourCart as seen:", error);
+    }
+  };
+
+  const handleSkip = async () => {
+    try {
+      // Complete all onboarding when skipping
+      await completeAllOnboarding();
+      navigation.navigate("SignIn/index");
+    } catch (error) {
+      console.error("Error completing onboarding:", error);
+    }
+  };
 
   return (
     <>
@@ -19,7 +41,7 @@ const YourCartScreen = () => {
           <View style={styles.Container}></View>
           <Image style={styles.Image} source={Cart} />
           <TouchableOpacity
-            onPress={() => navigation.navigate("SignIn/index")}
+            onPress={handleSkip}
             className="mx-5"
             style={styles.skipContainer}
           >
@@ -42,13 +64,14 @@ const YourCartScreen = () => {
             <BackButton />
             <View className="flex-row space-x-2 items-center">
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
+              <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#19213D] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
             </View>
 
             <TouchableOpacity
               style={styles.NextButton}
-              onPress={() => navigation.navigate("YourOrders/index")}
+              onPress={handleNextPress}
             >
               <ArrowRightIcon color="#fff" size={18} />
             </TouchableOpacity>

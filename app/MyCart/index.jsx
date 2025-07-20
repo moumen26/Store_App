@@ -88,6 +88,7 @@ const MyCartScreen = () => {
   // Handle order submission
   const handleSubmitOrder = useCallback(async () => {
     setSubmitionLoading(true);
+    setConfirmationModalVisible(false);
     try {
       const response = await fetch(
         `${Config.API_URL}/Receipt/${user?.info?.id}/${storeId}`,

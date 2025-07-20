@@ -3,11 +3,38 @@ import React from "react";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "expo-router";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Track = require("../../assets/images/Track.png");
 
 const YourOrdersScreen = () => {
   const navigation = useNavigation();
+  const { markYourOrdersAsSeen, completeAllOnboarding } = useAuthContext();
+
+  const handleNextPress = async () => {
+    try {
+      await markYourOrdersAsSeen();
+      // Navigate to SignIn since this is the last onboarding screen
+      navigation.navigate("SignIn/index");
+    } catch (error) {
+      console.error("Error marking YourOrders as seen:", error);
+    }
+  };
+
+  const handleSkip = async () => {
+    try {
+      // Complete all onboarding when skipping
+      await completeAllOnboarding();
+      navigation.navigate("SignIn/index");
+    } catch (error) {
+      console.error("Error completing onboarding:", error);
+    }
+  };
+
+  const handleBack = () => {
+    // Navigate back to YourCart screen
+    navigation.navigate("YourCart/index");
+  };
 
   return (
     <>
@@ -18,6 +45,13 @@ const YourOrdersScreen = () => {
         >
           <View style={styles.Container}></View>
           <Image style={styles.Image} source={Track} />
+          <TouchableOpacity
+            onPress={handleSkip}
+            className="mx-5"
+            style={styles.skipContainer}
+          >
+            <Text style={styles.skipText}>Skip</Text>
+          </TouchableOpacity>
         </View>
         <View className="mx-5 mt-[24] flex justify-center">
           <View className="flex h-[90] items-center justify-center">
@@ -33,8 +67,11 @@ const YourOrdersScreen = () => {
             </Text>
           </View>
           <View className="flex-row justify-between mx-5 mt-[40]">
-            <BackButton />
+            <TouchableOpacity onPress={handleBack}>
+              <BackButton />
+            </TouchableOpacity>
             <View className="flex-row space-x-2 items-center">
+              <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#19213D]"></View>
@@ -42,7 +79,7 @@ const YourOrdersScreen = () => {
 
             <TouchableOpacity
               style={styles.NextButton}
-              onPress={() => navigation.navigate("SignIn/index")}
+              onPress={handleNextPress}
             >
               <ArrowRightIcon color="#fff" size={18} />
             </TouchableOpacity>
@@ -88,6 +125,17 @@ const styles = StyleSheet.create({
     height: "90%",
     resizeMode: "contain",
     zIndex: 99,
+  },
+  skipContainer: {
+    position: "absolute",
+    top: 20,
+    right: 0,
+    zIndex: 99,
+  },
+  skipText: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#19213D",
   },
   title: {
     fontFamily: "Montserrat-Regular",

@@ -7,7 +7,7 @@ import {
   useWindowDimensions,
   Platform,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import { useNavigation } from "expo-router";
@@ -24,7 +24,20 @@ const SignInScreen = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { dispatch } = useAuthContext();
+  const { dispatch, completeAllOnboarding } = useAuthContext();
+  
+  // Complete onboarding when user reaches SignIn screen
+  useEffect(() => {
+    const completeOnboarding = async () => {
+      try {
+        await completeAllOnboarding();
+      } catch (error) {
+        console.error("Error completing onboarding on SignIn:", error);
+      }
+    };
+    
+    completeOnboarding();
+  }, [completeAllOnboarding]);
 
   // Get screen dimensions
   const { width, height } = useWindowDimensions();

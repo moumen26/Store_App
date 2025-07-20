@@ -69,6 +69,8 @@ const Product = memo(() => {
       store: storeId,
       ...product,
       stock: data?._id,
+      unityPrice: data?.selling, // Add unit price
+      price: product.quantity * data?.selling, // Add total price
       product: {
         image: `${Config.FILES_URL}/${data?.product?.image}`,
         name: `${data?.product?.name} ${data?.product?.size}`,
@@ -77,7 +79,7 @@ const Product = memo(() => {
     };
 
     dispatch({ type: "ADD_TO_CART", payload: updatedProduct });
-    setProduct(null);
+    setProduct(null);    
     navigator.goBack();
   }, [data, product, storeId, dispatch, navigator]);
 

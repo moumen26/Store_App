@@ -98,7 +98,7 @@ const ResetPassword = () => {
               borderRadius: isSmallScreen ? 8 : 10,
             },
           ]}
-          onPress={() => navigation.navigate("SignInScreen")}
+          // onPress={() => navigation.navigate("SignInScreen")}
         >
           <Text
             style={[

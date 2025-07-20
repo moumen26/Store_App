@@ -11,11 +11,13 @@ import React from "react";
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Home = require("../../assets/images/Home.png");
 
 const DiscoverScreen = () => {
   const navigation = useNavigation();
+  const { markDiscoverAsSeen, completeAllOnboarding } = useAuthContext();
 
   // Get screen dimensions
   const { width, height } = useWindowDimensions();
@@ -44,6 +46,25 @@ const DiscoverScreen = () => {
     : width * 0.5;
   const imageHeight = imageContainerHeight * 0.9;
 
+  const handleNextPress = async () => {
+    try {
+      await markDiscoverAsSeen();
+      navigation.navigate("YourCart/index");
+    } catch (error) {
+      console.error("Error marking Discover as seen:", error);
+    }
+  };
+
+  const handleSkip = async () => {
+    try {
+      // Complete all onboarding when skipping
+      await completeAllOnboarding();
+      navigation.navigate("SignIn/index");
+    } catch (error) {
+      console.error("Error completing onboarding:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
@@ -61,17 +82,15 @@ const DiscoverScreen = () => {
           ]}
           source={Home}
         />
-        {/* Uncomment if skip button is needed
         <TouchableOpacity
-          onPress={() => navigation.navigate("SignIn/index")}
+          onPress={handleSkip}
           style={[
             styles.skipContainer,
-            { right: horizontalPadding }
+            { right: horizontalPadding, top: 50 }
           ]}
         >
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
-        */}
       </View>
 
       <View
@@ -143,8 +162,8 @@ const DiscoverScreen = () => {
           ></View>
 
           <View style={styles.indicatorContainer}>
-            <View style={styles.activeIndicator}></View>
             <View style={styles.inactiveIndicator}></View>
+            <View style={styles.activeIndicator}></View>
             <View style={[styles.inactiveIndicator, { marginRight: 0 }]}></View>
           </View>
 
@@ -157,7 +176,7 @@ const DiscoverScreen = () => {
                 borderRadius: isSmallScreen ? 16 : 20,
               },
             ]}
-            onPress={() => navigation.navigate("YourCart/index")}
+            onPress={handleNextPress}
           >
             <ArrowRightIcon color="#fff" size={isSmallScreen ? 16 : 18} />
           </TouchableOpacity>
