@@ -11,8 +11,13 @@ const PopularProductCard = ({ imgUrl, ProductName, onPress }) => {
       >
         <Image source={{ uri: `${imgUrl || ""}` }} style={styles.image} />
       </View>
-      <View className="h-[53px] w-full flex-row items-center justify-center">
-        <Text style={styles.text}>{ProductName}</Text>
+      <View
+        className="h-[53px] w-full flex-row items-center justify-center"
+        style={{ paddingHorizontal: 10 }}
+      >
+        <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">
+          {ProductName}
+        </Text>
       </View>
     </TouchableOpacity>
   );

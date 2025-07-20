@@ -14,7 +14,10 @@ const CartRow = ({
         <View className="flex-row items-center">
           <Image style={styles.Image} source={{ uri: ProductImage }} />
 
-          <View className="flex-col space-y-[1.5]">
+          <View
+            className="flex-col space-y-[1.5]"
+            style={{ flex: 1, paddingRight: 10, paddingLeft: 10 }}
+          >
             <Text style={styles.textProductName}>{ProductName}</Text>
             <Text style={styles.textProductDescription}>
               {ProductBrand} | Qty.: {ProductQuantity}

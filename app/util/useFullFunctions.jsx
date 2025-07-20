@@ -9,6 +9,7 @@ const formatDate = (dateString) => {
     .utc(dateString, inputFormat, true)
     .format("D MMMM YYYY [at] HH:mm:ss");
 };
+
 const orderStatusTextDisplayer = (status, type) => {
   switch (status?.toString()) {
     case "0":
@@ -16,9 +17,11 @@ const orderStatusTextDisplayer = (status, type) => {
     case "1":
       return "Preparing your order";
     case "2":
-      return type?.toString() == 'pickup' ? "Ready for Pickup" : "Order on the way to address";
+      return type?.toString() == "pickup"
+        ? "Ready for Pickup"
+        : "Order on the way to address";
     case "3":
-      return type?.toString() == 'pickup' ? "Picked up" : "Delivered";
+      return type?.toString() == "pickup" ? "Picked up" : "Delivered";
     case "10":
       return "Fully paid";
     default:
@@ -26,4 +29,11 @@ const orderStatusTextDisplayer = (status, type) => {
   }
 };
 
+// Add a default export to satisfy the .jsx requirement
+const UtilityFunctions = {
+  formatDate,
+  orderStatusTextDisplayer,
+};
+
+export default UtilityFunctions;
 export { formatDate, orderStatusTextDisplayer };

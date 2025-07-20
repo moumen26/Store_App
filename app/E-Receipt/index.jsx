@@ -9,6 +9,9 @@ import {
   useWindowDimensions,
   Platform,
 } from "react-native";
+// Remove the problematic barcode import
+// import Barcode, { Format } from "react-native-barcode-builder";
+
 import React, { useLayoutEffect, useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
@@ -16,7 +19,6 @@ import BackButton from "../../components/BackButton";
 import CartRow from "../../components/CartRow";
 import SubmitOrderModal from "../../components/SubmitOrderModal.jsx";
 import EReceiptDetails from "../../components/EReceiptDetails";
-import Barcode from "react-native-barcode-svg";
 import { useRoute } from "@react-navigation/native";
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
@@ -43,28 +45,38 @@ const EReceiptScreen = () => {
   const route = useRoute();
   const { OrderID } = route.params;
 
-  // Get screen dimensions
+  // Get screen dimensions with validation
   const { width, height } = useWindowDimensions();
 
-  // Calculate responsive values
-  const isSmallScreen = width < 375;
-  const isMediumScreen = width >= 375 && width < 768;
-  const isLargeScreen = width >= 768;
+  // Validate dimensions to prevent NaN
+  const safeWidth = width && !isNaN(width) ? width : 375;
+  const safeHeight = height && !isNaN(height) ? height : 667;
 
-  // Responsive spacing calculations
-  const horizontalPadding = width * 0.05;
-  const verticalSpacing = height * 0.025;
-  const smallSpacing = height * 0.01;
+  // Calculate responsive values with safe dimensions
+  const isSmallScreen = safeWidth < 375;
+  const isMediumScreen = safeWidth >= 375 && safeWidth < 768;
+  const isLargeScreen = safeWidth >= 768;
 
-  // Additional responsive values
-  const buttonHeight = Math.max(45, height * 0.06);
-  const buttonWidth = isLargeScreen ? width * 0.6 : width * 0.85;
+  // Responsive spacing calculations with safe values
+  const horizontalPadding = safeWidth * 0.05;
+  const verticalSpacing = safeHeight * 0.025;
+  const smallSpacing = safeHeight * 0.01;
+
+  // Additional responsive values with validation
+  const buttonHeight = Math.max(45, safeHeight * 0.06);
+  const buttonWidth = isLargeScreen ? safeWidth * 0.6 : safeWidth * 0.85;
   const barcodeWidth = isSmallScreen
-    ? width * 0.8
+    ? safeWidth * 0.95
     : isLargeScreen
-    ? width * 0.6
-    : width * 0.7;
+    ? safeWidth * 0.85
+    : safeWidth * 0.9;
   const bottomBarHeight = isSmallScreen ? 70 : 80;
+
+  // Validate OrderID before using it
+  const validOrderID =
+    OrderID && typeof OrderID === "string" && OrderID.trim() !== ""
+      ? OrderID.trim()
+      : null;
 
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
@@ -96,21 +108,21 @@ const EReceiptScreen = () => {
     isLoading: OrderDataLoading,
     refetch: OrderDataRefetch,
   } = useQuery({
-    queryKey: ["OrderData", user?.token], // Ensure token is part of the query key
-    queryFn: fetchOrderData, // Pass token to the fetch function
-    enabled: !!user?.token, // Only run the query if user is authenticated
+    queryKey: ["OrderData", user?.token, validOrderID], // Include OrderID in query key
+    queryFn: fetchOrderData,
+    enabled: !!user?.token && !!validOrderID, // Only run if user is authenticated and OrderID is valid
     refetchInterval: 10000, // Refetch every 10 seconds
-    refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
+    refetchOnWindowFocus: true,
   });
 
   // Refetch data when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      if (user?.token) {
+      if (user?.token && validOrderID) {
         OrderDataRefetch();
       }
       return () => {};
-    }, [user?.token])
+    }, [user?.token, validOrderID])
   );
 
   const html = `
@@ -299,43 +311,50 @@ const EReceiptScreen = () => {
         </div>
         <div class="invoice-title">
           <h2>FACTURE</h2>
-          <p>N° ${OrderData?.reciept?._id}</p>
-          <p>Date: ${new Date(OrderData?.reciept?.date).toLocaleDateString(
-            "fr-FR"
-          )}</p>
+          <p>N° ${OrderData?.reciept?._id || "N/A"}</p>
+          <p>Date: ${
+            OrderData?.reciept?.date
+              ? new Date(OrderData.reciept.date).toLocaleDateString("fr-FR")
+              : "N/A"
+          }</p>
         </div>
       </div>
 
       <div class="barcode-container">
-        <img src="https://barcode.tec-it.com/barcode.ashx?data=${
+        ${
           OrderData?.reciept?._id
-        }&code=Code128&dpi=300" />
+            ? `<img src="https://barcode.tec-it.com/barcode.ashx?data=${OrderData.reciept._id}&code=Code128&dpi=300" />`
+            : "<p>Code-barres non disponible</p>"
+        }
       </div>
 
       <div class="client-info">
         <div class="info-section">
           <h3>Informations du Client</h3>
-          <p><strong>Nom:</strong> ${user?.info?.firstName} ${
-    user?.info?.lastName
+          <p><strong>Nom:</strong> ${user?.info?.firstName || ""} ${
+    user?.info?.lastName || ""
   }</p>
-          <p><strong>Email:</strong> ${user?.info?.email}</p>
-          <p><strong>Téléphone:</strong> ${user?.info?.phoneNumber}</p>
+          <p><strong>Email:</strong> ${user?.info?.email || "N/A"}</p>
+          <p><strong>Téléphone:</strong> ${user?.info?.phoneNumber || "N/A"}</p>
         </div>
         <div class="info-section">
           <h3>Détails de Livraison</h3>
           <p><strong>Magasin:</strong> ${
-            OrderData?.reciept?.store?.storeName
+            OrderData?.reciept?.store?.storeName || "N/A"
           }</p>
           <p><strong>Type:</strong> ${
-            OrderData?.reciept?.type === "pickup" ? "Retrait" : "Livraison"
+            OrderData?.reciept?.type === "pickup"
+              ? "Retrait"
+              : OrderData?.reciept?.type === "delivery"
+              ? "Livraison"
+              : "N/A"
           }</p>
           ${
             OrderData?.reciept?.type === "delivery"
-              ? `
-            <p><strong>Adresse:</strong> ${
-              OrderData?.reciept?.deliveredLocation?.address || ""
-            }</p>
-          `
+              ? `<p><strong>Adresse:</strong> ${
+                  OrderData?.reciept?.deliveredLocation?.address ||
+                  "Adresse non disponible"
+                }</p>`
               : ""
           }
         </div>
@@ -351,33 +370,40 @@ const EReceiptScreen = () => {
           </tr>
         </thead>
         <tbody>
-          ${OrderData?.recieptStatus?.products
-            ?.map((product) => {
-              const unitPrice = product.quantity
-                ? (product.total / product.quantity).toFixed(2)
-                : "0.00";
-              return `
-              <tr>
-                <td>
-                  <div class="product-details">
-                    <img class="product-image" src="${Config.FILES_URL}/${
-                product?.product?.image
-              }" />
-                    <div>
-                      <div class="product-name">${product?.product?.name}</div>
-                      <div class="product-brand">${
-                        product?.product?.brand?.name
-                      }</div>
+          ${
+            OrderData?.recieptStatus?.products?.length > 0
+              ? OrderData.recieptStatus.products
+                  .map((product) => {
+                    const unitPrice =
+                      product.quantity && product.total
+                        ? (product.total / product.quantity).toFixed(2)
+                        : "0.00";
+                    return `
+                <tr>
+                  <td>
+                    <div class="product-details">
+                      <img class="product-image" src="${Config.FILES_URL}/${
+                      product?.product?.image || "placeholder.jpg"
+                    }" />
+                      <div>
+                        <div class="product-name">${
+                          product?.product?.name || "Produit non disponible"
+                        }</div>
+                        <div class="product-brand">${
+                          product?.product?.brand?.name || "Marque inconnue"
+                        }</div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>${product?.quantity}</td>
-                <td>${unitPrice} DA</td>
-                <td>${product?.total?.toFixed(2)} DA</td>
-              </tr>
-            `;
-            })
-            ?.join("")}
+                  </td>
+                  <td>${product?.quantity || 0}</td>
+                  <td>${unitPrice} DA</td>
+                  <td>${product?.total?.toFixed(2) || "0.00"} DA</td>
+                </tr>
+              `;
+                  })
+                  .join("")
+              : '<tr><td colspan="4" style="text-align: center;">Aucun produit disponible</td></tr>'
+          }
         </tbody>
       </table>
 
@@ -385,9 +411,9 @@ const EReceiptScreen = () => {
         <div class="total-table">
           <tr>
             <span class="label">Sous-total:</span>
-            <span class="value">${OrderData?.reciept?.total?.toFixed(
-              2
-            )} DA</span>
+            <span class="value">${
+              OrderData?.reciept?.total?.toFixed(2) || "0.00"
+            } DA</span>
           </tr>
           ${
             OrderData?.reciept?.type === "delivery"
@@ -404,8 +430,8 @@ const EReceiptScreen = () => {
           <tr class="grand-total">
             <span class="label">Total:</span>
             <span class="value">${(
-              OrderData?.reciept?.total + (OrderData?.deliveryCost || 0)
-            )?.toFixed(2)} DA</span>
+              (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0)
+            ).toFixed(2)} DA</span>
           </tr>
         </div>
       </div>
@@ -423,17 +449,151 @@ const EReceiptScreen = () => {
   </html>
   `;
 
-  let generatePDF = async () => {
-    const file = await printToFileAsync({
-      html: html,
-      base64: false,
-    });
-
-    await shareAsync(file.uri);
+  const generatePDF = async () => {
+    try {
+      const file = await printToFileAsync({
+        html: html,
+        base64: false,
+      });
+      await shareAsync(file.uri);
+    } catch (error) {
+      console.log("Error generating PDF:", error);
+      // You might want to show an alert or toast here
+    }
   };
 
-  const BarcodeWrapper = ({ value, format = "CODE128", ...props }) => {
-    return <Barcode value={value} format={format} {...props} />;
+  // Alternative Barcode Component using online service
+  const BarcodeWrapper = ({ value, width, height }) => {
+    // Validate the barcode value
+    if (!value || typeof value !== "string" || value.trim() === "") {
+      return (
+        <View
+          style={{
+            width: width || 200,
+            height: height || 100,
+            backgroundColor: "#f0f0f0",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 8,
+          }}
+        >
+          <Text style={{ fontSize: 12, color: "#888" }}>
+            Code-barres indisponible
+          </Text>
+        </View>
+      );
+    }
+
+    // Ensure width and height are valid numbers
+    const validWidth = isNaN(width) ? 200 : width;
+    const validHeight = isNaN(height) ? 100 : height;
+
+    // Clean the value for barcode generation
+    const cleanValue = value.toString().trim();
+
+    // Use online barcode service - remove text display by setting ShowText=No
+    const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${encodeURIComponent(
+      cleanValue
+    )}&code=Code128&dpi=150&imagetype=Gif&ShowText=No`;
+
+    return (
+      <View
+        style={{
+          width: validWidth,
+          height: validHeight,
+          backgroundColor: "#fff",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 8,
+        }}
+      >
+        <Image
+          source={{ uri: barcodeUrl }}
+          style={{
+            width: validWidth,
+            height: validHeight,
+            resizeMode: "contain",
+          }}
+          onError={() => {
+            console.log("Barcode image failed to load");
+          }}
+        />
+      </View>
+    );
+  };
+
+  // Alternative: Simple styled text-based "barcode" component
+  const TextBarcode = ({ value, width, height }) => {
+    if (!value || typeof value !== "string" || value.trim() === "") {
+      return (
+        <View
+          style={{
+            width: width || 200,
+            height: height || 80,
+            backgroundColor: "#f0f0f0",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: "#ddd",
+          }}
+        >
+          <Text style={{ fontSize: 12, color: "#888" }}>
+            Code-barres indisponible
+          </Text>
+        </View>
+      );
+    }
+
+    const cleanValue = value.toString().trim();
+
+    return (
+      <View
+        style={{
+          width: width || 200,
+          height: height || 80,
+          backgroundColor: "#fff",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 8,
+          borderWidth: 2,
+          borderColor: "#19213D",
+          padding: 15,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: 5,
+          }}
+        >
+          {/* Simple visual bars representation */}
+          {[...Array(20)].map((_, i) => (
+            <View
+              key={i}
+              style={{
+                width: Math.random() > 0.5 ? 2 : 1,
+                height: 30,
+                backgroundColor: "#000",
+                marginHorizontal: 0.5,
+              }}
+            />
+          ))}
+        </View>
+        <Text
+          style={{
+            fontSize: 12,
+            color: "#19213D",
+            fontFamily: "Montserrat-Regular",
+            textAlign: "center",
+          }}
+        >
+          {cleanValue}
+        </Text>
+      </View>
+    );
   };
 
   //--------------------------------------------Rendering--------------------------------------------
@@ -445,7 +605,7 @@ const EReceiptScreen = () => {
         >
           <View style={styles.containerLoadingtextScreen}>
             <ShimmerPlaceholder
-              style={[styles.textScreen, { width: width * 0.6 }]}
+              style={[styles.textScreen, { width: safeWidth * 0.6 }]}
             />
           </View>
           <CodeBar />
@@ -454,6 +614,26 @@ const EReceiptScreen = () => {
           <ArticleItem />
           <ArticleItem />
           <EReceiptDetailsShimmer />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Show error state if OrderID is invalid
+  if (!validOrderID) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View
+          style={[styles.container, { marginHorizontal: horizontalPadding }]}
+        >
+          <View style={styles.headerContainer}>
+            <BackButton />
+            <Text style={styles.titleScreen}>E-Reçu</Text>
+            <View style={{ width: 24 }} />
+          </View>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Numéro de commande invalide</Text>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -472,7 +652,9 @@ const EReceiptScreen = () => {
       >
         <FlatList
           data={OrderData?.recieptStatus?.products || []}
-          keyExtractor={(item) => item?.stock?.toString()}
+          keyExtractor={(item, index) =>
+            item?.stock?.toString() || index.toString()
+          }
           ListHeaderComponent={
             <>
               <View
@@ -503,11 +685,33 @@ const EReceiptScreen = () => {
                   { marginBottom: verticalSpacing },
                 ]}
               >
-                <BarcodeWrapper
-                  value={OrderID}
-                  width={barcodeWidth}
-                  height={isSmallScreen ? 70 : 80}
-                />
+                {/* Choose one of these three options: */}
+
+                {/* Option 1: Online barcode service (recommended) */}
+                {validOrderID && !OrderDataLoading ? (
+                  <BarcodeWrapper
+                    value={validOrderID}
+                    width={barcodeWidth}
+                    height={isSmallScreen ? 70 : 80}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      width: barcodeWidth,
+                      height: isSmallScreen ? 70 : 80,
+                      backgroundColor: "#f0f0f0",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Text style={{ fontSize: 12, color: "#888" }}>
+                      {OrderDataLoading
+                        ? "Chargement du code-barres..."
+                        : "Code-barres indisponible"}
+                    </Text>
+                  </View>
+                )}
               </View>
             </>
           }
@@ -516,9 +720,7 @@ const EReceiptScreen = () => {
               ProductQuantity={item?.quantity}
               ProductName={item?.product?.name}
               ProductBrand={item?.product?.brand?.name}
-              ProductImage={`${
-                `${Config.FILES_URL}/${item?.product?.image}` || ""
-              }`}
+              ProductImage={`${Config.FILES_URL}/${item?.product?.image || ""}`}
               BoxItems={item?.product?.boxItems}
             />
           )}

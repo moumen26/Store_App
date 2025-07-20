@@ -11,11 +11,21 @@ const ProductCard = ({
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.row}>
-      <Image source={{ uri: `${imgUrl || ""}` }} style={styles.image} />
-      <View>
+      <Image source={{ uri: imgUrl || "" }} style={styles.image} />
+      <View
+        style={{
+          flex: 1,
+          paddingRight: 10,
+          paddingLeft: 10,
+        }}
+      >
         <Text style={styles.textName}>{ProductName}</Text>
-        <Text style={styles.textBrand}>{ProductBrand}</Text>
-        <Text style={styles.textPrice}>DA {ProductPrice}</Text>
+        <Text style={styles.textBrand} numberOfLines={1} ellipsizeMode="tail">
+          {ProductBrand}
+        </Text>
+        <Text style={styles.textPrice} numberOfLines={1} ellipsizeMode="tail">
+          DA {ProductPrice}
+        </Text>
       </View>
     </TouchableOpacity>
   );

@@ -1,32 +1,12 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import { useNavigation } from "expo-router";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { Link, useNavigation } from "expo-router";
+import { ArrowRightIcon } from "react-native-heroicons/outline";
 
 const StepIntoImg = require("../../assets/images/StepInto.png");
 
 const StepIntoScreen = () => {
   const navigation = useNavigation();
-  const { markStepIntoAsSeen, completeAllOnboarding } = useAuthContext();
-
-  const handleGetStarted = async () => {
-    try {
-      await markStepIntoAsSeen();
-      navigation.navigate("Discover/index");
-    } catch (error) {
-      console.error("Error marking StepInto as seen:", error);
-    }
-  };
-
-  const handleSignIn = async () => {
-    try {
-      // Complete all onboarding when skipping
-      await completeAllOnboarding();
-      navigation.navigate("SignIn/index");
-    } catch (error) {
-      console.error("Error completing onboarding:", error);
-    }
-  };
 
   return (
     <View className="bg-white h-full">
@@ -39,29 +19,42 @@ const StepIntoScreen = () => {
       </View>
       <View className="mx-5 mt-[24] flex justify-center">
         <View className="flex h-[90] items-center justify-center">
-          <Text style={styles.title}>Step into our World</Text>
+          <Text style={styles.title}>Entrez dans notre Monde</Text>
           <Text style={styles.title} className="text-[#19213D]">
-            of Stores
+            de Magasins
           </Text>
         </View>
         <View className="flex items-center justify-center h-[50]">
           <Text style={styles.description}>
-            Immerse yourself in our world of diverse stores, offering everything
-            you need under one roof
+            Plongez-vous dans notre monde de magasins diversifiés, offrant tout
+            ce dont vous avez besoin sous un même toit
           </Text>
         </View>
         <TouchableOpacity
           className="mt-[24]"
           style={styles.loginButton}
-          onPress={handleGetStarted}
+          onPress={() => navigation.navigate("Discover/index")}
         >
-          <Text style={styles.loginButtonText}>Let's get Started</Text>
+          <Text style={styles.loginButtonText}>Commençons</Text>
         </TouchableOpacity>
 
         <View className="flex-row justify-center items-center space-x-1 mt-[28]">
-          <Text style={styles.text}>Already have an account?</Text>
-          <TouchableOpacity onPress={handleSignIn}>
-            <Text style={styles.textForgotPassword}>Sign In</Text>
+          <Text style={styles.text}>Vous avez déjà un compte ?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("SignIn/index")}>
+            <Text style={styles.textForgotPassword}>Se connecter</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View className="flex-row justify-between mx-5 mt-[40]">
+          <BackButton />
+          <View className="flex-row space-x-2 items-center">
+            <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
+            <View className="w-[10] h-[10] rounded bg-[#19213D] mr-1"></View>
+            <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
+          </View>
+
+          <TouchableOpacity style={styles.NextButton} onPress={handleNextPress}>
+            <ArrowRightIcon color="#fff" size={18} />
           </TouchableOpacity>
         </View>
       </View>
@@ -97,7 +90,7 @@ const styles = StyleSheet.create({
   },
   ImageContainer: {
     width: "100%",
-    height: 492,
+    height: 192,
     position: "relative",
     overflow: "hidden",
   },

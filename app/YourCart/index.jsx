@@ -1,4 +1,3 @@
-
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
@@ -45,25 +44,24 @@ const YourCartScreen = () => {
             className="mx-5"
             style={styles.skipContainer}
           >
-            <Text style={styles.skipText}>Skip</Text>
+            <Text style={styles.skipText}>Passer</Text>
           </TouchableOpacity>
         </View>
         <View className="mx-5 mt-[24] flex justify-center">
           <View className="flex h-[90] items-center justify-center">
-            <Text style={styles.title}>Your Shopping</Text>
+            <Text style={styles.title}>Votre Panier</Text>
             <Text style={styles.title} className="text-[#19213D]">
-              Cart
+              d'Achats
             </Text>
           </View>
           <View className="flex items-center justify-center h-[50]">
             <Text style={styles.description}>
-              Review your selected items before checkout
+              Vérifiez vos articles sélectionnés avant de passer commande
             </Text>
           </View>
           <View className="flex-row justify-between mx-5 mt-[40]">
             <BackButton />
             <View className="flex-row space-x-2 items-center">
-              <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#19213D] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
   },
   skipContainer: {
     position: "absolute",
-    top: 20,
+    top: 60,
     right: 0,
     zIndex: 99,
   },

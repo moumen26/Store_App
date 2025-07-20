@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   searchBar: {
-    borderColor: "#19213D",
+    borderColor: "#E3EFFF",
     borderWidth: 1,
     alignItems: "center",
     flexDirection: "row",

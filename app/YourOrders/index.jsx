@@ -50,20 +50,20 @@ const YourOrdersScreen = () => {
             className="mx-5"
             style={styles.skipContainer}
           >
-            <Text style={styles.skipText}>Skip</Text>
+            <Text style={styles.skipText}>Passer</Text>
           </TouchableOpacity>
         </View>
         <View className="mx-5 mt-[24] flex justify-center">
           <View className="flex h-[90] items-center justify-center">
-            <Text style={styles.title}>Stay in the know with</Text>
+            <Text style={styles.title}>Restez informé avec</Text>
             <Text style={styles.title} className="text-[#19213D]">
-              Your Orders
+              Vos Commandes
             </Text>
           </View>
           <View className="flex items-center justify-center h-[50]">
             <Text style={styles.description}>
-              Stay updated with the status of your orders and track their
-              progress with ease
+              Restez à jour sur le statut de vos commandes et suivez leur
+              progression en toute simplicité
             </Text>
           </View>
           <View className="flex-row justify-between mx-5 mt-[40]">
@@ -71,7 +71,6 @@ const YourOrdersScreen = () => {
               <BackButton />
             </TouchableOpacity>
             <View className="flex-row space-x-2 items-center">
-              <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
               <View className="w-[10] h-[10] rounded bg-[#19213D]"></View>
