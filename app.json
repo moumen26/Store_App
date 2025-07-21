@@ -20,7 +20,9 @@
         "backgroundColor": "#192130"
       },
       "permissions": [
-        "CAMERA"
+        "CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.mosagro.clientapplication"
     },
@@ -56,7 +58,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "ef90c33b-3b50-416b-a45f-5ee1b067f395"
+        "projectId": "88bedf14-accc-43fd-8a5e-3d51a596b4b8"
       }
     }
   }

@@ -46,14 +46,14 @@ const StepIntoScreen = () => {
         </View>
 
         <View className="flex-row justify-between mx-5 mt-[40]">
-          <BackButton />
+          {/* <BackButton /> */}
           <View className="flex-row space-x-2 items-center">
             <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
             <View className="w-[10] h-[10] rounded bg-[#19213D] mr-1"></View>
             <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
           </View>
 
-          <TouchableOpacity style={styles.NextButton} onPress={handleNextPress}>
+          <TouchableOpacity style={styles.NextButton}>
             <ArrowRightIcon color="#fff" size={18} />
           </TouchableOpacity>
         </View>
