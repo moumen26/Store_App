@@ -17,6 +17,7 @@
     "@clerk/clerk-expo": "^2.14.9",
     "@expo/vector-icons": "~14.1.0",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/netinfo": "11.4.1",
     "@react-navigation/bottom-tabs": "^7.4.2",
     "@reduxjs/toolkit": "^2.8.2",
     "@sentry/react-native": "~6.14.0",
@@ -31,6 +32,7 @@
     "expo-constants": "~17.1.7",
     "expo-font": "~13.3.2",
     "expo-haptics": "~14.1.4",
+    "expo-linear-gradient": "^14.1.5",
     "expo-linking": "~7.1.7",
     "expo-print": "~14.1.4",
     "expo-router": "~5.1.4",
@@ -64,12 +66,11 @@
     "react-native-shimmer-placeholder": "^2.0.9",
     "react-native-step-indicator": "^1.0.3",
     "react-native-super-grid": "^6.0.1",
+    "react-native-svg": "15.11.2",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "react-redux": "^9.2.0",
-    "react-native-svg": "15.11.2",
-    "@react-native-community/netinfo": "11.4.1"
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",
