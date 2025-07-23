@@ -4,9 +4,26 @@ import "./../global.css";
 import "core-js/stable/atob";
 import { AuthContextProvider } from "./context/Authcontext.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://eab083935172317d16868ec02d78fd4b@o4509713532846080.ingest.de.sentry.io/4509713538547792',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 const queryClient = new QueryClient();
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   useFonts({
     "Montserrat-Regular": require("../assets/fonts/Montserrat-Regular.ttf"),
     "Montserrat-Medium": require("../assets/fonts/Montserrat-Medium.ttf"),
@@ -191,4 +208,4 @@ export default function RootLayout() {
       </AuthContextProvider>
     </QueryClientProvider>
   );
-}
+});

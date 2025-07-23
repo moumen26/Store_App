@@ -191,21 +191,31 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const handleNavigation = async () => {
       try {
+        // // Set onboarding state false
+        // await AsyncStorage.setItem("hasSeenStepInto", "false");
+        // await AsyncStorage.setItem("hasSeenDiscover", "false");
+        // await AsyncStorage.setItem("hasSeenYourCart", "false");
+        // await AsyncStorage.setItem("hasSeenYourOrders", "false");
+        // await AsyncStorage.setItem("onboardingCompleted", "false");
+        // console.log("Onboarding state reset to false");
+
         // Check onboarding status for all screens
         const hasSeenStepInto = await AsyncStorage.getItem("hasSeenStepInto");
         const hasSeenDiscover = await AsyncStorage.getItem("hasSeenDiscover");
         const hasSeenYourCart = await AsyncStorage.getItem("hasSeenYourCart");
         const hasSeenYourOrders = await AsyncStorage.getItem("hasSeenYourOrders");
         const onboardingCompleted = await AsyncStorage.getItem("onboardingCompleted");
+
+        
         
         dispatch({ 
           type: "SET_ONBOARDING_STATE", 
           payload: { 
-            hasSeenStepInto: hasSeenStepInto === "true",
-            hasSeenDiscover: hasSeenDiscover === "true",
-            hasSeenYourCart: hasSeenYourCart === "true",
-            hasSeenYourOrders: hasSeenYourOrders === "true",
-            onboardingCompleted: onboardingCompleted === "true"
+            hasSeenStepInto: hasSeenStepInto === "false",
+            hasSeenDiscover: hasSeenDiscover === "false",
+            hasSeenYourCart: hasSeenYourCart === "false",
+            hasSeenYourOrders: hasSeenYourOrders === "false",
+            onboardingCompleted: onboardingCompleted === "false"
           }
         });
 

@@ -2,12 +2,33 @@ import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { Link, useNavigation } from "expo-router";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
+import useAuthContext from "../hooks/useAuthContext";
 
 const StepIntoImg = require("../../assets/images/StepInto.png");
 
 const StepIntoScreen = () => {
   const navigation = useNavigation();
+  const { markStepIntoAsSeen, completeAllOnboarding } = useAuthContext();
 
+  const handleGetStarted = async () => {
+    try {
+      await markStepIntoAsSeen();
+      navigation.navigate("Discover/index");
+    } catch (error) {
+      console.error("Error marking StepInto as seen:", error);
+    }
+  };
+
+  const handleSignIn = async () => {
+    try {
+      // Complete all onboarding when skipping
+      await completeAllOnboarding();
+      navigation.navigate("SignIn/index");
+    } catch (error) {
+      console.error("Error completing onboarding:", error);
+    }
+  };
+  
   return (
     <View className="bg-white h-full">
       <View
@@ -33,14 +54,14 @@ const StepIntoScreen = () => {
         <TouchableOpacity
           className="mt-[24]"
           style={styles.loginButton}
-          onPress={() => navigation.navigate("Discover/index")}
+          onPress={handleGetStarted}
         >
           <Text style={styles.loginButtonText}>Commençons</Text>
         </TouchableOpacity>
 
         <View className="flex-row justify-center items-center space-x-1 mt-[28]">
           <Text style={styles.text}>Vous avez déjà un compte ?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignIn/index")}>
+          <TouchableOpacity onPress={handleSignIn}>
             <Text style={styles.textForgotPassword}>Se connecter</Text>
           </TouchableOpacity>
         </View>

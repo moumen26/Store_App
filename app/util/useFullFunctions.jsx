@@ -1,9 +1,8 @@
 import moment from "moment";
+import "moment/locale/fr";
 
 const formatDate = (dateString) => {
   const inputFormat = "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ";
-
-  moment.locale("fr");
 
   return moment
     .utc(dateString, inputFormat, true)
