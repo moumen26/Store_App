@@ -1,30 +1,35 @@
 import moment from "moment";
-import "moment/locale/fr";
 
 const formatDate = (dateString) => {
   const inputFormat = "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ";
+  const outputFormat = "D-MM-YYYY [at] HH:mm:ss";
 
-  return moment
-    .utc(dateString, inputFormat, true)
-    .format("D MMMM YYYY [at] HH:mm:ss");
+  // Create moment instance with English locale without changing global locale
+  const date = moment(dateString, inputFormat);
+  
+  return date.format(outputFormat);
 };
 
 const orderStatusTextDisplayer = (status, type) => {
   switch (status?.toString()) {
+    case "-2":
+      return "Commande annulée par le magasin";
+    case "-1":
+      return "Commande annulée par le client";
     case "0":
-      return "Order Placed";
+      return "Commande passée";
     case "1":
-      return "Preparing your order";
+      return "Préparation de votre commande";
     case "2":
-      return type?.toString() == "pickup"
-        ? "Ready for Pickup"
-        : "Order on the way to address";
+      return type?.toString() === "pickup" ? "Prêt pour le retrait" : "Commande en route vers l'adresse";
     case "3":
-      return type?.toString() == "pickup" ? "Picked up" : "Delivered";
+      return type?.toString() === "pickup" ? "Retirée" : "Livrée";
+    case "4":
+      return "Commande retournée";
     case "10":
-      return "Fully paid";
+      return "Entièrement payée";
     default:
-      return "Order Placed";
+      return "Commande passée";
   }
 };
 
