@@ -1,4 +1,11 @@
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import React from "react";
 import { Link, useNavigation } from "expo-router";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
@@ -6,14 +13,58 @@ import useAuthContext from "../hooks/useAuthContext";
 
 const StepIntoImg = require("../../assets/images/StepInto.png");
 
+// Get screen dimensions
+const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
+
+// Helper function to get responsive font size
+const getResponsiveFontSize = (baseSize) => {
+  const scale = screenWidth / 375; // Base width (iPhone X)
+  const newSize = baseSize * scale;
+
+  // Screen size categories
+  if (screenWidth <= 360) {
+    // Small screens
+    return Math.max(newSize * 0.85, baseSize * 0.8);
+  } else if (screenWidth <= 414) {
+    // Medium screens
+    return newSize;
+  } else {
+    // Large screens
+    return Math.min(newSize * 1.1, baseSize * 1.3);
+  }
+};
+
+// Helper function to get responsive dimensions
+const getResponsiveDimension = (baseSize) => {
+  const scale = screenWidth / 375;
+  const newSize = baseSize * scale;
+
+  if (screenWidth <= 360) {
+    // Small screens
+    return Math.max(newSize * 0.9, baseSize * 0.85);
+  } else if (screenWidth <= 414) {
+    // Medium screens
+    return newSize;
+  } else {
+    // Large screens
+    return Math.min(newSize * 1.1, baseSize * 1.2);
+  }
+};
+
 const StepIntoScreen = () => {
   const navigation = useNavigation();
   const { markStepIntoAsSeen, completeAllOnboarding } = useAuthContext();
 
+  // Calculate responsive heights
+  const imageContainerHeight = screenHeight * 0.5; // 60% of screen height
+  const containerHeight = imageContainerHeight; // 100% of ImageContainer height
+  const imageHeight = imageContainerHeight * 0.9; // 90% of ImageContainer height (bigger image)
+  const imageWidth = getResponsiveDimension(500); // Responsive image width
+
   const handleGetStarted = async () => {
     try {
       await markStepIntoAsSeen();
-      navigation.navigate("Discover/index");
+      navigation.navigate("YourCart/index");
     } catch (error) {
       console.error("Error marking StepInto as seen:", error);
     }
@@ -28,35 +79,79 @@ const StepIntoScreen = () => {
       console.error("Error completing onboarding:", error);
     }
   };
-  
+
+  // Create dynamic styles
+  const dynamicStyles = StyleSheet.create({
+    ImageContainer: {
+      width: "100%",
+      height: imageContainerHeight,
+      position: "relative",
+      overflow: "hidden",
+    },
+    Container: {
+      position: "absolute",
+      width: 5000,
+      height: containerHeight + 4504, // Keep the same proportion for the circular background
+      top: -4504,
+      left: -2305,
+      backgroundColor: "#E7F2F7",
+      zIndex: 1,
+      borderRadius: 4000,
+    },
+    Image: {
+      position: "absolute",
+      bottom: 0, // Position at the end (bottom) of the Container
+      left: "50%", // Center horizontally
+      transform: [{ translateX: -imageWidth / 2 }], // Offset by half the responsive width
+      width: imageWidth, // Responsive image width
+      height: imageHeight,
+      resizeMode: "contain",
+      zIndex: 99,
+    },
+  });
+
   return (
     <View className="bg-white h-full">
       <View
-        style={styles.ImageContainer}
+        style={dynamicStyles.ImageContainer}
         className="flex items-center justify-center"
       >
-        <View style={styles.Container}></View>
-        <Image style={styles.Image} source={StepIntoImg} />
+        <View style={dynamicStyles.Container}></View>
+        <Image style={dynamicStyles.Image} source={StepIntoImg} />
       </View>
       <View className="mx-5 mt-[24] flex justify-center">
-        <View className="flex h-[90] items-center justify-center">
-          <Text style={styles.title}>Entrez dans notre Monde</Text>
+        <View
+          style={{
+            height: getResponsiveDimension(90),
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
+          <Text style={styles.title}>Entrez dans notre</Text>
           <Text style={styles.title} className="text-[#19213D]">
-            de Magasins
+            monde de magasins
           </Text>
         </View>
-        <View className="flex items-center justify-center h-[50]">
+        <View
+          style={{
+            height: getResponsiveDimension(50),
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
           <Text style={styles.description}>
             Plongez-vous dans notre monde de magasins diversifiés, offrant tout
             ce dont vous avez besoin sous un même toit
           </Text>
         </View>
         <TouchableOpacity
-          className="mt-[24]"
+          className="mt-[48]"
           style={styles.loginButton}
           onPress={handleGetStarted}
         >
-          <Text style={styles.loginButtonText}>Commençons</Text>
+          <Text style={styles.loginButtonText}>Commencer</Text>
         </TouchableOpacity>
 
         <View className="flex-row justify-center items-center space-x-1 mt-[28]">
@@ -66,18 +161,7 @@ const StepIntoScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View className="flex-row justify-between mx-5 mt-[40]">
-          {/* <BackButton /> */}
-          <View className="flex-row space-x-2 items-center">
-            <View className="w-[10] h-[10] rounded bg-[#EDEDED] mr-1"></View>
-            <View className="w-[10] h-[10] rounded bg-[#19213D] mr-1"></View>
-            <View className="w-[10] h-[10] rounded bg-[#EDEDED]"></View>
-          </View>
 
-          <TouchableOpacity style={styles.NextButton}>
-            <ArrowRightIcon color="#fff" size={18} />
-          </TouchableOpacity>
-        </View>
       </View>
     </View>
   );
@@ -85,20 +169,21 @@ const StepIntoScreen = () => {
 
 const styles = StyleSheet.create({
   textForgotPassword: {
-    fontSize: 13,
+    fontSize: getResponsiveFontSize(13),
     color: "#19213D",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
+    marginLeft: 5,
   },
   text: {
-    fontSize: 13,
+    fontSize: getResponsiveFontSize(13),
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
   },
   loginButton: {
     backgroundColor: "#19213D",
     borderRadius: 10,
-    height: 50,
+    height: getResponsiveDimension(50),
     justifyContent: "center",
     alignItems: "center",
     display: "flex",
@@ -106,43 +191,32 @@ const styles = StyleSheet.create({
   loginButtonText: {
     textAlign: "center",
     color: "#fff",
-    fontSize: 16,
+    fontSize: getResponsiveFontSize(16),
     fontFamily: "Montserrat-Regular",
-  },
-  ImageContainer: {
-    width: "100%",
-    height: 192,
-    position: "relative",
-    overflow: "hidden",
-  },
-  Container: {
-    position: "absolute",
-    width: 5000,
-    height: 5000,
-    top: -4504,
-    left: -2305,
-    backgroundColor: "#E7F2F7",
-    zIndex: 1,
-    borderRadius: 4000,
-  },
-  Image: {
-    position: "absolute",
-    bottom: -58,
-    width: 400,
-    height: "100%",
-    resizeMode: "contain",
-    zIndex: 99,
   },
   title: {
     fontFamily: "Montserrat-Regular",
-    fontSize: 30,
+    fontSize: getResponsiveFontSize(30),
     textAlign: "center",
   },
   description: {
     fontFamily: "Montserrat-Regular",
-    fontSize: 13,
+    fontSize: getResponsiveFontSize(13),
     textAlign: "center",
     color: "#888888",
+  },
+  NextButton: {
+    // Add your NextButton styles here if missing
+    backgroundColor: "#19213D",
+    borderRadius: getResponsiveDimension(25),
+    width: getResponsiveDimension(50),
+    height: getResponsiveDimension(50),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  NextButtonPlaceHolder: {
+    width: getResponsiveDimension(50),
+    height: getResponsiveDimension(50),
   },
 });
 

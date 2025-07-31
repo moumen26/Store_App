@@ -40,8 +40,8 @@ const Product = memo(() => {
   // Responsive spacing calculations
   const horizontalPadding = width * 0.05;
   const imageSize = {
-    width: isSmallScreen ? 120 : isLargeScreen ? 180 : 150,
-    height: isSmallScreen ? 160 : isLargeScreen ? 240 : 200,
+    width: isSmallScreen ? 140 : isLargeScreen ? 200 : 170,
+    height: isSmallScreen ? 180 : isLargeScreen ? 260 : 220,
   };
   const buttonWidth = width * 0.85;
 

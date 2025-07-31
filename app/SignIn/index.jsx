@@ -25,7 +25,7 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { dispatch, completeAllOnboarding } = useAuthContext();
-  
+
   // Complete onboarding when user reaches SignIn screen
   useEffect(() => {
     const completeOnboarding = async () => {
@@ -35,7 +35,7 @@ const SignInScreen = () => {
         console.error("Error completing onboarding on SignIn:", error);
       }
     };
-    
+
     completeOnboarding();
   }, [completeAllOnboarding]);
 

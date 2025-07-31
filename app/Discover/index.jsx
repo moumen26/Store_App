@@ -4,7 +4,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  useWindowDimensions,
+  Dimensions,
   Platform,
 } from "react-native";
 import React from "react";
@@ -15,36 +15,56 @@ import { useAuthContext } from "../hooks/useAuthContext";
 
 const Home = require("../../assets/images/Home.png");
 
+// Get screen dimensions
+const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
+
+// Helper function to get responsive font size
+const getResponsiveFontSize = (baseSize) => {
+  const scale = screenWidth / 375; // Base width (iPhone X)
+  const newSize = baseSize * scale;
+
+  // Screen size categories
+  if (screenWidth <= 360) {
+    // Small screens
+    return Math.max(newSize * 0.85, baseSize * 0.8);
+  } else if (screenWidth <= 414) {
+    // Medium screens
+    return newSize;
+  } else {
+    // Large screens
+    return Math.min(newSize * 1.1, baseSize * 1.3);
+  }
+};
+
+// Helper function to get responsive dimensions
+const getResponsiveDimension = (baseSize) => {
+  const scale = screenWidth / 375;
+  const newSize = baseSize * scale;
+
+  if (screenWidth <= 360) {
+    // Small screens
+    return Math.max(newSize * 0.9, baseSize * 0.85);
+  } else if (screenWidth <= 414) {
+    // Medium screens
+    return newSize;
+  } else {
+    // Large screens
+    return Math.min(newSize * 1.1, baseSize * 1.2);
+  }
+};
+
 const DiscoverScreen = () => {
   const navigation = useNavigation();
   const { markDiscoverAsSeen, completeAllOnboarding } = useAuthContext();
 
-  // Get screen dimensions
-  const { width, height } = useWindowDimensions();
-
   // Calculate responsive values
-  const isSmallScreen = width < 375;
-  const isMediumScreen = width >= 375 && width < 768;
-  const isLargeScreen = width >= 768;
+  const horizontalPadding = screenWidth * 0.05;
+  const verticalSpacing = screenHeight * 0.025;
 
-  // Responsive spacing calculations
-  const horizontalPadding = width * 0.05;
-  const verticalSpacing = height * 0.025;
-
-  // Calculate image container height based on screen size
-  const imageContainerHeight = isSmallScreen
-    ? height * 0.45
-    : isMediumScreen
-    ? height * 0.5
-    : height * 0.55;
-
-  // Calculate image dimensions
-  const imageWidth = isSmallScreen
-    ? width * 0.7
-    : isMediumScreen
-    ? width * 0.6
-    : width * 0.5;
-  const imageHeight = imageContainerHeight * 0.9;
+  // Calculate responsive heights
+  const imageContainerHeight = screenHeight * 0.5; // 60% of screen height (consistent with previous screen)
+  const imageHeight = imageContainerHeight * 0.9; // 90% of ImageContainer height
+  const imageWidth = getResponsiveDimension(500); // Responsive image width
 
   const handleNextPress = async () => {
     try {
@@ -65,31 +85,56 @@ const DiscoverScreen = () => {
     }
   };
 
+  // Create dynamic styles
+  const dynamicStyles = StyleSheet.create({
+    imageContainer: {
+      width: "100%",
+      height: imageContainerHeight,
+      position: "relative",
+      overflow: "hidden",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    circleContainer: {
+      position: "absolute",
+      width: 5000,
+      height: imageContainerHeight + 4504, // Keep the same proportion for the circular background
+      top: -4504,
+      left: -2305,
+      backgroundColor: "#E7F2F7",
+      zIndex: 1,
+      borderRadius: 4000,
+    },
+    image: {
+      position: "absolute",
+      bottom: "-10%", // Position at the end (bottom) of the Container
+      left: "50%", // Center horizontally
+      transform: [{ translateX: -imageWidth / 2 }], // Offset by half the responsive width
+      width: imageWidth,
+      height: imageHeight,
+      resizeMode: "contain",
+      zIndex: 99,
+    },
+  });
+
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
 
-      <View style={[styles.imageContainer, { height: imageContainerHeight }]}>
-        <View style={styles.circleContainer}></View>
-        <Image
-          style={[
-            styles.image,
-            {
-              width: imageWidth,
-              height: imageHeight,
-              bottom: isSmallScreen ? -30 : isMediumScreen ? -50 : -70,
-            },
-          ]}
-          source={Home}
-        />
+      <View style={dynamicStyles.imageContainer}>
+        <View style={dynamicStyles.circleContainer}></View>
+        <Image style={dynamicStyles.image} source={Home} />
         <TouchableOpacity
           onPress={handleSkip}
           style={[
             styles.skipContainer,
-            { right: horizontalPadding, top: 50 }
+            {
+              right: horizontalPadding,
+              top: getResponsiveDimension(50),
+            },
           ]}
         >
-          <Text style={styles.skipText}>Skip</Text>
+          <Text style={styles.skipText}>Passer</Text>
         </TouchableOpacity>
       </View>
 
@@ -103,25 +148,13 @@ const DiscoverScreen = () => {
         ]}
       >
         <View
-          style={[styles.titleContainer, { height: isSmallScreen ? 70 : 90 }]}
+          style={[
+            styles.titleContainer,
+            { height: getResponsiveDimension(90) },
+          ]}
         >
-          <Text
-            style={[
-              styles.title,
-              { fontSize: isSmallScreen ? 24 : isLargeScreen ? 36 : 30 },
-            ]}
-          >
-            Découvrez le monde
-          </Text>
-          <Text
-            style={[
-              styles.title,
-              {
-                fontSize: isSmallScreen ? 24 : isLargeScreen ? 36 : 30,
-                color: "#19213D",
-              },
-            ]}
-          >
+          <Text style={styles.title}>Découvrez l’univers</Text>
+          <Text style={[styles.title, { color: "#19213D" }]}>
             de votre magasin
           </Text>
         </View>
@@ -129,16 +162,12 @@ const DiscoverScreen = () => {
         <View
           style={[
             styles.descriptionContainer,
-            { height: isSmallScreen ? 40 : 50 },
+            { height: getResponsiveDimension(50) },
           ]}
         >
-          <Text
-            style={[
-              styles.description,
-              { fontSize: isSmallScreen ? 12 : isLargeScreen ? 16 : 13 },
-            ]}
-          >
-            Le magasin est le premier tout-en-un au monde
+          <Text style={styles.description}>
+            Votre solution tout-en-un, pour répondre à tous besoins, en un seul
+            endroit
           </Text>
         </View>
 
@@ -146,8 +175,8 @@ const DiscoverScreen = () => {
           style={[
             styles.navigationRow,
             {
-              marginHorizontal: width * 0.05,
-              marginTop: isSmallScreen ? height * 0.03 : height * 0.04,
+              marginHorizontal: screenWidth * 0.05,
+              marginTop: getResponsiveDimension(40),
             },
           ]}
         >
@@ -155,30 +184,104 @@ const DiscoverScreen = () => {
             style={[
               styles.vide,
               {
-                width: isSmallScreen ? 32 : 40,
-                height: isSmallScreen ? 32 : 40,
+                width:
+                  screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65,
+                height:
+                  screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65,
               },
             ]}
           ></View>
 
           <View style={styles.indicatorContainer}>
-            <View style={styles.inactiveIndicator}></View>
-            <View style={styles.activeIndicator}></View>
-            <View style={[styles.inactiveIndicator, { marginRight: 0 }]}></View>
+            <View
+              style={[
+                styles.activeIndicator,
+                {
+                  width: getResponsiveDimension(10),
+                  height: getResponsiveDimension(10),
+                  borderRadius: getResponsiveDimension(5),
+                },
+              ]}
+            ></View>
+            <View
+              style={[
+                styles.inactiveIndicator,
+                {
+                  width: getResponsiveDimension(10),
+                  height: getResponsiveDimension(10),
+                  borderRadius: getResponsiveDimension(5),
+                },
+              ]}
+            ></View>
+            <View
+              style={[
+                styles.inactiveIndicator,
+                {
+                  width: getResponsiveDimension(10),
+                  height: getResponsiveDimension(10),
+                  borderRadius: getResponsiveDimension(5),
+                  marginRight: 0,
+                },
+              ]}
+            ></View>
           </View>
 
           <TouchableOpacity
             style={[
               styles.nextButton,
               {
-                width: isSmallScreen ? 32 : 40,
-                height: isSmallScreen ? 32 : 40,
-                borderRadius: isSmallScreen ? 16 : 20,
+                width:
+                  screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65,
+                height:
+                  screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65,
+                borderRadius:
+                  (screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65) / 2,
               },
             ]}
             onPress={handleNextPress}
           >
-            <ArrowRightIcon color="#fff" size={isSmallScreen ? 16 : 18} />
+            <ArrowRightIcon
+              color="#fff"
+              size={
+                screenWidth <= 360
+                  ? 16
+                  : screenWidth <= 414
+                  ? 18
+                  : screenWidth <= 768
+                  ? 22
+                  : 26
+              }
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -201,34 +304,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#19213D",
     borderWidth: 1,
   },
-  imageContainer: {
-    width: "100%",
-    position: "relative",
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  circleContainer: {
-    position: "absolute",
-    width: 5000,
-    height: 5000,
-    top: -4504,
-    left: -2305,
-    backgroundColor: "#E7F2F7",
-    zIndex: 1,
-    borderRadius: 4000,
-  },
-  image: {
-    position: "absolute",
-    resizeMode: "contain",
-    zIndex: 99,
-  },
   skipContainer: {
     position: "absolute",
     zIndex: 99,
   },
   skipText: {
-    fontSize: 14,
+    fontSize: getResponsiveFontSize(14),
     fontFamily: "Montserrat-Regular",
     color: "#19213D",
   },
@@ -241,6 +322,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "Montserrat-Regular",
+    fontSize: getResponsiveFontSize(30),
     textAlign: "center",
   },
   descriptionContainer: {
@@ -249,6 +331,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontFamily: "Montserrat-Regular",
+    fontSize: getResponsiveFontSize(13),
     textAlign: "center",
     color: "#888888",
   },
@@ -263,16 +346,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   activeIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
     backgroundColor: "#19213D",
     marginRight: 4,
   },
   inactiveIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
     backgroundColor: "#EDEDED",
     marginRight: 4,
   },
