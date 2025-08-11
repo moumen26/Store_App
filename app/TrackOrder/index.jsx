@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,8 +7,11 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   Platform,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useQuery } from "@tanstack/react-query";
+import { useFocusEffect } from "@react-navigation/native";
 import CartRow from "../../components/CartRow";
 import ScanButton from "../../components/ScanButton";
 import BackButton from "../../components/BackButton";
@@ -30,10 +33,8 @@ const TrackOrder = () => {
   const [snackbarType, setSnackbarType] = useState("");
   const [submitionLoading, setSubmitionLoading] = useState(false);
   const [scanedData, setScanedData] = useState({ type: null, data: null });
-  const [confirmationModalVisible, setConfirmationModalVisible] =
-    useState(false);
-  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] =
-    useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] = useState(false);
   const [reason, setReason] = useState("");
 
   // Get screen dimensions
@@ -49,6 +50,88 @@ const TrackOrder = () => {
   const verticalSpacing = height * 0.025;
   const sectionGap = isSmallScreen ? 16 : isLargeScreen ? 24 : 20;
 
+  // Helper function to calculate returned products
+  const getReturnedProducts = (orderStatusData) => {
+    if (!orderStatusData || !Array.isArray(orderStatusData) || orderStatusData.length < 2) {
+      return [];
+    }
+
+    // Sort by date to get first and last entries
+    const sortedData = [...orderStatusData].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const firstStatus = sortedData[0];
+    const lastStatus = sortedData[sortedData.length - 1];
+
+    const returnedProducts = [];
+
+    // Compare products between first and last status
+    firstStatus.products.forEach(firstProduct => {
+      const lastProduct = lastStatus.products.find(
+        p => p.product._id === firstProduct.product._id
+      );
+
+      if (lastProduct && firstProduct.quantity > lastProduct.quantity) {
+        const returnedQuantity = firstProduct.quantity - lastProduct.quantity;
+        returnedProducts.push({
+          ...firstProduct,
+          returnedQuantity,
+          originalQuantity: firstProduct.quantity,
+          currentQuantity: lastProduct.quantity,
+          returnedValue: returnedQuantity * firstProduct.price
+        });
+      }
+    });
+
+    return returnedProducts;
+  };
+
+  // Fetch order status data
+  const fetchOrderStatusData = async () => {
+    const response = await fetch(
+      `${Config.API_URL}/ReceiptStatus/all/${recieptData?.reciept?._id}/${recieptData?.reciept?.store?._id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      if (errorData.error?.statusCode === 404) {
+        return []; // Return an empty array if no data is found
+      } else {
+        throw new Error("Error receiving order data");
+      }
+    }
+
+    return await response.json(); // Return the data if the response is successful
+  };
+
+  // useQuery hook to fetch order status data
+  const {
+    data: OrderStatusData,
+    error: OrderStatusDataError,
+    isLoading: OrderStatusDataLoading,
+    refetch: refetchOrderStatusData,
+  } = useQuery({
+    queryKey: ["OrderStatusData", user?.token, recieptData?.reciept?._id],
+    queryFn: fetchOrderStatusData,
+    enabled: !!user?.token && !!recieptData?.reciept?._id,
+    refetchOnWindowFocus: true,
+  });
+
+  // Refetch data when the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.token && recieptData?.reciept?._id) {
+        refetchOrderStatusData();
+      }
+      return () => {};
+    }, [user?.token, recieptData?.reciept?._id])
+  );
+
   const handleOpenNotAllConfirmationModal = () => {
     setConfirmationModalVisible(false);
     setNotAllConfirmationModalVisible(true);
@@ -58,6 +141,7 @@ const TrackOrder = () => {
     setScanedData({ type: null, data: null });
     setNotAllConfirmationModalVisible(false);
   };
+
   const handleScanComplete = async (val) => {
     setSubmitionLoading(true);
 
@@ -113,6 +197,78 @@ const TrackOrder = () => {
       setSubmitionLoading(false);
     }
   };
+
+  // Check if we should show detailed order status
+  const shouldShowDetailedStatus = recieptData?.reciept?.status === 4 && recieptData?.reciept?.products?.length > 1;
+
+  // Render individual returned product item
+  const renderReturnedProductItem = ({ item, index }) => {    
+    return (
+      <View style={styles.productStatusCard}>
+        <View style={styles.productImageContainer}>
+          <Image
+            source={{ 
+              uri: `${Config.FILES_URL}/${item?.product?.image}` 
+            }}
+            style={styles.productImage}
+            resizeMode="cover"
+          />
+        </View>
+        
+        <View style={styles.productDetails}>
+          <Text style={styles.productName} numberOfLines={2}>
+            {item?.product?.name || 'Produit non disponible'}
+          </Text>
+          <Text style={styles.productBrand}>
+            {item?.product?.brand?.name || 'Marque inconnue'}
+          </Text>
+          
+          <View style={styles.productMetrics}>
+            <View style={styles.metricItem}>
+              <Text style={styles.metricLabel}>Quantité retournée</Text>
+              <Text style={styles.metricValue}>{item?.returnedQuantity || 0}</Text>
+            </View>
+            <View style={styles.metricItem}>
+              <Text style={styles.metricLabel}>Prix unitaire</Text>
+              <Text style={styles.metricValue}>{item?.price?.toFixed(2) || '0.00'} DA</Text>
+            </View>
+          </View>
+          
+          <View style={styles.returnSummary}>
+            <Text style={styles.returnSummaryText}>
+              {item?.originalQuantity} → {item?.currentQuantity} 
+              (Retour: {item?.returnedQuantity})
+            </Text>
+            <Text style={styles.returnValue}>
+              Valeur retournée: {item?.returnedValue?.toFixed(2)} DA
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  // Render shimmer loading for product status
+  const renderProductStatusLoading = () => {
+    return (
+      <View style={styles.loadingContainer}>
+        {[...Array(3)].map((_, index) => (
+          <View key={index} style={styles.shimmerCard}>
+            <View style={styles.shimmerImage} />
+            <View style={styles.shimmerContent}>
+              <View style={[styles.shimmerLine, { width: '80%' }]} />
+              <View style={[styles.shimmerLine, { width: '60%', marginTop: 8 }]} />
+              <View style={[styles.shimmerLine, { width: '40%', marginTop: 8 }]} />
+            </View>
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  // Get returned products data
+  const returnedProducts = OrderStatusData ? getReturnedProducts(OrderStatusData) : [];
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
@@ -255,6 +411,8 @@ const TrackOrder = () => {
                 )}
               </View>
             </View>
+
+            {/* Conditional rendering based on status and products */}
             <View style={[styles.OrderStatus, { marginTop: sectionGap }]}>
               <Text
                 style={[
@@ -265,12 +423,49 @@ const TrackOrder = () => {
                   },
                 ]}
               >
-                État de la commande
+                {shouldShowDetailedStatus ? 'Produits retournés' : 'État de la commande'}
               </Text>
-              <OrderStatus
-                type={recieptData?.reciept?.type}
-                status={recieptData?.reciept?.status}
-              />
+
+              {shouldShowDetailedStatus ? (
+                <View style={styles.detailedStatusContainer}>
+                  {OrderStatusDataLoading ? (
+                    renderProductStatusLoading()
+                  ) : OrderStatusDataError ? (
+                    <View style={styles.errorContainer}>
+                      <Text style={styles.errorText}>
+                        Erreur lors du chargement des détails
+                      </Text>
+                    </View>
+                  ) : returnedProducts.length > 0 ? (
+                    <>
+                      <Text style={styles.summaryTitle}>
+                        {returnedProducts.length} produit(s) retourné(s)
+                      </Text>
+                      <FlatList
+                        data={returnedProducts}
+                        renderItem={renderReturnedProductItem}
+                        keyExtractor={(item, index) => 
+                          `${item?.product?._id}-${index}` || index.toString()
+                        }
+                        scrollEnabled={false}
+                        showsVerticalScrollIndicator={false}
+                        ItemSeparatorComponent={() => <View style={styles.separator} />}
+                      />
+                    </>
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>
+                        Aucun produit retourné
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <OrderStatus
+                  type={recieptData?.reciept?.type}
+                  status={recieptData?.reciept?.status}
+                />
+              )}
             </View>
           </View>
         }
@@ -278,6 +473,7 @@ const TrackOrder = () => {
           paddingBottom: Platform.OS === "ios" ? 20 : 10,
         }}
       />
+
       <SubmitOrderModal
         visible={confirmationModalVisible}
         onCancel={handleOpenNotAllConfirmationModal}
@@ -297,6 +493,7 @@ const TrackOrder = () => {
         setReason={setReason}
         reason={reason}
       />
+
       {snackbarKey !== 0 && (
         <Snackbar
           key={snackbarKey}
@@ -362,27 +559,149 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
     color: "#888888",
   },
-  navigationClass: {
-    borderTopColor: "#888888",
-    borderTopWidth: 0.5,
-    backgroundColor: "#fff",
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    padding: 20,
-    alignItems: "center",
+  // Styles for detailed status
+  detailedStatusContainer: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    padding: 16,
   },
-  loginButton: {
-    backgroundColor: "#19213D",
-    borderRadius: 10,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "90%",
+  summaryTitle: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: '#666666',
+    marginBottom: 12,
   },
-  loginButtonText: {
-    color: "#fff",
+  productStatusCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  productImageContainer: {
+    marginRight: 16,
+  },
+  productImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: '#F0F0F0',
+  },
+  productDetails: {
+    flex: 1,
+    marginRight: 12,
+  },
+  productName: {
     fontSize: 16,
-    fontFamily: "Montserrat-Regular",
+    fontFamily: 'Montserrat-Medium',
+    color: '#1A1A1A',
+    marginBottom: 4,
+  },
+  productBrand: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Regular',
+    color: '#666666',
+    marginBottom: 8,
+  },
+  productMetrics: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 8,
+  },
+  metricItem: {
+    alignItems: 'center',
+  },
+  metricLabel: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: '#888888',
+  },
+  metricValue: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Medium',
+    color: '#1A1A1A',
+    marginTop: 2,
+  },
+  returnSummary: {
+    marginTop: 4,
+  },
+  returnSummaryText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
+    color: '#666666',
+  },
+  returnValue: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: '#FF6B6B',
+    marginTop: 2,
+  },
+  statusIndicator: {
+    alignItems: 'center',
+  },
+  statusDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginBottom: 4,
+  },
+  statusText: {
+    fontSize: 12,
+    fontFamily: 'Montserrat-Medium',
+    color: '#FF6B6B',
+  },
+  separator: {
+    height: 12,
+  },
+  loadingContainer: {
+    gap: 12,
+  },
+  shimmerCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  shimmerImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: '#E5E5E5',
+    marginRight: 16,
+  },
+  shimmerContent: {
+    flex: 1,
+  },
+  shimmerLine: {
+    height: 16,
+    backgroundColor: '#E5E5E5',
+    borderRadius: 4,
+  },
+  errorContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Regular',
+    color: '#FF6B6B',
+    textAlign: 'center',
+  },
+  emptyContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-Regular',
+    color: '#888888',
+    textAlign: 'center',
   },
 });
 
