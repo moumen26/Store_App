@@ -31,6 +31,7 @@ import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
 import TrackButton from "../../components/TrackButton";
+const Logo = require("../../assets/Logo-vertical.png");
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -125,325 +126,521 @@ const EReceiptScreen = () => {
     }, [user?.token, validOrderID])
   );
 
-  const html = `
+ const html = `
   <html>
     <head>
+      <meta charset="UTF-8">
       <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
         body {
-          font-family: Montserrat, sans-serif;
+          font-family: 'Montserrat', sans-serif;
           margin: 0;
-          padding: 40px;
-          color: #333;
-          background-color: #fff;
+          padding: 10px 30px;
+          background-color: white;
+          color: black;
+          font-size: 11px;
+          line-height: 1.4;
+          max-width: 800px;
+          margin: 0 auto;
         }
-        .invoice-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 40px;
-          border-bottom: 2px solid #19213D;
-          padding-bottom: 20px;
-        }
-        .company-info {
-          text-align: left;
-        }
-        .company-info h1 {
-          margin: 0;
-          font-size: 32px;
-          color: #19213D;
-          font-weight: 700;
-        }
-        .company-info p {
-          margin: 5px 0;
-          font-size: 14px;
-          color: #666;
-        }
-        .invoice-title {
-          text-align: right;
-        }
-        .invoice-title h2 {
-          margin: 0;
-          font-size: 36px;
-          color: #333;
-          font-weight: 600;
-        }
-        .invoice-title p {
-          margin: 5px 0;
-          font-size: 16px;
-          color: #666;
-        }
-        .barcode-container {
-          text-align: center;
-          margin: 30px 0;
-          background-color: #f8f9fa;
-          padding: 20px;
-          border-radius: 8px;
-        }
-        .client-info {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 40px;
-        }
-        .info-section {
-          flex: 1;
-          margin-right: 20px;
-        }
-        .info-section:last-child {
-          margin-right: 0;
-        }
-        .info-section h3 {
-          margin-bottom: 10px;
-          font-size: 16px;
-          font-weight: 600;
-          color: #19213D;
-          border-bottom: 1px solid #ddd;
-          padding-bottom: 5px;
-        }
-        .info-section p {
-          margin: 5px 0;
-          font-size: 14px;
-        }
-        .product-table {
-          width: 100%;
-          border-collapse: collapse;
+        
+        .header-section {
           margin-bottom: 30px;
         }
-        .product-table th {
-          background-color: #19213D;
-          color: white;
-          padding: 12px;
-          text-align: left;
-          font-weight: 600;
-          border-bottom: 2px solid #1f5566;
-        }
-        .product-table td {
-          padding: 12px;
-          border-bottom: 1px solid #ddd;
-        }
-        .product-table tr:last-child td {
-          border-bottom: none;
-        }
-        .product-table tr:nth-child(even) {
-          background-color: #f9f9f9;
-        }
-        .product-image {
-          width: 60px;
-          height: 60px;
-          object-fit: contain;
-          border-radius: 4px;
-        }
-        .product-details {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-        }
-        .product-name {
-          font-weight: 600;
-          color: #333;
-        }
-        .product-brand {
-          color: #666;
-          font-size: 14px;
-        }
-        .total-section {
-          display: flex;
-          justify-content: flex-end;
-          margin-top: 30px;
-        }
-        .total-table {
-          width: 300px;
-        }
-        .total-table tr {
+        
+        .logo-barcode-row {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 8px;
+          align-items: center;
+          margin-bottom: 20px;
         }
-        .total-table .label {
-          font-weight: 500;
-          color: #666;
+        
+        .logo-container {
+          flex: 0 0 auto;
         }
-        .total-table .value {
-          font-weight: 600;
-          color: #333;
+        
+        .company-logo {
+          max-height: 80px;
+          max-width: 200px;
+          height: auto;
+          width: auto;
         }
-        .total-table .grand-total {
-          border-top: 2px solid #19213D;
-          padding-top: 8px;
-          font-size: 18px;
+        
+        .barcode-container {
+          flex: 0 0 auto;
         }
-        .total-table .grand-total .label {
-          color: #19213D;
+        
+        .barcode-image {
+          max-width: 250px;
+          min-height: 50px;
+          height: auto;
         }
-        .total-table .grand-total .value {
-          color: #19213D;
+        
+        .title-section {
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
         }
-        .footer {
-          margin-top: 50px;
+        
+        .title-content {
+          flex: 1;
           text-align: center;
-          font-size: 12px;
-          color: #666;
-          border-top: 1px solid #ddd;
-          padding-top: 20px;
+          padding-top: 10px;
         }
-        .thank-you {
-          margin-top: 40px;
-          text-align: center;
+        
+        .main-title {
+          margin: 0 0 15px 0;
+          font-size: 24px;
+          font-weight: bold;
+          color: #0d3a71;
         }
-        .thank-you h3 {
-          color: #19213D;
-          font-size: 18px;
-          margin-bottom: 10px;
+        
+        .title-underline {
+          width: 100px;
+          height: 3px;
+          background-color: #0d3a71;
+          margin: 10px auto;
+          border-radius: 2px;
         }
-        .thank-you p {
-          color: #666;
+        
+        .order-info {
           font-size: 14px;
+          color: #666;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        
+        .info-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 40px;
+          margin-bottom: 30px;
+        }
+        
+        .info-section h3 {
+          font-weight: bold;
+          margin-bottom: 3px;
+          font-size: 11px;
+        }
+        
+        .info-section p {
+          margin-bottom: 2px;
+          font-size: 11px;
+        }
+        
+        .client-info {
+          text-align: right;
+        }
+        
+        .products-section {
+          margin-bottom: 30px;
+        }
+        
+        .part-title {
+          margin: 0 0 10px 0;
+          font-size: 14px;
+          color: #666;
+        }
+        
+        .products-table {
+          width: 100%;
+          border-collapse: collapse;
+          border: 1px solid #ddd;
+          margin-bottom: 20px;
+        }
+        
+        .products-table th {
+          background-color: #0d3a71;
+          color: white;
+          padding: 8px;
+          font-size: 11px;
+          font-weight: bold;
+          border: 1px solid #0d3a71;
+        }
+        
+        .products-table td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          font-size: 10px;
+        }
+        
+        .quantity-col {
+          width: 60px;
+          text-align: center;
+        }
+        
+        .description-col {
+          text-align: left;
+        }
+        
+        .price-col {
+          width: 100px;
+          text-align: center;
+        }
+        
+        .total-col {
+          width: 140px;
+          text-align: center;
+        }
+        
+        .product-name {
+          font-weight: bold;
+          margin-bottom: 2px;
+        }
+        
+        .product-size {
+          font-size: 9px;
+          color: #666;
+        }
+        
+        .product-box-display {
+          font-size: 9px;
+          color: #666;
+          font-style: italic;
+        }
+        
+        .empty-row {
+          padding: 12px;
+          background-color: #f8f9fa;
+        }
+        
+        .subtotal-row {
+          font-weight: bold;
+          background-color: #f8f9fa;
+        }
+        
+        .subtotal-row .label {
+          text-align: left;
+        }
+        
+        .delivery-row {
+          font-weight: bold;
+          background-color: #f8f9fa;
+        }
+        
+        .delivery-row .label {
+          text-align: left;
+        }
+        
+        .final-total-row {
+          font-weight: bold;
+          font-size: 12px;
+          background-color: #0d3a71;
+          color: white;
+        }
+        
+        .final-total-row .label {
+          padding: 12px 8px;
+          text-align: left;
+        }
+        
+        .final-total-row .value {
+          padding: 12px 8px;
+          font-size: 14px;
+        }
+        
+        .payment-section {
+          margin-bottom: 30px;
+        }
+        
+        .payment-title {
+          margin: 0 0 15px 0;
+          font-size: 16px;
+          font-weight: bold;
+          color: #0d3a71;
+        }
+        
+        .payment-table {
+          width: 100%;
+          border-collapse: collapse;
+          border: 1px solid #ddd;
+        }
+        
+        .payment-table th {
+          background-color: #0d3a71;
+          color: white;
+          padding: 8px;
+          text-align: center;
+          font-weight: bold;
+          border: 1px solid #0d3a71;
+        }
+        
+        .payment-table td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: center;
+        }
+        
+        .payment-summary {
+          text-align: right;
+          margin-top: 10px;
+          font-size: 14px;
+        }
+        
+        .remaining-amount {
+          color: #ef4444;
+          font-weight: bold;
+        }
+        
+        .footer {
+          border-top: 3px solid #0d3a71;
+          padding-top: 10px;
+          margin-top: 10px;
+          background-color: #f8f9fa;
+          padding: 20px;
+          text-align: center;
+          position: absolute;
+          bottom: 20px;
+          left: 0;
+          width: 100%;
+        }
+        
+        .footer-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+        }
+        
+        .print-date {
+          flex: 1;
+          text-align: left;
+          font-size: 10px;
+          color: #666;
+          font-style: italic;
+        }
+        
+        .thank-you {
+          flex: 1;
+          text-align: center;
+          font-size: 14px;
+          font-weight: bold;
+          color: #0d3a71;
+        }
+        
+        .company-name {
+          flex: 1;
+          text-align: right;
+          font-size: 10px;
+          color: #0d3a71;
+          font-weight: bold;
         }
       </style>
     </head>
     <body>
-      <div class="invoice-header">
-        <div class="company-info">
-          <h1>Votre Entreprise</h1>
-          <p>www.votreentreprise.com</p>
-          <p>contact@votreentreprise.com</p>
-          <p>+213 123 456 789</p>
+      <!-- Header Section -->
+      <div class="header-section">
+        <!-- Logo and Barcode Row -->
+        <div class="logo-barcode-row">
+          <!-- Logo on the left -->
+          <div class="logo-container">
+            <img src="../../assets/Logo-vertical.png" alt="Company Logo" class="company-logo" />
+          </div>
+
+          <!-- Barcode on the right -->
+          <div class="barcode-container">
+            ${
+              OrderData?.reciept?._id
+                ? `<img src="https://barcode.tec-it.com/barcode.ashx?data=${OrderData.reciept._id}&code=Code128&dpi=300&width=300&height=80" alt="Code-barres" class="barcode-image" />`
+                : "<p>Code-barres non disponible</p>"
+            }
+          </div>
         </div>
-        <div class="invoice-title">
-          <h2>FACTURE</h2>
-          <p>N° ${OrderData?.reciept?._id || "N/A"}</p>
-          <p>Date: ${
+
+        <!-- Title Row -->
+        <div class="title-section">
+          <div class="title-content">
+            <h1 class="main-title">BON DE COMMANDE</h1>
+            <div class="title-underline"></div>
+          </div>
+        </div>
+
+        <!-- Order Number and Date -->
+        <div class="order-info">
+          <span>N° Commande: #${OrderData?.reciept?._id || "N/A"}</span>
+          <span>Date: ${
             OrderData?.reciept?.date
               ? new Date(OrderData.reciept.date).toLocaleDateString("fr-FR")
               : "N/A"
-          }</p>
+          }</span>
         </div>
       </div>
 
-      <div class="barcode-container">
-        ${
-          OrderData?.reciept?._id
-            ? `<img src="https://barcode.tec-it.com/barcode.ashx?data=${OrderData.reciept._id}&code=Code128&dpi=300" />`
-            : "<p>Code-barres non disponible</p>"
-        }
-      </div>
-
-      <div class="client-info">
+      <!-- Order and Client Info -->
+      <div class="info-grid">
+        <!-- Order Details -->
         <div class="info-section">
-          <h3>Informations du Client</h3>
-          <p><strong>Nom:</strong> ${user?.info?.firstName || ""} ${
-    user?.info?.lastName || ""
-  }</p>
-          <p><strong>Email:</strong> ${user?.info?.email || "N/A"}</p>
-          <p><strong>Téléphone:</strong> ${user?.info?.phoneNumber || "N/A"}</p>
-        </div>
-        <div class="info-section">
-          <h3>Détails de Livraison</h3>
-          <p><strong>Magasin:</strong> ${
-            OrderData?.reciept?.store?.storeName || "N/A"
-          }</p>
-          <p><strong>Type:</strong> ${
-            OrderData?.reciept?.type === "pickup"
-              ? "Retrait"
-              : OrderData?.reciept?.type === "delivery"
-              ? "Livraison"
-              : "N/A"
-          }</p>
-          ${
-            OrderData?.reciept?.type === "delivery"
-              ? `<p><strong>Adresse:</strong> ${
-                  OrderData?.reciept?.deliveredLocation?.address ||
-                  "Adresse non disponible"
-                }</p>`
-              : ""
-          }
-        </div>
-      </div>
-
-      <table class="product-table">
-        <thead>
-          <tr>
-            <th>Produit</th>
-            <th>Quantité</th>
-            <th>Prix Unitaire</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${
-            OrderData?.recieptStatus?.products?.length > 0
-              ? OrderData.recieptStatus.products
-                  .map((product) => {
-                    const unitPrice =
-                      product.quantity && product.total
-                        ? (product.total / product.quantity).toFixed(2)
-                        : "0.00";
-                    return `
-                <tr>
-                  <td>
-                    <div class="product-details">
-                      <img class="product-image" src="${Config.FILES_URL}/${
-                      product?.product?.image || "placeholder.jpg"
-                    }" />
-                      <div>
-                        <div class="product-name">${
-                          product?.product?.name || "Produit non disponible"
-                        }</div>
-                        <div class="product-brand">${
-                          product?.product?.brand?.name || "Marque inconnue"
-                        }</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>${product?.quantity || 0}</td>
-                  <td>${unitPrice} DA</td>
-                  <td>${product?.total?.toFixed(2) || "0.00"} DA</td>
-                </tr>
-              `;
-                  })
-                  .join("")
-              : '<tr><td colspan="4" style="text-align: center;">Aucun produit disponible</td></tr>'
-          }
-        </tbody>
-      </table>
-
-      <div class="total-section">
-        <div class="total-table">
-          <tr>
-            <span class="label">Sous-total:</span>
-            <span class="value">${
-              OrderData?.reciept?.total?.toFixed(2) || "0.00"
-            } DA</span>
-          </tr>
-          ${
-            OrderData?.reciept?.type === "delivery"
-              ? `
-            <tr>
-              <span class="label">Frais de livraison:</span>
-              <span class="value">${
-                OrderData?.deliveryCost?.toFixed(2) || "0.00"
-              } DA</span>
-            </tr>
-          `
-              : ""
-          }
-          <tr class="grand-total">
-            <span class="label">Total:</span>
-            <span class="value">${(
+          <h3>DÉTAILS DE LA COMMANDE</h3>
+          <p><strong>Montant Total:</strong> ${
+            new Intl.NumberFormat("fr-FR").format(
               (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0)
-            ).toFixed(2)} DA</span>
-          </tr>
+            )
+          } DA</p>
+          <p><strong>Type de livraison:</strong> ${
+            OrderData?.reciept?.type === "delivery" ? "Livraison" : "Retrait"
+          }</p>
+        </div>
+
+        <!-- Client Details -->
+        <div class="info-section client-info">
+          <h3>INFORMATIONS CLIENT</h3>
+          <p><strong>Nom:</strong> ${user?.info?.firstName || ""} ${user?.info?.lastName || ""}</p>
+          <p><strong>Téléphone:</strong> ${user?.info?.phoneNumber || "N/A"}</p>
+          <p style="font-size: 10px;"><strong>Adresse:</strong> ${
+            OrderData?.reciept?.type === "delivery" && OrderData?.reciept?.deliveredLocation?.address
+              ? OrderData.reciept.deliveredLocation.address
+              : OrderData?.reciept?.store?.storeName || "N/A"
+          }</p>
         </div>
       </div>
 
-      <div class="thank-you">
-        <h3>Merci pour votre confiance!</h3>
-        <p>Nous espérons vous revoir bientôt.</p>
+      <!-- Products Section -->
+      <div class="products-section">
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th class="quantity-col">Quantité</th>
+              <th class="description-col">Description</th>
+              <th class="price-col">Prix unitaire</th>
+              <th class="total-col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${
+              OrderData?.recieptStatus?.products?.length > 0
+                ? OrderData.recieptStatus.products
+                    .map((product) => {
+                      const unitPrice =
+                        product.quantity && product.total
+                          ? (product.total / product.quantity).toFixed(2)
+                          : "0.00";
+                      
+                      return `
+                    <tr>
+                      <td class="quantity-col">${product?.quantity || 0}</td>
+                      <td class="description-col">
+                        <div class="product-name">${product?.product?.name || "Produit non disponible"}</div>
+                        ${product?.product?.brand?.name ? `<div class="product-size">${product.product.brand.name}</div>` : ""}
+                        ${product?.product?.size ? `<div class="product-size">${product.product.size}</div>` : ""}
+                      </td>
+                      <td class="price-col">${new Intl.NumberFormat("fr-FR").format(unitPrice)} DA</td>
+                      <td class="total-col"><strong>${new Intl.NumberFormat("fr-FR").format(product?.total || 0)} DA</strong></td>
+                    </tr>
+                  `;
+                    })
+                    .join("")
+                : '<tr><td colspan="4" style="text-align: center;">Aucun produit disponible</td></tr>'
+            }
+            
+            ${Array.from(
+              { length: Math.max(0, 6 - (OrderData?.recieptStatus?.products?.length || 0)) },
+              () => `
+                <tr>
+                  <td class="empty-row"></td>
+                  <td class="empty-row"></td>
+                  <td class="empty-row"></td>
+                  <td class="empty-row"></td>
+                </tr>
+              `
+            ).join("")}
+            
+            <!-- Subtotal Row -->
+            <tr class="subtotal-row">
+              <td colspan="3" class="label">SOUS-TOTAL</td>
+              <td class="total-col"><strong>${
+                new Intl.NumberFormat("fr-FR").format(OrderData?.reciept?.total || 0)
+              } DA</strong></td>
+            </tr>
+            
+            ${
+              OrderData?.reciept?.type === "delivery" && OrderData?.deliveryCost > 0
+                ? `
+            <!-- Delivery Fee Row -->
+            <tr class="delivery-row">
+              <td colspan="3" class="label">FRAIS DE LIVRAISON</td>
+              <td class="total-col"><strong>${
+                new Intl.NumberFormat("fr-FR").format(OrderData.deliveryCost)
+              } DA</strong></td>
+            </tr>
+            `
+                : ""
+            }
+            
+            <!-- Final Total Row -->
+            <tr class="final-total-row">
+              <td colspan="3" class="label">TOTAL TTC</td>
+              <td class="value"><strong>${
+                new Intl.NumberFormat("fr-FR").format(
+                  (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0)
+                )
+              } DA</strong></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
+      ${
+        OrderData?.reciept?.payment && OrderData.reciept.payment.length > 0
+          ? `
+      <!-- Payment History -->
+      <div class="payment-section">
+        <h3 class="payment-title">Historique des Paiements</h3>
+        
+        <table class="payment-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Montant</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${OrderData.reciept.payment
+              .map(
+                (payment) => `
+              <tr>
+                <td>${new Date(payment.date).toLocaleDateString("fr-FR")}</td>
+                <td><strong>${new Intl.NumberFormat("fr-FR").format(payment.amount)} DA</strong></td>
+              </tr>
+            `
+              )
+              .join("")}
+          </tbody>
+        </table>
+        
+        <div class="payment-summary">
+          <div style="margin-bottom: 5px;">
+            <strong>Total Payé: ${new Intl.NumberFormat("fr-FR").format(
+              OrderData.reciept.payment.reduce((sum, pay) => sum + pay.amount, 0)
+            )} DA</strong>
+          </div>
+          <div class="remaining-amount">
+            Reste à payer: ${new Intl.NumberFormat("fr-FR").format(
+              (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0) - 
+              OrderData.reciept.payment.reduce((sum, pay) => sum + pay.amount, 0)
+            )} DA
+          </div>
+        </div>
+      </div>
+      `
+          : ""
+      }
+
+      <!-- Footer -->
       <div class="footer">
-        <p>Ceci est un document électronique généré automatiquement.</p>
-        <p>Pour toute question, veuillez contacter notre service client.</p>
+        <div class="footer-content">
+          <div class="print-date">
+            Date d'impression: ${new Date().toLocaleDateString("fr-FR")}
+          </div>
+          
+          <div class="thank-you">
+            Merci de votre confiance
+          </div>
+          
+          <div class="company-name">
+            MOSAGRO
+          </div>
+        </div>
       </div>
     </body>
   </html>

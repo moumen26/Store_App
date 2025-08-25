@@ -10,14 +10,14 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { CubeIcon } from "react-native-heroicons/outline"; // Import Cube icon from heroicons
 import FavoriteButton from "../../components/FavoriteButton";
 import ProductPer from "../../components/ProductPer";
 import BackButton from "../../components/BackButton";
 import Snackbar from "../../components/Snackbar.jsx";
 import useAuthContext from "../hooks/useAuthContext";
 import Config from "../config";
-
-const BoxIcon = require("../../assets/icons/CartDark.png");
+import { formatNumber } from "../util/useFullFunctions.jsx";
 
 const Product = memo(() => {
   const route = useRoute();
@@ -79,7 +79,7 @@ const Product = memo(() => {
     };
 
     dispatch({ type: "ADD_TO_CART", payload: updatedProduct });
-    setProduct(null);    
+    setProduct(null);
     navigator.goBack();
   }, [data, product, storeId, dispatch, navigator]);
 
@@ -127,7 +127,7 @@ const Product = memo(() => {
             { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
           ]}
         >
-          Prix par unité: {data?.selling} DA
+          Prix par unité: {formatNumber(data?.selling)} DA
         </Text>
         <Text
           style={[
@@ -135,7 +135,7 @@ const Product = memo(() => {
             { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
           ]}
         >
-          Prix par boîte: {data?.selling * data?.product?.boxItems} DA
+          Prix par boîte: {formatNumber(data?.selling * data?.product?.boxItems)} DA
         </Text>
         <View style={styles.boxContainer}>
           <View
@@ -164,15 +164,10 @@ const Product = memo(() => {
             >
               /
             </Text>
-            <Image
-              style={[
-                styles.boxIcon,
-                {
-                  width: isSmallScreen ? 13 : isLargeScreen ? 17 : 15,
-                  height: isSmallScreen ? 13 : isLargeScreen ? 17 : 15,
-                },
-              ]}
-              source={BoxIcon}
+            <CubeIcon
+              size={isSmallScreen ? 13 : isLargeScreen ? 17 : 15}
+              color="#19213D"
+              strokeWidth={2}
             />
           </View>
         </View>
@@ -261,9 +256,6 @@ const styles = StyleSheet.create({
   boxText: {
     fontFamily: "Montserrat-Medium",
     color: "#19213D",
-  },
-  boxIcon: {
-    resizeMode: "contain",
   },
   loginButton: {
     backgroundColor: "#19213D",

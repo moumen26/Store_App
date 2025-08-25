@@ -163,7 +163,7 @@ const ProductPer = memo(
                   </TouchableOpacity>
                 </View>
               ) : (
-                <Text style={styles.OutOfStock}>Out of stock</Text>
+                <Text style={styles.OutOfStock}>En rupture de stock</Text>
               )}
               <View style={styles.SubTotal}>
                 <Text style={styles.textSubTotal}>

@@ -2,11 +2,11 @@ import moment from "moment";
 
 const formatDate = (dateString) => {
   const inputFormat = "ddd MMM DD YYYY HH:mm:ss [GMT]ZZ";
-  const outputFormat = "D-MM-YYYY [at] HH:mm:ss";
+  const outputFormat = "D-MM-YYYY - HH:mm:ss";
 
   // Create moment instance with English locale without changing global locale
   const date = moment(dateString, inputFormat);
-  
+
   return date.format(outputFormat);
 };
 
@@ -21,7 +21,9 @@ const orderStatusTextDisplayer = (status, type) => {
     case "1":
       return "Préparation de votre commande";
     case "2":
-      return type?.toString() === "pickup" ? "Prêt pour le retrait" : "Commande en route vers l'adresse";
+      return type?.toString() === "pickup"
+        ? "Prêt pour le retrait"
+        : "Commande en route vers l'adresse";
     case "3":
       return type?.toString() === "pickup" ? "Retirée" : "Livrée";
     case "4":
@@ -39,5 +41,13 @@ const UtilityFunctions = {
   orderStatusTextDisplayer,
 };
 
+const formatNumber = (num) => {
+  if (num == null) return "0.00";
+  return num.toLocaleString("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
 export default UtilityFunctions;
-export { formatDate, orderStatusTextDisplayer };
+export { formatDate, orderStatusTextDisplayer, formatNumber };

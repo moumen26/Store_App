@@ -621,44 +621,56 @@ const Settings = () => {
 
       {/* Profile Update Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer}>
+        <View style={styles.modalOverlay}>
           <View
             style={[
               styles.modalContent,
               {
                 width: modalWidth,
-                padding: isSmallScreen ? 15 : 20,
+                maxHeight: height * 0.8,
               },
             ]}
           >
-            <Text
-              style={[
-                styles.modalTitle,
-                {
-                  fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
-                  marginBottom: verticalSpacing / 2,
-                },
-              ]}
-            >
-              Modifier {currentSetting?.label}
-            </Text>
-
-            <View
-              style={[
-                styles.modalContentContainer,
-                { padding: isSmallScreen ? 10 : 15 },
-              ]}
-            >
-              {renderModalContent()}
+            {/* Modal Header */}
+            <View style={styles.modalHeader}>
+              <Text
+                style={[
+                  styles.modalTitle,
+                  {
+                    fontSize: isSmallScreen ? 18 : isLargeScreen ? 22 : 20,
+                  },
+                ]}
+              >
+                Modifier {currentSetting?.label}
+              </Text>
+              {/* <TouchableOpacity
+                style={styles.closeButton}
+                onPress={closeModal}
+                disabled={submitting}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity> */}
             </View>
 
-            <View style={[styles.modalButtons, { marginTop: verticalSpacing }]}>
+            {/* Modal Body */}
+            <ScrollView
+              style={styles.modalBody}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            >
+              {renderModalContent()}
+            </ScrollView>
+
+            {/* Modal Footer */}
+            <View style={styles.modalFooter}>
               <TouchableOpacity
                 style={[
                   styles.modalButton,
+                  styles.cancelButton,
                   {
-                    padding: isSmallScreen ? 10 : 12,
-                    width: isSmallScreen ? modalWidth * 0.38 : modalWidth * 0.4,
+                    height: isSmallScreen ? 45 : isLargeScreen ? 55 : 50,
+                    flex: 1,
+                    marginRight: 10,
                   },
                 ]}
                 onPress={closeModal}
@@ -666,21 +678,23 @@ const Settings = () => {
               >
                 <Text
                   style={[
-                    styles.buttonTextCancel,
-                    { fontSize: isSmallScreen ? 13 : 14 },
+                    styles.cancelButtonText,
+                    { fontSize: isSmallScreen ? 14 : isLargeScreen ? 16 : 15 },
                   ]}
                 >
                   Annuler
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
                 style={[
                   styles.modalButton,
-                  styles.confirmButton,
+                  styles.saveButton,
                   submitting && styles.disabledButton,
                   {
-                    padding: isSmallScreen ? 10 : 12,
-                    width: isSmallScreen ? modalWidth * 0.38 : modalWidth * 0.4,
+                    height: isSmallScreen ? 45 : isLargeScreen ? 55 : 50,
+                    flex: 1,
+                    marginLeft: 10,
                   },
                 ]}
                 onPress={handleUpdateProfile}
@@ -691,8 +705,10 @@ const Settings = () => {
                 ) : (
                   <Text
                     style={[
-                      styles.buttonText,
-                      { fontSize: isSmallScreen ? 13 : 14 },
+                      styles.saveButtonText,
+                      {
+                        fontSize: isSmallScreen ? 14 : isLargeScreen ? 16 : 15,
+                      },
                     ]}
                   >
                     Sauvegarder
@@ -864,33 +880,92 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(201, 228, 238, 0.7)",
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(201, 228, 238, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+
   modalContent: {
     backgroundColor: "white",
-    borderRadius: 10,
+    borderRadius: 16,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 8,
+    elevation: 8,
+
+    overflow: "hidden",
   },
+
   modalContentContainer: {
     backgroundColor: "#f9f9f9",
     borderRadius: 8,
     marginVertical: 5,
   },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
   modalTitle: {
     fontFamily: "Montserrat-Medium",
-    textAlign: "center",
     color: "#19213D",
+    flex: 1,
   },
   modalLabel: {
     fontFamily: "Montserrat-Medium",
-    marginBottom: 5,
-    color: "#555",
+    fontSize: 14,
+    marginBottom: 8,
+    color: "#19213D",
+    marginTop: 5,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  passwordHelp: {
+    fontFamily: "Montserrat-Regular",
+    fontSize: 12,
+    color: "#666",
+    marginTop: 8,
+    backgroundColor: "#f8f9ff",
+    padding: 12,
+    borderRadius: 8,
+    lineHeight: 16,
+  },
+
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1.5,
+    borderColor: "#e0e0e0",
+    borderRadius: 12,
+    backgroundColor: "white",
+    paddingHorizontal: 12,
+    height: 50,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+
+  inputWrapperFocused: {
+    borderColor: "#19213D",
+    shadowOpacity: 0.1,
+  },
+
+  inputIcon: {
+    marginRight: 10,
   },
   modalButtons: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
+    width: "100%",
   },
   buttonText: {
     color: "white",
@@ -928,39 +1003,44 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 10,
     borderRadius: 8,
+    gap: 10,
     marginBottom: 15,
     backgroundColor: "white",
   },
   modalInput: {
-    height: 40,
-    paddingLeft: 10,
-    width: "100%",
+    flex: 1,
+    height: "100%",
     fontFamily: "Montserrat-Regular",
+    fontSize: 15,
+    color: "#333",
   },
   passwordInput: {
-    height: 40,
-    paddingLeft: 10,
-    flex: 2,
+    flex: 1,
+    height: "100%",
     fontFamily: "Montserrat-Regular",
+    fontSize: 15,
+    color: "#333",
   },
-  passwordHelp: {
-    fontFamily: "Montserrat-Regular",
-    color: "#666",
-    marginTop: -5,
-    backgroundColor: "#f0f0f0",
-    padding: 8,
-    borderRadius: 5,
-    borderLeftWidth: 3,
-    borderLeftColor: "#19213D",
-  },
+
   eyeIcon: {
-    padding: 5,
+    padding: 8,
+    marginLeft: 5,
+  },
+
+  modalBody: {
+    paddingHorizontal: 20,
+  },
+  modalFooter: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
   modalButton: {
     backgroundColor: "#F7F7F7",
     borderRadius: 10,
+    padding: 10,
+    width: 120,
     alignItems: "center",
-    elevation: 2,
   },
   confirmButton: {
     backgroundColor: "#19213D",
@@ -968,8 +1048,27 @@ const styles = StyleSheet.create({
   deleteButton: {
     backgroundColor: "#FF033E",
   },
+  saveButtonText: {
+    fontFamily: "Montserrat-Medium",
+    color: "white",
+  },
+
   disabledButton: {
-    opacity: 0.7,
+    opacity: 0.6,
+  },
+
+  cancelButton: {
+    backgroundColor: "#f8f8f8",
+    borderColor: "#e0e0e0",
+  },
+
+  cancelButtonText: {
+    fontFamily: "Montserrat-Medium",
+    color: "#666666",
+  },
+
+  saveButton: {
+    backgroundColor: "#19213D",
   },
 });
 

@@ -10,11 +10,18 @@ import { ChevronRightIcon } from "react-native-heroicons/outline";
 import {
   orderStatusTextDisplayer,
   formatDate,
+  formatNumber,
 } from "../app/util/useFullFunctions";
 import { useNavigation } from "expo-router";
 
 // Get screen dimensions
 const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
+
+const truncateText = (text, maxLength = 100) => {
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + "...";
+};
 
 // Helper function to get responsive font size
 const getResponsiveFontSize = (baseSize) => {
@@ -112,7 +119,7 @@ const CartOrderItem = ({
         ]}
       >
         <Text style={styles.text}>Numéro de commande</Text>
-        <Text style={styles.textDescription}>{OrderID}</Text>
+        <Text style={styles.textDescription}>{truncateText(OrderID, 12)}</Text>
       </View>
 
       <View
@@ -125,7 +132,11 @@ const CartOrderItem = ({
       >
         <Text style={styles.text}>Type de commande</Text>
         <Text style={styles.textDescription}>
-          {capitalizeFirstLetters(OrderType)}
+          {OrderType === "pickup"
+            ? "Retrait"
+            : OrderType === "delivery"
+            ? "Livraison"
+            : capitalizeFirstLetters(OrderType)}
         </Text>
       </View>
 
@@ -178,7 +189,7 @@ const CartOrderItem = ({
         ]}
       >
         <Text style={styles.text}>Sous-total</Text>
-        <Text style={styles.textDescription}>DA {OrderSubTotal}</Text>
+        <Text style={styles.textDescription}>DA {formatNumber(OrderSubTotal)}</Text>
       </View>
 
       <View

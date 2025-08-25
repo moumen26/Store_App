@@ -351,7 +351,7 @@ const home = () => {
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>
                       {NotificationData.length > 9
-                        ? "9+"
+                        ? "+9"
                         : NotificationData.length}
                     </Text>
                   </View>
@@ -560,7 +560,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -12,
     right: -12,
-    backgroundColor: "red",
     borderRadius: 10,
     width: 16,
     height: 16,
@@ -569,7 +568,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: "#fff",
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: "bold",
   },
   titleCategory: {

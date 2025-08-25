@@ -5,23 +5,55 @@ import {
   TouchableOpacity,
   Animated,
   FlatList,
-  useWindowDimensions,
+  Dimensions,
 } from "react-native";
 import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import { useNavigation } from "expo-router";
+
+// Get screen dimensions
+const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
+
+// Helper function to get responsive font size
+const getResponsiveFontSize = (baseSize) => {
+  const scale = screenWidth / 375; // Base width (iPhone X)
+  const newSize = baseSize * scale;
+
+  // Screen size categories
+  if (screenWidth <= 360) {
+    // Small screens
+    return Math.max(newSize * 0.85, baseSize * 0.8);
+  } else if (screenWidth <= 414) {
+    // Medium screens
+    return newSize;
+  } else {
+    // Large screens
+    return Math.min(newSize * 1.1, baseSize * 1.3);
+  }
+};
+
+// Helper function to get responsive dimensions
+const getResponsiveDimension = (baseSize) => {
+  const scale = screenWidth / 375;
+  const newSize = baseSize * scale;
+
+  if (screenWidth <= 360) {
+    // Small screens
+    return Math.max(newSize * 0.9, baseSize * 0.85);
+  } else if (screenWidth <= 414) {
+    // Medium screens
+    return newSize;
+  } else {
+    // Large screens
+    return Math.min(newSize * 1.1, baseSize * 1.2);
+  }
+};
 
 const Store = ({ StoresData, CategoriesData }) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  const { width, height } = useWindowDimensions();
-
-  const isSmallScreen = width < 375;
-  const isMediumScreen = width >= 375 && width < 768;
-  const isLargeScreen = width >= 768;
 
   useEffect(() => {
     Animated.parallel([
@@ -65,7 +97,6 @@ const Store = ({ StoresData, CategoriesData }) => {
   );
 
   const renderStoreCard = ({ item }) => (
-    
     <StoreCard
       key={item._id}
       title={item.store.storeName}
@@ -82,43 +113,48 @@ const Store = ({ StoresData, CategoriesData }) => {
   );
 
   const renderNoStores = () => (
-    <Text style={styles.noStoresText}>
-      Aucun magasin disponible pour cette catégorie.
-    </Text>
+    <View style={styles.noStoresContainer}>
+      <Text style={styles.noStoresText}>
+        Aucun magasin disponible pour cette catégorie.
+      </Text>
+    </View>
   );
 
   return (
-    <View>
-      <FlatList
-        data={CategoriesData}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(category) => category._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.buttonStore,
-              activeTab === item._id && styles.storeToggle,
-            ]}
-            onPress={() => handleMenuClick(item._id)}
-          >
-            <Text
+    <View style={styles.mainContainer}>
+      {/* Categories horizontal scroll - fixed at top */}
+      <View style={styles.categoriesContainer}>
+        <FlatList
+          data={CategoriesData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(category) => category._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
               style={[
-                styles.text,
-                {
-                  fontSize: isSmallScreen ? 11 : isLargeScreen ? 15 : 11,
-                },
+                styles.buttonStore,
                 activeTab === item._id && styles.storeToggle,
               ]}
+              onPress={() => handleMenuClick(item._id)}
             >
-              {item.name}
-            </Text>
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
-      />
+              <Text
+                style={[
+                  styles.text,
+                  activeTab === item._id && styles.storeToggleText,
+                ]}
+              >
+                {item.name}
+              </Text>
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={styles.categoriesContentContainer}
+        />
+      </View>
+
+      {/* Stores vertical scroll - takes remaining space */}
       <Animated.View
         style={[
+          styles.storesContainer,
           {
             opacity: opacityAnim,
             transform: [{ scale: scaleAnim }],
@@ -130,7 +166,9 @@ const Store = ({ StoresData, CategoriesData }) => {
           renderItem={renderStoreCard}
           keyExtractor={(store) => store._id}
           ListEmptyComponent={renderNoStores}
-          contentContainerStyle={styles.containerScroll}
+          contentContainerStyle={styles.storesContentContainer}
+          showsVerticalScrollIndicator={true}
+          bounces={true}
         />
       </Animated.View>
     </View>
@@ -138,35 +176,59 @@ const Store = ({ StoresData, CategoriesData }) => {
 };
 
 const styles = StyleSheet.create({
-  containerScroll: {
-    flexDirection: "column",
-    paddingTop: 15,
-    height: "auto",
+  mainContainer: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  categoriesContainer: {
+    backgroundColor: "#FFFFFF",
+    paddingBottom: getResponsiveDimension(10),
+  },
+  categoriesContentContainer: {
+    paddingTop: getResponsiveDimension(10),
+  },
+  storesContainer: {
+    flex: 1,
+  },
+  storesContentContainer: {
+    paddingBottom: getResponsiveDimension(20),
+    flexGrow: 1,
+  },
+  noStoresContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: getResponsiveDimension(40),
   },
   noStoresText: {
-    fontSize: 13,
+    fontSize: getResponsiveFontSize(13),
     fontFamily: "Montserrat-Regular",
     color: "#888888",
+    textAlign: "center",
   },
   text: {
     fontFamily: "Montserrat-Regular",
+    fontSize: getResponsiveFontSize(11),
+    color: "#000000",
+  },
+  storeToggleText: {
+    color: "#FFFFFF",
   },
   buttonStore: {
-    minWidth: 120,
+    minWidth: getResponsiveDimension(120),
     width: "auto",
-    height: 42,
-    paddingInline: 14,
-    borderRadius: 40,
+    height: getResponsiveDimension(42),
+    paddingHorizontal: getResponsiveDimension(14),
+    borderRadius: getResponsiveDimension(40),
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
     borderColor: "#E3EFFF",
     borderWidth: 0.5,
-    marginRight: 4,
+    marginRight: getResponsiveDimension(4),
   },
   storeToggle: {
     backgroundColor: "#19213D",
-    color: "#fff",
   },
 });
 
