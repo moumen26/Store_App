@@ -12,8 +12,11 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "We need access to your camera to scan barcodes.",
-        "NSLocationWhenInUseUsageDescription": "We need access to your location to show nearby stores.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need access to your location to show nearby stores."
+        "NSLocationWhenInUseUsageDescription": "This app needs access to location to show your position on the map and help you select delivery addresses.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to location to show your position on the map and help you select delivery addresses."
+      },
+      "config": {
+        "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
       }
     },
     "android": {
@@ -53,10 +56,20 @@
         }
       ],
       [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "This app needs access to location to show your position on the map and help you select delivery addresses.",
+          "locationWhenInUsePermission": "This app needs access to location to show your position on the map and help you select delivery addresses.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false,
+          "isAndroidForegroundServiceEnabled": false
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/Dark.png",
-          "imageWidth": 200,
+          "imageWidth": 100,
           "resizeMode": "contain",
           "backgroundColor": "#192130"
         }

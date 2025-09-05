@@ -42,7 +42,7 @@ const api = axios.create({
 
 const Store = () => {
   const route = useRoute();
-  const { storeId, storeName, storeAddress } = route.params;  
+  const { storeId, storeName, storeAddress } = route.params;
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -209,18 +209,21 @@ const Store = () => {
     if (!productsData || productsData.length === 0) {
       return [];
     }
-    const brandsData = productsData.reduce((acc, product) => {      
-      if (product?.product?.brand && !acc.some((b) => b._id === product.product.brand._id)) {
+    const brandsData = productsData.reduce((acc, product) => {
+      if (
+        product?.product?.brand &&
+        !acc.some((b) => b._id === product.product.brand._id)
+      ) {
         acc.push({
           _id: product.product.brand._id,
           name: product.product.brand.name,
           image: product.product.brand.image,
         });
-      }      
+      }
       return acc;
     }, []);
     return brandsData;
-  } 
+  };
   //--------------------------------------------RENDERING--------------------------------------------
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -388,7 +391,11 @@ const Store = () => {
               Marques
             </Text>
             <ScrollView
-              contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 10 }}
+              contentContainerStyle={{
+                paddingHorizontal: 0,
+                paddingTop: 10,
+                gap: 6,
+              }}
               horizontal
               showsHorizontalScrollIndicator={false}
             >

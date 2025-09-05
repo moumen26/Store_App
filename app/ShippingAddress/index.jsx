@@ -9,9 +9,12 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import * as Location from "expo-location";
 import BackButton from "../../components/BackButton";
 import ShippingAddressCard from "../../components/ShippingAddressCard";
 import useAuthContext from "../hooks/useAuthContext";
@@ -23,6 +26,8 @@ import {
   PencilIcon,
 } from "react-native-heroicons/outline";
 import Config from "../config";
+
+const { width, height } = Dimensions.get("window");
 
 const ShippingAddressScreen = memo(() => {
   const { cart, user, dispatch } = useAuthContext();
@@ -37,6 +42,10 @@ const ShippingAddressScreen = memo(() => {
   // State for map selection modal
   const [mapModalVisible, setMapModalVisible] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [mapRegion, setMapRegion] = useState(null);
+  const [loadingLocation, setLoadingLocation] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState("");
 
   // For address modal states
   const [modalVisible, setModalVisible] = useState(false);
@@ -53,6 +62,98 @@ const ShippingAddressScreen = memo(() => {
     () => cart?.filter((item) => item.store === storeId) || [],
     [cart, storeId]
   );
+
+  // Get current location
+  const getCurrentLocation = async () => {
+    try {
+      setLoadingLocation(true);
+
+      // Request permissions
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission refusée",
+          "Nous avons besoin de votre permission pour accéder à votre localisation.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
+      // Get current position
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      const { latitude, longitude } = location.coords;
+
+      setCurrentLocation({
+        latitude,
+        longitude,
+      });
+
+      setMapRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+
+      // Set initial selected location to current location
+      setSelectedLocation({
+        latitude,
+        longitude,
+      });
+
+      // Get address for current location
+      await reverseGeocode(latitude, longitude);
+    } catch (error) {
+      console.error("Error getting location:", error);
+      Alert.alert(
+        "Erreur",
+        "Impossible d'obtenir votre localisation. Veuillez réessayer.",
+        [{ text: "OK" }]
+      );
+    } finally {
+      setLoadingLocation(false);
+    }
+  };
+
+  // Reverse geocode coordinates to address
+  const reverseGeocode = async (latitude, longitude) => {
+    try {
+      const result = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+
+      if (result.length > 0) {
+        const address = result[0];
+        const formattedAddress = `${address.street || ""} ${
+          address.streetNumber || ""
+        }, ${address.city || ""}, ${address.postalCode || ""}, ${
+          address.country || ""
+        }`.trim();
+        setSelectedAddress(formattedAddress);
+      }
+    } catch (error) {
+      console.error("Error reverse geocoding:", error);
+      setSelectedAddress(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+    }
+  };
+
+  // Handle map press
+  const onMapPress = async (event) => {
+    const { coordinate } = event.nativeEvent;
+    const { latitude, longitude } = coordinate;
+
+    setSelectedLocation({
+      latitude,
+      longitude,
+    });
+
+    // Get address for selected location
+    await reverseGeocode(latitude, longitude);
+  };
 
   const handleSelectItem = useCallback((index) => {
     setSelectedIndex(index);
@@ -123,7 +224,6 @@ const ShippingAddressScreen = memo(() => {
 
   const closeModal = () => {
     setModalVisible(false);
-    // Reset form data
     setNewAddress({
       name: "",
       address: "",
@@ -132,21 +232,41 @@ const ShippingAddressScreen = memo(() => {
     setAddressToEdit(null);
   };
 
-  const openLocationPicker = () => {
-    // Open the map modal for location selection
+  const openLocationPicker = async () => {
     setMapModalVisible(true);
+    // Get current location when opening map
+    await getCurrentLocation();
   };
 
-  const handleLocationSelect = (location) => {
-    // Update the address with the selected location
-    setNewAddress((prev) => ({
-      ...prev,
-      location: location.address,
-      coordinates: location.coordinates, // Store coordinates for backend
-    }));
+  const handleLocationSelect = () => {
+    if (selectedLocation && selectedAddress) {
+      // Update the address with the selected location
+      setNewAddress((prev) => ({
+        ...prev,
+        location: selectedAddress,
+        coordinates: selectedLocation,
+      }));
 
-    // Close the map modal
+      // Close the map modal
+      setMapModalVisible(false);
+
+      // Reset selected location for next time
+      setSelectedLocation(null);
+      setSelectedAddress("");
+    } else {
+      Alert.alert(
+        "Erreur",
+        "Veuillez sélectionner un emplacement sur la carte."
+      );
+    }
+  };
+
+  const closeMapModal = () => {
     setMapModalVisible(false);
+    setSelectedLocation(null);
+    setSelectedAddress("");
+    setCurrentLocation(null);
+    setMapRegion(null);
   };
 
   const handleSaveAddress = async () => {
@@ -155,11 +275,9 @@ const ShippingAddressScreen = memo(() => {
     setSubmitting(true);
 
     try {
-      // If we're editing an existing address
       if (addressToEdit) {
         await updateExistingAddress();
       } else {
-        // Validate inputs
         if (!newAddress.name.trim()) {
           closeModal();
           setSnackbarType("error");
@@ -175,7 +293,6 @@ const ShippingAddressScreen = memo(() => {
           setSnackbarKey((prevKey) => prevKey + 1);
           return;
         }
-        // If we're adding a new address
         await addNewAddress();
       }
     } catch (error) {
@@ -204,6 +321,7 @@ const ShippingAddressScreen = memo(() => {
           name: newAddress.name,
           addr: newAddress.address,
           location: newAddress.location,
+          coordinates: newAddress.coordinates, // Include coordinates
         }),
       }
     );
@@ -219,7 +337,6 @@ const ShippingAddressScreen = memo(() => {
 
     const newAddressAdded = json.address;
 
-    // Update locally with an estimated structure
     const updatedAddresses = [
       ...(user?.info?.storeAddresses || []),
       {
@@ -227,6 +344,7 @@ const ShippingAddressScreen = memo(() => {
         name: newAddressAdded.name,
         address: newAddressAdded.address,
         location: newAddressAdded.location,
+        coordinates: newAddressAdded.coordinates,
       },
     ];
 
@@ -261,6 +379,7 @@ const ShippingAddressScreen = memo(() => {
           name: newAddress.name,
           addr: newAddress.address,
           location: newAddress.location,
+          coordinates: newAddress.coordinates, // Include coordinates
         }),
       }
     );
@@ -274,7 +393,6 @@ const ShippingAddressScreen = memo(() => {
       return;
     }
 
-    // Update the address in the local state
     const updatedAddresses = user?.info?.storeAddresses.map((address) =>
       address._id === addressToEdit._id
         ? {
@@ -282,6 +400,7 @@ const ShippingAddressScreen = memo(() => {
             name: newAddress.name,
             address: newAddress.address,
             location: newAddress.location,
+            coordinates: newAddress.coordinates,
           }
         : address
     );
@@ -345,7 +464,6 @@ const ShippingAddressScreen = memo(() => {
         return;
       }
 
-      // Update local state
       const updatedAddresses = user?.info?.storeAddresses.filter(
         (address) => address._id !== addressId
       );
@@ -365,7 +483,6 @@ const ShippingAddressScreen = memo(() => {
       setSnackbarMessage(json.message || "Adresse supprimée avec succès");
       setSnackbarKey((prevKey) => prevKey + 1);
 
-      // Clear selection if the deleted address was selected
       if (selectedIndex === addressId) {
         setSelectedIndex(null);
       }
@@ -400,9 +517,9 @@ const ShippingAddressScreen = memo(() => {
       handleDeleteAddress,
     ]
   );
+
   return (
     <View style={{ flex: 1, position: "relative" }}>
-      {/* Snackbar with proper positioning - higher z-index than modal */}
       {snackbarKey !== 0 && (
         <View
           style={[
@@ -468,7 +585,6 @@ const ShippingAddressScreen = memo(() => {
             </Text>
 
             <View style={styles.modalContentContainer}>
-              {/* Name Field */}
               <Text style={styles.modalLabel}>Nom</Text>
               <View style={styles.inputChange}>
                 <UserIcon size={20} color="#888888" />
@@ -482,7 +598,6 @@ const ShippingAddressScreen = memo(() => {
                 />
               </View>
 
-              {/* Address Field */}
               <Text style={styles.modalLabel}>Adresse</Text>
               <View style={styles.inputChange}>
                 <MapPinIcon size={20} color="#888888" />
@@ -496,7 +611,6 @@ const ShippingAddressScreen = memo(() => {
                 />
               </View>
 
-              {/* Location Field */}
               <Text style={styles.modalLabel}>Lieu</Text>
               <TouchableOpacity
                 style={styles.locationSelector}
@@ -564,7 +678,7 @@ const ShippingAddressScreen = memo(() => {
           <View style={styles.mapHeader}>
             <TouchableOpacity
               style={styles.closeMapButton}
-              onPress={() => setMapModalVisible(false)}
+              onPress={closeMapModal}
             >
               <Text style={styles.closeButtonText}>Annuler</Text>
             </TouchableOpacity>
@@ -572,72 +686,74 @@ const ShippingAddressScreen = memo(() => {
             <View style={{ width: 70 }} />
           </View>
 
-          {/* Map View Placeholder - would be replaced with actual Google Maps component */}
+          {/* Map View */}
           <View style={styles.mapContainer}>
-            <Text style={styles.mapPlaceholderText}>
-              La carte Google s'afficherait ici
-            </Text>
-            <Text style={styles.mapInstructionText}>
-              Appuyez sur la carte pour sélectionner votre emplacement
-            </Text>
+            {loadingLocation ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#19213D" />
+                <Text style={styles.loadingText}>
+                  Recherche de votre position...
+                </Text>
+              </View>
+            ) : mapRegion ? (
+              <MapView
+                style={styles.map}
+                provider={PROVIDER_GOOGLE}
+                region={mapRegion}
+                onPress={onMapPress}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+                toolbarEnabled={false}
+              >
+                {selectedLocation && (
+                  <Marker
+                    coordinate={selectedLocation}
+                    title="Adresse sélectionnée"
+                    description={selectedAddress}
+                    pinColor="red"
+                  />
+                )}
+              </MapView>
+            ) : (
+              <View style={styles.mapPlaceholder}>
+                <MapIcon size={50} color="#19213D" />
+                <Text style={styles.mapPlaceholderText}>
+                  Appuyez pour obtenir votre position
+                </Text>
+                <TouchableOpacity
+                  style={styles.getCurrentLocationButton}
+                  onPress={getCurrentLocation}
+                >
+                  <Text style={styles.getCurrentLocationText}>
+                    Obtenir ma position
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
 
-          {/* Sample Location Options */}
-          <View style={styles.locationOptionsContainer}>
-            <Text style={styles.locationOptionTitle}>Lieux suggérés</Text>
-
-            <TouchableOpacity
-              style={styles.locationOption}
-              onPress={() =>
-                handleLocationSelect({
-                  address: "123 Rue Principale, Paris, 75001",
-                  coordinates: { lat: 48.8566, lng: 2.3522 },
-                })
-              }
-            >
+          {/* Selected Address Display */}
+          {selectedAddress && (
+            <View style={styles.selectedAddressContainer}>
               <MapPinIcon size={20} color="#19213D" />
-              <View style={styles.locationOptionTextContainer}>
-                <Text style={styles.locationOptionName}>Domicile</Text>
-                <Text style={styles.locationOptionAddress}>
-                  123 Rue Principale, Paris, 75001
-                </Text>
-              </View>
-            </TouchableOpacity>
+              <Text style={styles.selectedAddressText}>{selectedAddress}</Text>
+            </View>
+          )}
 
+          {/* Confirm Button */}
+          <View style={styles.mapButtonContainer}>
             <TouchableOpacity
-              style={styles.locationOption}
-              onPress={() =>
-                handleLocationSelect({
-                  address: "456 Avenue des Champs-Élysées, Paris, 75008",
-                  coordinates: { lat: 48.8738, lng: 2.295 },
-                })
-              }
+              style={[
+                styles.confirmLocationButton,
+                (!selectedLocation || !selectedAddress) &&
+                  styles.disabledButton,
+              ]}
+              onPress={handleLocationSelect}
+              disabled={!selectedLocation || !selectedAddress}
             >
-              <MapPinIcon size={20} color="#19213D" />
-              <View style={styles.locationOptionTextContainer}>
-                <Text style={styles.locationOptionName}>Travail</Text>
-                <Text style={styles.locationOptionAddress}>
-                  456 Avenue des Champs-Élysées, Paris, 75008
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.locationOption}
-              onPress={() =>
-                handleLocationSelect({
-                  address: "789 Rue de Rivoli, Paris, 75001",
-                  coordinates: { lat: 48.8606, lng: 2.3376 },
-                })
-              }
-            >
-              <MapPinIcon size={20} color="#19213D" />
-              <View style={styles.locationOptionTextContainer}>
-                <Text style={styles.locationOptionName}>À proximité</Text>
-                <Text style={styles.locationOptionAddress}>
-                  789 Rue de Rivoli, Paris, 75001
-                </Text>
-              </View>
+              <Text style={styles.confirmLocationText}>
+                Confirmer l'emplacement
+              </Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -656,9 +772,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   snackbarWrapperOverModal: {
-    zIndex: 20000, // Higher z-index when modal is visible
-    elevation: 25, // Higher elevation for Android
-    bottom: "40%", // Position it in the middle of the screen when modal is open
+    zIndex: 20000,
+    elevation: 25,
+    bottom: "40%",
   },
   safeArea: {
     flex: 1,
@@ -683,47 +799,12 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     marginHorizontal: 20,
-    // borderTopWidth: 1,
-    // borderColor: "#F7F7F7",
     paddingTop: 18,
     height: "70%",
   },
   scrollContent: {
     flexGrow: 1,
     gap: 18,
-  },
-  row: {
-    borderBottomWidth: 1,
-    borderColor: "#F7F7F7",
-    marginBottom: 10,
-    paddingBottom: 5,
-  },
-  addressActions: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginTop: 5,
-    marginBottom: 5,
-    paddingHorizontal: 10,
-  },
-  editButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 5,
-    marginRight: 15,
-  },
-  editButtonText: {
-    color: "#19213D",
-    fontSize: 12,
-    fontFamily: "Montserrat-Medium",
-    marginLeft: 5,
-  },
-  deleteButton: {
-    padding: 5,
-  },
-  deleteButtonText: {
-    color: "#FF6B6B",
-    fontSize: 12,
-    fontFamily: "Montserrat-Medium",
   },
   addAddressContainer: {
     marginHorizontal: 20,
@@ -764,15 +845,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
   },
   disabledButton: {
-    backgroundColor: "#84a7b5", // Lighter color to indicate disabled state
+    backgroundColor: "#84a7b5",
   },
-  // Modal styles (remaining styles unchanged)
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(201, 228, 238, 0.7)",
-    zIndex: 15000, // Set z-index lower than snackbar over modal
+    zIndex: 15000,
   },
   modalContent: {
     width: 320,
@@ -850,7 +930,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     borderRadius: 8,
     marginBottom: 15,
-    backgroundColor: "#e8f4f8", // Light blue background to indicate it's tappable
+    backgroundColor: "#e8f4f8",
   },
   locationText: {
     marginLeft: 10,
@@ -911,54 +991,79 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Medium",
   },
   mapContainer: {
-    height: 300,
+    flex: 1,
     backgroundColor: "#e8f4f8",
+  },
+  map: {
+    width: width,
+    height: "100%",
+  },
+  loadingContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
+    backgroundColor: "#f8f9fa",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    fontFamily: "Montserrat-Regular",
+    color: "#19213D",
+  },
+  mapPlaceholder: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f8f9fa",
   },
   mapPlaceholderText: {
-    fontSize: 18,
-    fontFamily: "Montserrat-Medium",
-    color: "#19213D",
-    marginBottom: 10,
-  },
-  mapInstructionText: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: "Montserrat-Regular",
     color: "#666",
+    marginTop: 15,
+    marginBottom: 20,
+    textAlign: "center",
   },
-  locationOptionsContainer: {
-    padding: 15,
+  getCurrentLocationButton: {
+    backgroundColor: "#19213D",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
   },
-  locationOptionTitle: {
+  getCurrentLocationText: {
+    color: "white",
     fontSize: 16,
     fontFamily: "Montserrat-Medium",
-    marginBottom: 15,
-    color: "#333",
   },
-  locationOption: {
+  selectedAddressContainer: {
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    backgroundColor: "#f8f9fa",
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
   },
-  locationOptionTextContainer: {
-    marginLeft: 15,
-  },
-  locationOptionName: {
-    fontSize: 16,
-    fontFamily: "Montserrat-Medium",
-    color: "#333",
-  },
-  locationOptionAddress: {
+  selectedAddressText: {
+    marginLeft: 10,
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
-    color: "#666",
-    marginTop: 3,
+    color: "#333",
+    flex: 1,
+  },
+  mapButtonContainer: {
+    padding: 15,
+    backgroundColor: "white",
+  },
+  confirmLocationButton: {
+    backgroundColor: "#19213D",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  confirmLocationText: {
+    color: "white",
+    fontSize: 16,
+    fontFamily: "Montserrat-Medium",
   },
 });
-
 export default ShippingAddressScreen;
