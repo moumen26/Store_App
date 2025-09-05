@@ -16,7 +16,7 @@
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to location to show your position on the map and help you select delivery addresses."
       },
       "config": {
-        "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+        "googleMapsApiKey": "NASUHUTM7J5HNOJVZ2EULOP6INPNPSE4KN6AQNRI"
       }
     },
     "android": {
@@ -38,7 +38,7 @@
       "jsEngine": "hermes",
       "config": {
         "googleMaps": {
-          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+          "apiKey": "NASUHUTM7J5HNOJVZ2EULOP6INPNPSE4KN6AQNRI"
         }
       }
     },

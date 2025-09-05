@@ -326,6 +326,7 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
     textAlign: "center",
     color: "#888888",
+    paddingHorizontal: 6,
   },
   textlabel: {
     color: "#888888",

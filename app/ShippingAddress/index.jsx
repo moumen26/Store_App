@@ -888,9 +888,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalContentContainer: {
-    backgroundColor: "#f9f9f9",
     borderRadius: 8,
-    padding: 15,
     marginVertical: 5,
   },
   modalTitle: {
