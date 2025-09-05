@@ -324,6 +324,7 @@ const Settings = () => {
                   setInputValues((prev) => ({ ...prev, firstName: text }))
                 }
                 placeholder="Prénom"
+                placeholderTextColor="#888888"
               />
             </View>
 
@@ -421,6 +422,7 @@ const Settings = () => {
                 placeholder="Nouveau mot de passe"
                 secureTextEntry={!showNewPassword}
                 autoCapitalize="none"
+                placeholderTextColor="#888888"
               />
               <TouchableOpacity
                 onPress={() => setShowNewPassword(!showNewPassword)}
@@ -656,7 +658,6 @@ const Settings = () => {
             <ScrollView
               style={styles.modalBody}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 20 }}
             >
               {renderModalContent()}
             </ScrollView>
@@ -668,7 +669,7 @@ const Settings = () => {
                   styles.modalButton,
                   styles.cancelButton,
                   {
-                    height: isSmallScreen ? 45 : isLargeScreen ? 55 : 50,
+                    // height: isSmallScreen ? 45 : isLargeScreen ? 55 : 50,
                     flex: 1,
                     marginRight: 10,
                   },
@@ -692,7 +693,7 @@ const Settings = () => {
                   styles.saveButton,
                   submitting && styles.disabledButton,
                   {
-                    height: isSmallScreen ? 45 : isLargeScreen ? 55 : 50,
+                    // height: isSmallScreen ? 45 : isLargeScreen ? 55 : 50,
                     flex: 1,
                     marginLeft: 10,
                   },
@@ -936,6 +937,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     lineHeight: 16,
+    marginBottom: 16,
   },
 
   inputWrapper: {

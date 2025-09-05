@@ -126,7 +126,7 @@ const EReceiptScreen = () => {
     }, [user?.token, validOrderID])
   );
 
- const html = `
+  const html = `
   <html>
     <head>
       <meta charset="UTF-8">
@@ -472,11 +472,11 @@ const EReceiptScreen = () => {
         <!-- Order Details -->
         <div class="info-section">
           <h3>DÉTAILS DE LA COMMANDE</h3>
-          <p><strong>Montant Total:</strong> ${
-            new Intl.NumberFormat("fr-FR").format(
-              (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0)
-            )
-          } DA</p>
+          <p><strong>Montant Total:</strong> ${new Intl.NumberFormat(
+            "fr-FR"
+          ).format(
+            (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0)
+          )} DA</p>
           <p><strong>Type de livraison:</strong> ${
             OrderData?.reciept?.type === "delivery" ? "Livraison" : "Retrait"
           }</p>
@@ -485,10 +485,13 @@ const EReceiptScreen = () => {
         <!-- Client Details -->
         <div class="info-section client-info">
           <h3>INFORMATIONS CLIENT</h3>
-          <p><strong>Nom:</strong> ${user?.info?.firstName || ""} ${user?.info?.lastName || ""}</p>
+          <p><strong>Nom:</strong> ${user?.info?.firstName || ""} ${
+    user?.info?.lastName || ""
+  }</p>
           <p><strong>Téléphone:</strong> ${user?.info?.phoneNumber || "N/A"}</p>
           <p style="font-size: 10px;"><strong>Adresse:</strong> ${
-            OrderData?.reciept?.type === "delivery" && OrderData?.reciept?.deliveredLocation?.address
+            OrderData?.reciept?.type === "delivery" &&
+            OrderData?.reciept?.deliveredLocation?.address
               ? OrderData.reciept.deliveredLocation.address
               : OrderData?.reciept?.store?.storeName || "N/A"
           }</p>
@@ -515,17 +518,31 @@ const EReceiptScreen = () => {
                         product.quantity && product.total
                           ? (product.total / product.quantity).toFixed(2)
                           : "0.00";
-                      
+
                       return `
                     <tr>
                       <td class="quantity-col">${product?.quantity || 0}</td>
                       <td class="description-col">
-                        <div class="product-name">${product?.product?.name || "Produit non disponible"}</div>
-                        ${product?.product?.brand?.name ? `<div class="product-size">${product.product.brand.name}</div>` : ""}
-                        ${product?.product?.size ? `<div class="product-size">${product.product.size}</div>` : ""}
+                        <div class="product-name">${
+                          product?.product?.name || "Produit non disponible"
+                        }</div>
+                        ${
+                          product?.product?.brand?.name
+                            ? `<div class="product-size">${product.product.brand.name}</div>`
+                            : ""
+                        }
+                        ${
+                          product?.product?.size
+                            ? `<div class="product-size">${product.product.size}</div>`
+                            : ""
+                        }
                       </td>
-                      <td class="price-col">${new Intl.NumberFormat("fr-FR").format(unitPrice)} DA</td>
-                      <td class="total-col"><strong>${new Intl.NumberFormat("fr-FR").format(product?.total || 0)} DA</strong></td>
+                      <td class="price-col">${new Intl.NumberFormat(
+                        "fr-FR"
+                      ).format(unitPrice)} DA</td>
+                      <td class="total-col"><strong>${new Intl.NumberFormat(
+                        "fr-FR"
+                      ).format(product?.total || 0)} DA</strong></td>
                     </tr>
                   `;
                     })
@@ -534,7 +551,12 @@ const EReceiptScreen = () => {
             }
             
             ${Array.from(
-              { length: Math.max(0, 6 - (OrderData?.recieptStatus?.products?.length || 0)) },
+              {
+                length: Math.max(
+                  0,
+                  6 - (OrderData?.recieptStatus?.products?.length || 0)
+                ),
+              },
               () => `
                 <tr>
                   <td class="empty-row"></td>
@@ -548,20 +570,21 @@ const EReceiptScreen = () => {
             <!-- Subtotal Row -->
             <tr class="subtotal-row">
               <td colspan="3" class="label">SOUS-TOTAL</td>
-              <td class="total-col"><strong>${
-                new Intl.NumberFormat("fr-FR").format(OrderData?.reciept?.total || 0)
-              } DA</strong></td>
+              <td class="total-col"><strong>${new Intl.NumberFormat(
+                "fr-FR"
+              ).format(OrderData?.reciept?.total || 0)} DA</strong></td>
             </tr>
             
             ${
-              OrderData?.reciept?.type === "delivery" && OrderData?.deliveryCost > 0
+              OrderData?.reciept?.type === "delivery" &&
+              OrderData?.deliveryCost > 0
                 ? `
             <!-- Delivery Fee Row -->
             <tr class="delivery-row">
               <td colspan="3" class="label">FRAIS DE LIVRAISON</td>
-              <td class="total-col"><strong>${
-                new Intl.NumberFormat("fr-FR").format(OrderData.deliveryCost)
-              } DA</strong></td>
+              <td class="total-col"><strong>${new Intl.NumberFormat(
+                "fr-FR"
+              ).format(OrderData.deliveryCost)} DA</strong></td>
             </tr>
             `
                 : ""
@@ -570,11 +593,10 @@ const EReceiptScreen = () => {
             <!-- Final Total Row -->
             <tr class="final-total-row">
               <td colspan="3" class="label">TOTAL TTC</td>
-              <td class="value"><strong>${
-                new Intl.NumberFormat("fr-FR").format(
-                  (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0)
-                )
-              } DA</strong></td>
+              <td class="value"><strong>${new Intl.NumberFormat("fr-FR").format(
+                (OrderData?.reciept?.total || 0) +
+                  (OrderData?.deliveryCost || 0)
+              )} DA</strong></td>
             </tr>
           </tbody>
         </table>
@@ -600,7 +622,9 @@ const EReceiptScreen = () => {
                 (payment) => `
               <tr>
                 <td>${new Date(payment.date).toLocaleDateString("fr-FR")}</td>
-                <td><strong>${new Intl.NumberFormat("fr-FR").format(payment.amount)} DA</strong></td>
+                <td><strong>${new Intl.NumberFormat("fr-FR").format(
+                  payment.amount
+                )} DA</strong></td>
               </tr>
             `
               )
@@ -611,13 +635,20 @@ const EReceiptScreen = () => {
         <div class="payment-summary">
           <div style="margin-bottom: 5px;">
             <strong>Total Payé: ${new Intl.NumberFormat("fr-FR").format(
-              OrderData.reciept.payment.reduce((sum, pay) => sum + pay.amount, 0)
+              OrderData.reciept.payment.reduce(
+                (sum, pay) => sum + pay.amount,
+                0
+              )
             )} DA</strong>
           </div>
           <div class="remaining-amount">
             Reste à payer: ${new Intl.NumberFormat("fr-FR").format(
-              (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0) - 
-              OrderData.reciept.payment.reduce((sum, pay) => sum + pay.amount, 0)
+              (OrderData?.reciept?.total || 0) +
+                (OrderData?.deliveryCost || 0) -
+                OrderData.reciept.payment.reduce(
+                  (sum, pay) => sum + pay.amount,
+                  0
+                )
             )} DA
           </div>
         </div>
@@ -945,13 +976,8 @@ const EReceiptScreen = () => {
       </View>
 
       <View
-        style={[
-          styles.bottomBar,
-          {
-            height: bottomBarHeight,
-            paddingBottom: isSmallScreen ? 0 : Platform.OS === "ios" ? 10 : 3,
-          },
-        ]}
+        className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
+        style={styles.navigationClass}
       >
         <TouchableOpacity
           style={[
@@ -1040,6 +1066,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 10,
+  },
+  navigationClass: {
+    borderColor: "#888888",
+    borderWidth: 0.5,
+    backgroundColor: "#fff",
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
   },
   downloadButton: {
     backgroundColor: "#19213D",

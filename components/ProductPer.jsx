@@ -15,6 +15,7 @@ import {
   Dimensions,
 } from "react-native";
 import { MinusIcon, PlusIcon } from "react-native-heroicons/outline";
+import { formatNumber } from "../app/util/useFullFunctions";
 
 const ProductPer = memo(
   ({
@@ -167,7 +168,7 @@ const ProductPer = memo(
               )}
               <View style={styles.SubTotal}>
                 <Text style={styles.textSubTotal}>
-                  DA {totalPrice.toFixed(2)}
+                  DA {formatNumber(totalPrice)}
                 </Text>
               </View>
             </View>

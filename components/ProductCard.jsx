@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { StyleSheet } from "react-native";
+import { formatNumber } from "../app/util/useFullFunctions";
 
 const ProductCard = ({
   imgUrl,
@@ -24,7 +25,7 @@ const ProductCard = ({
           {ProductBrand}
         </Text>
         <Text style={styles.textPrice} numberOfLines={1} ellipsizeMode="tail">
-          DA {ProductPrice}
+          DA {formatNumber(ProductPrice)}
         </Text>
       </View>
     </TouchableOpacity>

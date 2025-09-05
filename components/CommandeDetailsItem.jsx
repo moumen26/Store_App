@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
+import { formatNumber } from "../app/util/useFullFunctions";
 
 const CommandeDetailsItem = ({ ProductName, ProductPriceTotal }) => {
   return (
     <View className="flex-row items-center justify-between w-full my-2">
       <Text style={[styles.title, styles.productName]}>{ProductName}</Text>
       <Text style={[styles.title, styles.productPrice]}>
-        DA {parseFloat(ProductPriceTotal).toFixed(2)}
+        DA {formatNumber(parseFloat(ProductPriceTotal))}
       </Text>
     </View>
   );

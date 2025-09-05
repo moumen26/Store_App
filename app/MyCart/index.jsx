@@ -23,6 +23,7 @@ import useAuthContext from "../hooks/useAuthContext";
 import Config from "../config.jsx";
 import Snackbar from "../../components/Snackbar.jsx";
 import ConfirmationModal from "../../components/ConfirmationModal.jsx";
+import { formatNumber } from "../util/useFullFunctions.jsx";
 
 const MyCartScreen = () => {
   const { cart, user, dispatch } = useAuthContext();
@@ -324,7 +325,7 @@ const MyCartScreen = () => {
                         },
                       ]}
                     >
-                      DA {total}
+                      DA {formatNumber(total)}
                     </Text>
                   </View>
                 </View>
@@ -362,17 +363,8 @@ const MyCartScreen = () => {
           </View>
 
           <View
-            style={[
-              styles.bottomBar,
-              {
-                height: bottomBarHeight,
-                paddingBottom: isSmallScreen
-                  ? 0
-                  : Platform.OS === "ios"
-                  ? 10
-                  : 3,
-              },
-            ]}
+            className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
+            style={styles.navigationClass}
           >
             <TouchableOpacity
               style={[
@@ -506,11 +498,20 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     zIndex: 10,
   },
+  navigationClass: {
+    borderColor: "#888888",
+    borderWidth: 0.5,
+    backgroundColor: "#fff",
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+  },
   orderButton: {
     backgroundColor: "#19213D",
     borderRadius: 10,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
+    width: 340,
   },
   orderButtonText: {
     color: "#fff",

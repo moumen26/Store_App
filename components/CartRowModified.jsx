@@ -49,8 +49,14 @@ const CartRowModified = memo(
               {ProductBrand} | Qty.: {displayedQuantity}
             </Text>
             <Text style={styles.productDescription}>
-              Méthode d'achat: {buyingMathode}
+              Méthode d'achat:{" "}
+              {buyingMathode === "box"
+                ? "boite"
+                : buyingMathode === "unity"
+                ? "unité"
+                : buyingMathode}
             </Text>
+
             <TouchableOpacity onPress={handleRemove}>
               <Text style={styles.removeText}>Supprimer</Text>
             </TouchableOpacity>

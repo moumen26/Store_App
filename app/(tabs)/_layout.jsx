@@ -1,5 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import { Animated, View } from "react-native";
 import {
   Cog8ToothIcon,
   HeartIcon,
@@ -8,6 +9,42 @@ import {
   BuildingStorefrontIcon,
 } from "react-native-heroicons/solid";
 import ProtectedScreen from "../util/ProtectedScreen";
+
+const AnimatedTabIcon = ({ Icon, focused, color, name, size = 24 }) => {
+  const scaleValue = React.useRef(
+    new Animated.Value(focused ? 1.2 : 1)
+  ).current;
+  const opacityValue = React.useRef(
+    new Animated.Value(focused ? 1 : 0.7)
+  ).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.spring(scaleValue, {
+        toValue: focused ? 1.2 : 1,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 7,
+      }),
+      Animated.timing(opacityValue, {
+        toValue: focused ? 1 : 0.7,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [focused]);
+
+  return (
+    <Animated.View
+      style={{
+        transform: [{ scale: scaleValue }],
+        opacity: opacityValue,
+      }}
+    >
+      <Icon name={name} size={size} color={color} />
+    </Animated.View>
+  );
+};
 
 const TabLayout = () => {
   return (
@@ -20,11 +57,12 @@ const TabLayout = () => {
             backgroundColor: "white",
             borderWidth: 1,
             borderTopColor: "#E3EFFF",
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
+            // borderTopLeftRadius: 20,
+            // borderTopRightRadius: 20,
+            paddingTop: 3,
             position: "absolute",
             overflow: "hidden",
-            height: 70,
+            height: 80,
             zIndex: 1000,
           },
         }}
@@ -34,8 +72,13 @@ const TabLayout = () => {
           options={{
             title: "Accueil",
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <HomeIcon name="home" size={24} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <AnimatedTabIcon
+                Icon={HomeIcon}
+                focused={focused}
+                color={color}
+                name="home"
+              />
             ),
           }}
         />
@@ -44,8 +87,13 @@ const TabLayout = () => {
           options={{
             title: "Magasins",
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <BuildingStorefrontIcon name="stores" size={24} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <AnimatedTabIcon
+                Icon={BuildingStorefrontIcon}
+                focused={focused}
+                color={color}
+                name="stores"
+              />
             ),
           }}
         />
@@ -54,8 +102,13 @@ const TabLayout = () => {
           options={{
             title: "Enregistré",
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <HeartIcon name="saved" size={24} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <AnimatedTabIcon
+                Icon={HeartIcon}
+                focused={focused}
+                color={color}
+                name="saved"
+              />
             ),
           }}
         />
@@ -64,8 +117,13 @@ const TabLayout = () => {
           options={{
             title: "Commandes",
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <ShoppingCartIcon name="orders" size={24} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <AnimatedTabIcon
+                Icon={ShoppingCartIcon}
+                focused={focused}
+                color={color}
+                name="orders"
+              />
             ),
           }}
         />
@@ -74,8 +132,13 @@ const TabLayout = () => {
           options={{
             title: "Paramètres",
             headerShown: false,
-            tabBarIcon: ({ color }) => (
-              <Cog8ToothIcon name="settings" size={24} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <AnimatedTabIcon
+                Icon={Cog8ToothIcon}
+                focused={focused}
+                color={color}
+                name="settings"
+              />
             ),
           }}
         />
