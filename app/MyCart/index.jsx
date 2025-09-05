@@ -27,7 +27,7 @@ import ConfirmationModal from "../../components/ConfirmationModal.jsx";
 const MyCartScreen = () => {
   const { cart, user, dispatch } = useAuthContext();
   const route = useRoute();
-  const { storeId, storeAddress } = route.params;  
+  const { storeId, storeAddress } = route.params;
   const navigation = useNavigation();
 
   // Get screen dimensions
@@ -404,6 +404,7 @@ const MyCartScreen = () => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
+        style={styles.modalViewZindex}
       >
         <View style={styles.modalView}>
           <EditCartScreen
@@ -521,6 +522,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(201, 228, 238, 0.7)",
   },
+
   loadingContainer: {
     flex: 1,
     justifyContent: "center",

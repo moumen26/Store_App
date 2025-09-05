@@ -24,6 +24,8 @@ import {
   MapPinIcon,
   MapIcon,
   PencilIcon,
+  ArrowLeftIcon,
+  CheckIcon,
 } from "react-native-heroicons/outline";
 import Config from "../config";
 
@@ -632,9 +634,9 @@ const ShippingAddressScreen = memo(() => {
                     ? newAddress.location.substring(0, 30) + "..."
                     : newAddress.location}
                 </Text>
-                <View style={styles.mapButton}>
+                {/* <View style={styles.mapButton}>
                   <Text style={styles.mapButtonText}>Sélectionner</Text>
-                </View>
+                </View> */}
               </TouchableOpacity>
             </View>
 
@@ -673,90 +675,110 @@ const ShippingAddressScreen = memo(() => {
         visible={mapModalVisible}
         animationType="slide"
         transparent={false}
+        statusBarTranslucent={true}
       >
-        <SafeAreaView style={styles.mapModalContainer}>
-          <View style={styles.mapHeader}>
-            <TouchableOpacity
-              style={styles.closeMapButton}
-              onPress={closeMapModal}
-            >
-              <Text style={styles.closeButtonText}>Annuler</Text>
-            </TouchableOpacity>
-            <Text style={styles.mapTitleText}>Sélectionner un lieu</Text>
-            <View style={{ width: 70 }} />
-          </View>
-
-          {/* Map View */}
-          <View style={styles.mapContainer}>
-            {loadingLocation ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#19213D" />
-                <Text style={styles.loadingText}>
-                  Recherche de votre position...
-                </Text>
-              </View>
-            ) : mapRegion ? (
-              <MapView
-                style={styles.map}
-                provider={PROVIDER_GOOGLE}
-                region={mapRegion}
-                onPress={onMapPress}
-                showsUserLocation={true}
-                showsMyLocationButton={true}
-                toolbarEnabled={false}
+        <View style={styles.mapModalContainer}>
+          <SafeAreaView style={styles.mapModalSafeArea}>
+            {/* Enhanced Header */}
+            <View style={styles.mapHeader}>
+              <TouchableOpacity
+                style={styles.closeMapButton}
+                onPress={closeMapModal}
               >
-                {selectedLocation && (
-                  <Marker
-                    coordinate={selectedLocation}
-                    title="Adresse sélectionnée"
-                    description={selectedAddress}
-                    pinColor="red"
-                  />
-                )}
-              </MapView>
-            ) : (
-              <View style={styles.mapPlaceholder}>
-                <MapIcon size={50} color="#19213D" />
-                <Text style={styles.mapPlaceholderText}>
-                  Appuyez pour obtenir votre position
-                </Text>
-                <TouchableOpacity
-                  style={styles.getCurrentLocationButton}
-                  onPress={getCurrentLocation}
-                >
-                  <Text style={styles.getCurrentLocationText}>
-                    Obtenir ma position
+                <ArrowLeftIcon color="#19213D" size={18} />
+              </TouchableOpacity>
+              <View style={styles.mapHeaderContent}>
+                <Text style={styles.mapTitleText}>Sélectionner un lieu</Text>
+                {/* <Text style={styles.mapSubtitleText}>
+                  Appuyez sur la carte pour choisir votre emplacement
+                </Text> */}
+              </View>
+              <TouchableOpacity
+                style={[
+                  styles.confirmHeaderButton,
+                  (!selectedLocation || !selectedAddress) &&
+                    styles.disabledHeaderButton,
+                ]}
+                onPress={handleLocationSelect}
+                disabled={!selectedLocation || !selectedAddress}
+              >
+                <CheckIcon
+                  color={
+                    !selectedLocation || !selectedAddress ? "#999" : "#19213D"
+                  }
+                  size={18}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* Map View - Full Screen */}
+            <View style={styles.mapContainer}>
+              {loadingLocation ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color="#19213D" />
+                  <Text style={styles.loadingText}>
+                    Recherche de votre position...
                   </Text>
-                </TouchableOpacity>
+                </View>
+              ) : mapRegion ? (
+                <MapView
+                  style={styles.map}
+                  provider={PROVIDER_GOOGLE}
+                  region={mapRegion}
+                  onPress={onMapPress}
+                  showsUserLocation={true}
+                  showsMyLocationButton={true}
+                  toolbarEnabled={false}
+                  mapType="standard"
+                >
+                  {selectedLocation && (
+                    <Marker
+                      coordinate={selectedLocation}
+                      title="Adresse sélectionnée"
+                      description={selectedAddress}
+                      pinColor="red"
+                    />
+                  )}
+                </MapView>
+              ) : (
+                <View style={styles.mapPlaceholder}>
+                  <MapIcon size={60} color="#19213D" />
+                  <Text style={styles.mapPlaceholderText}>
+                    Appuyez pour obtenir votre position
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.getCurrentLocationButton}
+                    onPress={getCurrentLocation}
+                  >
+                    <Text style={styles.getCurrentLocationText}>
+                      Obtenir ma position
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+
+            {/* Selected Address Display - Floating at bottom */}
+            {selectedAddress && (
+              <View style={styles.selectedAddressFloating}>
+                <View style={styles.selectedAddressContent}>
+                  <MapPinIcon size={20} color="#19213D" />
+                  <Text style={styles.selectedAddressText}>
+                    {selectedAddress}
+                  </Text>
+                </View>
               </View>
             )}
-          </View>
 
-          {/* Selected Address Display */}
-          {selectedAddress && (
-            <View style={styles.selectedAddressContainer}>
-              <MapPinIcon size={20} color="#19213D" />
-              <Text style={styles.selectedAddressText}>{selectedAddress}</Text>
-            </View>
-          )}
-
-          {/* Confirm Button */}
-          <View style={styles.mapButtonContainer}>
+            {/* Quick Actions Floating Button */}
             <TouchableOpacity
-              style={[
-                styles.confirmLocationButton,
-                (!selectedLocation || !selectedAddress) &&
-                  styles.disabledButton,
-              ]}
-              onPress={handleLocationSelect}
-              disabled={!selectedLocation || !selectedAddress}
+              style={styles.myLocationFloatingButton}
+              onPress={getCurrentLocation}
             >
-              <Text style={styles.confirmLocationText}>
-                Confirmer l'emplacement
-              </Text>
+              <MapIcon size={24} color="white" />
             </TouchableOpacity>
-          </View>
-        </SafeAreaView>
+          </SafeAreaView>
+        </View>
       </Modal>
     </View>
   );
@@ -964,8 +986,13 @@ const styles = StyleSheet.create({
   confirmButton: {
     backgroundColor: "#19213D",
   },
-  // Map modal styles
+
+  // Map modal styles - Full Screen
   mapModalContainer: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  mapModalSafeArea: {
     flex: 1,
     backgroundColor: "white",
   },
@@ -973,29 +1000,65 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    backgroundColor: "white",
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    zIndex: 1000,
   },
   closeMapButton: {
-    padding: 5,
-    width: 70,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: "#E3EFFF",
+    borderWidth: 1,
   },
-  closeButtonText: {
-    color: "#19213D",
-    fontSize: 16,
-    fontFamily: "Montserrat-Medium",
+
+  mapHeaderContent: {
+    flex: 1,
+    alignItems: "center",
+    marginHorizontal: 15,
   },
   mapTitleText: {
-    fontSize: 18,
-    fontFamily: "Montserrat-Medium",
+    fontSize: 20,
+    fontFamily: "Montserrat-Regular",
+    marginBottom: 2,
   },
+  mapSubtitleText: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#666",
+    textAlign: "center",
+  },
+  confirmHeaderButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: "#E3EFFF",
+    borderWidth: 1,
+  },
+
+  disabledHeaderButton: {
+    backgroundColor: "#f5f5f5",
+    backgroundColor: "#e0e0e0",
+  },
+
   mapContainer: {
     flex: 1,
-    backgroundColor: "#e8f4f8",
+    position: "relative",
   },
   map: {
-    width: width,
+    flex: 1,
+    width: "100%",
     height: "100%",
   },
   loadingContainer: {
@@ -1005,7 +1068,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
   },
   loadingText: {
-    marginTop: 10,
+    marginTop: 15,
     fontSize: 16,
     fontFamily: "Montserrat-Regular",
     color: "#19213D",
@@ -1015,55 +1078,77 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#f8f9fa",
+    paddingHorizontal: 40,
   },
   mapPlaceholderText: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: "Montserrat-Regular",
     color: "#666",
-    marginTop: 15,
-    marginBottom: 20,
+    marginTop: 20,
+    marginBottom: 30,
     textAlign: "center",
+    lineHeight: 24,
   },
   getCurrentLocationButton: {
     backgroundColor: "#19213D",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    borderRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   getCurrentLocationText: {
     color: "white",
     fontSize: 16,
     fontFamily: "Montserrat-Medium",
   },
-  selectedAddressContainer: {
+  selectedAddressFloating: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: "white",
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 8,
+    zIndex: 1000,
+  },
+  selectedAddressContent: {
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
-    backgroundColor: "#f8f9fa",
-    borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
   },
   selectedAddressText: {
-    marginLeft: 10,
+    marginLeft: 12,
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
     color: "#333",
     flex: 1,
+    lineHeight: 18,
   },
-  mapButtonContainer: {
-    padding: 15,
-    backgroundColor: "white",
-  },
-  confirmLocationButton: {
+  myLocationFloatingButton: {
+    position: "absolute",
+    bottom: 80,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: "#19213D",
-    padding: 15,
-    borderRadius: 8,
+    justifyContent: "center",
     alignItems: "center",
-  },
-  confirmLocationText: {
-    color: "white",
-    fontSize: 16,
-    fontFamily: "Montserrat-Medium",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    zIndex: 1000,
   },
 });
+
 export default ShippingAddressScreen;
