@@ -215,7 +215,9 @@ const cart = () => {
       >
         {filteredOrders?.length > 0 ? (
           <FlatList
-            data={filteredOrders.reverse()}
+            data={filteredOrders.sort(
+              (a, b) => new Date(b.date) - new Date(a.date)
+            )}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <CartOrderItem

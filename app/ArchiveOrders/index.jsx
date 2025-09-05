@@ -229,7 +229,9 @@ const ArchiveOrder = () => {
       >
         {filteredArchiveOrdersData?.length > 0 ? (
           <FlatList
-            data={filteredArchiveOrdersData?.reverse()}
+            data={filteredArchiveOrdersData.sort(
+              (a, b) => new Date(b.date) - new Date(a.date)
+            )}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <CartOrderItem

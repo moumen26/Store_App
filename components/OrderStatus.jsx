@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { CheckIcon, XMarkIcon, ArrowPathIcon } from "react-native-heroicons/outline";
+import {
+  CheckIcon,
+  XMarkIcon,
+  ArrowPathIcon,
+} from "react-native-heroicons/outline";
 import StepIndicator from "react-native-step-indicator";
-import { orderStatusTextDisplayer } from '../app/util/useFullFunctions';
+import { orderStatusTextDisplayer } from "../app/util/useFullFunctions";
 
 const OrderScreen = ({ type, status }) => {
   const specialStatuses = ["-2", "-1", "4"];
@@ -85,38 +89,30 @@ const OrderScreen = ({ type, status }) => {
       case "-2":
         return {
           icon: XMarkIcon,
-          iconColor: "#FF4444",
-          backgroundColor: "#FFE6E6",
-          borderColor: "#FF4444",
+          iconColor: "#FFFFFF",
+          backgroundColor: "#FF4444",
           textColor: "#FF4444",
-          gradientColors: ["#FFE6E6", "#FFCCCC"],
         };
       case "-1":
         return {
           icon: XMarkIcon,
-          iconColor: "#FF8C00",
-          backgroundColor: "#FFF4E6",
-          borderColor: "#FF8C00",
+          iconColor: "#FFFFFF",
+          backgroundColor: "#FF8C00",
           textColor: "#FF8C00",
-          gradientColors: ["#FFF4E6", "#FFE6CC"],
         };
       case "4":
         return {
           icon: ArrowPathIcon,
-          iconColor: "#6B46C1",
-          backgroundColor: "#F3F0FF",
-          borderColor: "#6B46C1",
+          iconColor: "#FFFFFF",
+          backgroundColor: "#6B46C1",
           textColor: "#6B46C1",
-          gradientColors: ["#F3F0FF", "#E9E2FF"],
         };
       default:
         return {
           icon: XMarkIcon,
-          iconColor: "#888888",
-          backgroundColor: "#F5F5F5",
-          borderColor: "#888888",
+          iconColor: "#FFFFFF",
+          backgroundColor: "#888888",
           textColor: "#888888",
-          gradientColors: ["#F5F5F5", "#E5E5E5"],
         };
     }
   };
@@ -127,58 +123,55 @@ const OrderScreen = ({ type, status }) => {
     const statusText = orderStatusTextDisplayer(status, type);
 
     return (
-      <View style={styles.specialStatusContainer}>
-        <View style={[styles.specialStatusCard, { 
-          backgroundColor: config.backgroundColor,
-          borderColor: config.borderColor 
-        }]}>
-          <View style={[styles.iconContainer, { 
-            backgroundColor: config.iconColor + '20',
-            borderColor: config.iconColor 
-          }]}>
-            <IconComponent size={40} color={config.iconColor} strokeWidth={2.5} />
+      <View style={styles.container}>
+        <View style={styles.specialStepIndicator}>
+          {/* Main status indicator circle - matching the step indicator style */}
+          <View
+            style={[
+              styles.specialStatusCircle,
+              {
+                backgroundColor: config.backgroundColor,
+              },
+            ]}
+          >
+            <IconComponent size={20} color={config.iconColor} strokeWidth={2} />
           </View>
-          
-          <View style={styles.statusTextContainer}>
-            <Text style={[styles.specialStatusText, { color: config.textColor }]}>
+
+          {/* Vertical line extending down - matching separator style */}
+          <View
+            style={[
+              styles.specialStatusLine,
+              {
+                backgroundColor: config.backgroundColor,
+              },
+            ]}
+          />
+        </View>
+
+        <View style={styles.specialContentContainer}>
+          {/* Main status text */}
+          <View style={styles.specialRowItem}>
+            <Text style={[styles.specialTitle, { color: config.textColor }]}>
               {statusText}
             </Text>
-            <View style={[styles.statusIndicatorLine, { backgroundColor: config.iconColor }]} />
+
+            {/* Additional info based on status */}
+            <Text style={styles.specialDescription}>
+              {status?.toString() === "-2" &&
+                "Le magasin a annulé votre commande."}
+              {status?.toString() === "-1" &&
+                "Vous avez annulé cette commande. Le remboursement sera traité automatiquement."}
+              {status?.toString() === "4" &&
+                "Votre commande a été retournée et sera traitée par notre équipe."}
+            </Text>
           </View>
-          
-          {/* Decorative elements */}
-          <View style={[styles.decorativeCircle1, { backgroundColor: config.iconColor + '10' }]} />
-          <View style={[styles.decorativeCircle2, { backgroundColor: config.iconColor + '15' }]} />
-        </View>
-        
-        {/* Additional info based on status */}
-        <View style={styles.additionalInfoContainer}>
-          {status?.toString() === "-2" && (
-            <Text style={styles.additionalInfoText}>
-              Le magasin a annulé votre commande.
-            </Text>
-          )}
-          {status?.toString() === "-1" && (
-            <Text style={styles.additionalInfoText}>
-              Vous avez annulé cette commande. Le remboursement sera traité automatiquement.
-            </Text>
-          )}
-          {status?.toString() === "4" && (
-            <Text style={styles.additionalInfoText}>
-              Votre commande a été retournée et sera traitée par notre équipe.
-            </Text>
-          )}
         </View>
       </View>
     );
   };
 
   if (isSpecialStatus) {
-    return (
-      <View style={styles.container}>
-        {renderSpecialStatusDesign()}
-      </View>
-    );
+    return renderSpecialStatusDesign();
   }
 
   // Regular StepIndicator for normal statuses
@@ -231,81 +224,45 @@ const styles = StyleSheet.create({
     color: "#888888",
     paddingBottom: 4,
   },
-  // Special status styles
-  specialStatusContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 30,
-  },
-  specialStatusCard: {
-    width: "100%",
-    minHeight: 200,
-    borderRadius: 20,
-    borderWidth: 2,
-    padding: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 3,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 20,
-  },
-  statusTextContainer: {
-    alignItems: "center",
-    marginTop: 10,
-  },
-  specialStatusText: {
-    fontSize: 18,
-    fontFamily: "Montserrat-SemiBold",
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  statusIndicatorLine: {
-    width: 60,
-    height: 3,
-    borderRadius: 2,
-  },
-  decorativeCircle1: {
-    position: "absolute",
-    top: 20,
-    right: 20,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-  },
-  decorativeCircle2: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-  },
-  additionalInfoContainer: {
-    marginTop: 20,
+  // Special status styles - matching the step indicator layout
+  specialStepIndicator: {
     paddingHorizontal: 20,
+    justifyContent: "flex-start",
+    paddingTop: 26,
+    alignItems: "center",
   },
-  additionalInfoText: {
-    fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-    color: "#666666",
-    textAlign: "center",
-    lineHeight: 20,
+  specialStatusCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#ffffff",
+  },
+
+  specialContentContainer: {
+    flex: 1,
+  },
+  specialRowItem: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    paddingVertical: 26,
+  },
+  specialTitle: {
+    fontSize: 13,
+    fontFamily: "Montserrat-Medium",
+    paddingBottom: 8,
+    fontWeight: "600",
+  },
+  specialDescription: {
+    fontSize: 11,
+    fontFamily: "Montserrat-Medium",
+    color: "#888888",
+    paddingBottom: 4,
+    lineHeight: 16,
   },
 });
 

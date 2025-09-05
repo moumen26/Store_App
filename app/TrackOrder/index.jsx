@@ -22,6 +22,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Config from "../config.jsx";
 import SubmitOrderModal from "../../components/SubmitOrderModal.jsx";
 import SubmitOderModalReason from "../../components/SubmitOderModalReason.jsx";
+import { formatNumber } from "../util/useFullFunctions.jsx";
 
 const TrackOrder = () => {
   const navigation = useNavigation();
@@ -33,8 +34,10 @@ const TrackOrder = () => {
   const [snackbarType, setSnackbarType] = useState("");
   const [submitionLoading, setSubmitionLoading] = useState(false);
   const [scanedData, setScanedData] = useState({ type: null, data: null });
-  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
-  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] = useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+  const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] =
+    useState(false);
   const [reason, setReason] = useState("");
 
   // Get screen dimensions
@@ -52,21 +55,27 @@ const TrackOrder = () => {
 
   // Helper function to calculate returned products
   const getReturnedProducts = (orderStatusData) => {
-    if (!orderStatusData || !Array.isArray(orderStatusData) || orderStatusData.length < 2) {
+    if (
+      !orderStatusData ||
+      !Array.isArray(orderStatusData) ||
+      orderStatusData.length < 2
+    ) {
       return [];
     }
 
     // Sort by date to get first and last entries
-    const sortedData = [...orderStatusData].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const sortedData = [...orderStatusData].sort(
+      (a, b) => new Date(a.date) - new Date(b.date)
+    );
     const firstStatus = sortedData[0];
     const lastStatus = sortedData[sortedData.length - 1];
 
     const returnedProducts = [];
 
     // Compare products between first and last status
-    firstStatus.products.forEach(firstProduct => {
+    firstStatus.products.forEach((firstProduct) => {
       const lastProduct = lastStatus.products.find(
-        p => p.product._id === firstProduct.product._id
+        (p) => p.product._id === firstProduct.product._id
       );
 
       if (lastProduct && firstProduct.quantity > lastProduct.quantity) {
@@ -76,7 +85,7 @@ const TrackOrder = () => {
           returnedQuantity,
           originalQuantity: firstProduct.quantity,
           currentQuantity: lastProduct.quantity,
-          returnedValue: returnedQuantity * firstProduct.price
+          returnedValue: returnedQuantity * firstProduct.price,
         });
       }
     });
@@ -199,48 +208,54 @@ const TrackOrder = () => {
   };
 
   // Check if we should show detailed order status
-  const shouldShowDetailedStatus = recieptData?.reciept?.status === 4 && recieptData?.reciept?.products?.length > 1;
+  const shouldShowDetailedStatus =
+    recieptData?.reciept?.status === 4 &&
+    recieptData?.reciept?.products?.length > 1;
 
   // Render individual returned product item
-  const renderReturnedProductItem = ({ item, index }) => {    
+  const renderReturnedProductItem = ({ item, index }) => {
     return (
       <View style={styles.productStatusCard}>
         <View style={styles.productImageContainer}>
           <Image
-            source={{ 
-              uri: `${Config.FILES_URL}/${item?.product?.image}` 
+            source={{
+              uri: `${Config.FILES_URL}/${item?.product?.image}`,
             }}
             style={styles.productImage}
             resizeMode="cover"
           />
         </View>
-        
+
         <View style={styles.productDetails}>
           <Text style={styles.productName} numberOfLines={2}>
-            {item?.product?.name || 'Produit non disponible'}
+            {item?.product?.name || "Produit non disponible"}
           </Text>
           <Text style={styles.productBrand}>
-            {item?.product?.brand?.name || 'Marque inconnue'}
+            {item?.product?.brand?.name || "Marque inconnue"}
           </Text>
-          
+
           <View style={styles.productMetrics}>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>Quantité retournée</Text>
-              <Text style={styles.metricValue}>{item?.returnedQuantity || 0}</Text>
+              <Text style={styles.metricValue}>
+                {item?.returnedQuantity || 0}
+              </Text>
             </View>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>Prix unitaire</Text>
-              <Text style={styles.metricValue}>{item?.price?.toFixed(2) || '0.00'} DA</Text>
+              <Text style={styles.metricValue}>
+                {formatNumber(item?.price) || "0.00"} DA
+              </Text>
             </View>
           </View>
-          
+
           <View style={styles.returnSummary}>
             <Text style={styles.returnSummaryText}>
-              {item?.originalQuantity} → {item?.currentQuantity} 
+              {item?.originalQuantity} → {item?.currentQuantity} {" "}
               (Retour: {item?.returnedQuantity})
             </Text>
             <Text style={styles.returnValue}>
-              Valeur retournée: {item?.returnedValue?.toFixed(2)} DA
+              Valeur retournée: {formatNumber(item?.returnedValue)} DA
             </Text>
           </View>
         </View>
@@ -256,9 +271,13 @@ const TrackOrder = () => {
           <View key={index} style={styles.shimmerCard}>
             <View style={styles.shimmerImage} />
             <View style={styles.shimmerContent}>
-              <View style={[styles.shimmerLine, { width: '80%' }]} />
-              <View style={[styles.shimmerLine, { width: '60%', marginTop: 8 }]} />
-              <View style={[styles.shimmerLine, { width: '40%', marginTop: 8 }]} />
+              <View style={[styles.shimmerLine, { width: "80%" }]} />
+              <View
+                style={[styles.shimmerLine, { width: "60%", marginTop: 8 }]}
+              />
+              <View
+                style={[styles.shimmerLine, { width: "40%", marginTop: 8 }]}
+              />
             </View>
           </View>
         ))}
@@ -267,7 +286,9 @@ const TrackOrder = () => {
   };
 
   // Get returned products data
-  const returnedProducts = OrderStatusData ? getReturnedProducts(OrderStatusData) : [];
+  const returnedProducts = OrderStatusData
+    ? getReturnedProducts(OrderStatusData)
+    : [];
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -366,7 +387,7 @@ const TrackOrder = () => {
                       },
                     ]}
                   >
-                    pas encore disponible
+                    -
                   </Text>
                 )}
               </View>
@@ -423,7 +444,9 @@ const TrackOrder = () => {
                   },
                 ]}
               >
-                {shouldShowDetailedStatus ? 'Produits retournés' : 'État de la commande'}
+                {shouldShowDetailedStatus
+                  ? "Produits retournés"
+                  : "État de la commande"}
               </Text>
 
               {shouldShowDetailedStatus ? (
@@ -439,17 +462,19 @@ const TrackOrder = () => {
                   ) : returnedProducts.length > 0 ? (
                     <>
                       <Text style={styles.summaryTitle}>
-                        {returnedProducts.length} produit(s) retourné(s)
+                        {returnedProducts.length} Produit(s) retourné(s)
                       </Text>
                       <FlatList
                         data={returnedProducts}
                         renderItem={renderReturnedProductItem}
-                        keyExtractor={(item, index) => 
+                        keyExtractor={(item, index) =>
                           `${item?.product?._id}-${index}` || index.toString()
                         }
                         scrollEnabled={false}
                         showsVerticalScrollIndicator={false}
-                        ItemSeparatorComponent={() => <View style={styles.separator} />}
+                        ItemSeparatorComponent={() => (
+                          <View style={styles.separator} />
+                        )}
                       />
                     </>
                   ) : (
@@ -561,27 +586,22 @@ const styles = StyleSheet.create({
   },
   // Styles for detailed status
   detailedStatusContainer: {
-    backgroundColor: '#F8F9FA',
+    backgroundColor: "#F8F9FA",
     borderRadius: 12,
     padding: 16,
   },
   summaryTitle: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Medium',
-    color: '#666666',
+    fontFamily: "Montserrat-Medium",
+    color: "#666666",
     marginBottom: 12,
   },
   productStatusCard: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    flexDirection: "row",
+    alignItems: "center",
   },
   productImageContainer: {
     marginRight: 16,
@@ -590,41 +610,40 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: '#F0F0F0',
   },
   productDetails: {
     flex: 1,
     marginRight: 12,
   },
   productName: {
-    fontSize: 16,
-    fontFamily: 'Montserrat-Medium',
-    color: '#1A1A1A',
-    marginBottom: 4,
+    fontSize: 13,
+    fontFamily: "Montserrat-Regular",
+    color: "#000",
   },
   productBrand: {
-    fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
-    color: '#666666',
-    marginBottom: 8,
+    fontSize: 11,
+    fontFamily: "Montserrat-Regular",
+    color: "#888888",
   },
   productMetrics: {
-    flexDirection: 'row',
-    gap: 16,
-    marginBottom: 8,
+    flexDirection: "column",
+    marginBottom: 4,
+    marginTop: 4,
   },
   metricItem: {
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   metricLabel: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: '#888888',
+    fontFamily: "Montserrat-Regular",
+    color: "#888888",
   },
   metricValue: {
-    fontSize: 14,
-    fontFamily: 'Montserrat-Medium',
-    color: '#1A1A1A',
+    fontSize: 12,
+    fontFamily: "Montserrat-Medium",
+    color: "#1A1A1A",
     marginTop: 2,
   },
   returnSummary: {
@@ -632,17 +651,17 @@ const styles = StyleSheet.create({
   },
   returnSummaryText: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
-    color: '#666666',
+    fontFamily: "Montserrat-Regular",
+    color: "#666666",
   },
   returnValue: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: '#FF6B6B',
+    fontFamily: "Montserrat-Medium",
+    color: "#FF6B6B",
     marginTop: 2,
   },
   statusIndicator: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   statusDot: {
     width: 12,
@@ -652,8 +671,8 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Medium',
-    color: '#FF6B6B',
+    fontFamily: "Montserrat-Medium",
+    color: "#FF6B6B",
   },
   separator: {
     height: 12,
@@ -662,17 +681,17 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   shimmerCard: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   shimmerImage: {
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: "#E5E5E5",
     marginRight: 16,
   },
   shimmerContent: {
@@ -680,28 +699,28 @@ const styles = StyleSheet.create({
   },
   shimmerLine: {
     height: 16,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: "#E5E5E5",
     borderRadius: 4,
   },
   errorContainer: {
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   errorText: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
-    color: '#FF6B6B',
-    textAlign: 'center',
+    fontFamily: "Montserrat-Regular",
+    color: "#FF6B6B",
+    textAlign: "center",
   },
   emptyContainer: {
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emptyText: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
-    color: '#888888',
-    textAlign: 'center',
+    fontFamily: "Montserrat-Regular",
+    color: "#888888",
+    textAlign: "center",
   },
 });
 
