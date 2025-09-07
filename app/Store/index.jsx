@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   Platform,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
@@ -33,6 +33,7 @@ import Search from "../loading/Search";
 import TopHomeScreen from "../loading/TopHomeScreen";
 import COMING_SOON from "../../assets/images/comingSoon.jpg";
 import { BuildingStorefrontIcon } from "react-native-heroicons/solid";
+
 const api = axios.create({
   baseURL: Config.API_URL,
   headers: {
@@ -72,6 +73,7 @@ const Store = () => {
     setModalVisible(false);
     setSelectedProduct(null);
   };
+
   //--------------------------------------------APIs--------------------------------------------
   // Function to fetch public publicities data
   const fetchPrivatePublicitiesData = async () => {
@@ -117,6 +119,7 @@ const Store = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
   // Function to fetch brands data
   const fetchPopularProductsData = async () => {
     try {
@@ -161,6 +164,7 @@ const Store = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
   // Function to fetch brands data
   const fetchProductsData = async () => {
     try {
@@ -205,6 +209,27 @@ const Store = () => {
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchOnWindowFocus: true, // Optional: refetching on window focus for React Native
   });
+
+  // Sort products alphabetically by name (A to Z)
+  const sortedProductsData = useMemo(() => {
+    if (!ProductsData || ProductsData.length === 0) return [];
+    return [...ProductsData].sort((a, b) => {
+      const nameA = (a?.product?.name || "").toLowerCase();
+      const nameB = (b?.product?.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [ProductsData]);
+
+  // Sort popular products alphabetically by name (A to Z)
+  const sortedPopularProductsData = useMemo(() => {
+    if (!PopularProductsData || PopularProductsData.length === 0) return [];
+    return [...PopularProductsData].sort((a, b) => {
+      const nameA = (a?.stock?.product?.name || "").toLowerCase();
+      const nameB = (b?.stock?.product?.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [PopularProductsData]);
+
   const extractBrandDataFromProductsData = (productsData) => {
     if (!productsData || productsData.length === 0) {
       return [];
@@ -222,8 +247,15 @@ const Store = () => {
       }
       return acc;
     }, []);
-    return brandsData;
+
+    // Sort brands alphabetically by name (A to Z)
+    return brandsData.sort((a, b) => {
+      const nameA = (a?.name || "").toLowerCase();
+      const nameB = (b?.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
   };
+
   //--------------------------------------------RENDERING--------------------------------------------
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -315,7 +347,7 @@ const Store = () => {
             ]}
             onPress={() =>
               navigation.navigate("Search/index", {
-                ProductsData: ProductsData,
+                ProductsData: sortedProductsData, // Pass sorted data
                 storeId: storeId,
               })
             }
@@ -407,7 +439,7 @@ const Store = () => {
                     navigation.navigate("Brand/index", {
                       brandId: brand?._id,
                       brandIMG: `${Config.FILES_URL}/${brand?.image}`,
-                      ProductsData: ProductsData,
+                      ProductsData: sortedProductsData, // Pass sorted data
                       storeId: storeId,
                     })
                   }
@@ -446,7 +478,7 @@ const Store = () => {
                 <Text
                   onPress={() =>
                     navigation.navigate("AllProducts/index", {
-                      productsData: ProductsData,
+                      productsData: sortedProductsData, // Pass sorted data
                       storeId: storeId,
                     })
                   }
@@ -461,7 +493,7 @@ const Store = () => {
             </View>
             <View style={styles.productsContainer}>
               <FlatList
-                data={ProductsData}
+                data={sortedProductsData} // Use sorted data
                 horizontal
                 keyExtractor={(item) => item?._id?.toString()}
                 showsHorizontalScrollIndicator={false}
@@ -482,7 +514,6 @@ const Store = () => {
                         storeId: storeId,
                       })
                     }
-
                     // onPress={() => handleOpenModel(item)}
                   />
                 )}
@@ -535,7 +566,7 @@ const Store = () => {
                 <Text
                   onPress={() =>
                     navigation.navigate("PopularProducts/index", {
-                      popularProductsData: PopularProductsData,
+                      popularProductsData: sortedPopularProductsData, // Pass sorted data
                       storeId: storeId,
                     })
                   }
@@ -550,7 +581,7 @@ const Store = () => {
             </View>
             <View style={styles.productsContainer}>
               <FlatList
-                data={PopularProductsData}
+                data={sortedPopularProductsData} // Use sorted data
                 horizontal
                 keyExtractor={(item) => item?._id?.toString()}
                 showsHorizontalScrollIndicator={false}

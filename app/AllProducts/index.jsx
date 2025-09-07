@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   Platform,
 } from "react-native";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import BackButton from "../../components/BackButton";
@@ -18,6 +18,15 @@ const AllProductsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { productsData, storeId } = route.params;
+
+  // Sort products alphabetically by name (A to Z)
+  const sortedProductsData = useMemo(() => {
+    return [...productsData].sort((a, b) => {
+      const nameA = (a?.product?.name || "").toLowerCase();
+      const nameB = (b?.product?.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [productsData]);
 
   // Get screen dimensions
   const { width, height } = useWindowDimensions();
@@ -44,10 +53,13 @@ const AllProductsScreen = () => {
     const grid = [];
     let row = [];
 
-    productsData.forEach((item, index) => {
+    sortedProductsData.forEach((item, index) => {
       row.push(item);
 
-      if (row.length === numberOfColumns || index === productsData.length - 1) {
+      if (
+        row.length === numberOfColumns ||
+        index === sortedProductsData.length - 1
+      ) {
         grid.push([...row]);
         row = [];
       }
@@ -138,9 +150,7 @@ const AllProductsScreen = () => {
                       }
                       ProductBrand={item?.product?.brand?.name}
                       ProductPrice={item.selling}
-                      imgUrl={`${Config.FILES_URL}/${
-                        item?.product?.image
-                      }`}
+                      imgUrl={`${Config.FILES_URL}/${item?.product?.image}`}
                       onPress={() =>
                         navigation.navigate("Product/index", {
                           data: item,
@@ -171,15 +181,13 @@ const AllProductsScreen = () => {
               </View>
             ))
           : // Column layout for small screens
-            productsData.map((item) => (
+            sortedProductsData.map((item) => (
               <ProductCard
                 key={item._id}
                 ProductName={item?.product?.name + " " + item?.product?.size}
                 ProductBrand={item?.product?.brand?.name}
                 ProductPrice={item.selling}
-                imgUrl={`${Config.FILES_URL}/${
-                  item?.product?.image
-                }`}
+                imgUrl={`${Config.FILES_URL}/${item?.product?.image}`}
                 onPress={() =>
                   navigation.navigate("Product/index", {
                     data: item,

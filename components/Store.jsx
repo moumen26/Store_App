@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   View,
   Text,
@@ -51,9 +51,39 @@ const getResponsiveDimension = (baseSize) => {
 
 const Store = ({ StoresData, CategoriesData }) => {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
+
+  // Sort categories alphabetically by name (A to Z)
+  const sortedCategoriesData = useMemo(() => {
+    if (!CategoriesData || CategoriesData.length === 0) return [];
+    return [...CategoriesData].sort((a, b) => {
+      const nameA = (a?.name || "").toLowerCase();
+      const nameB = (b?.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [CategoriesData]);
+
+  // Sort stores alphabetically by store name (A to Z)
+  const sortedStoresData = useMemo(() => {
+    if (!StoresData || StoresData.length === 0) return [];
+    return [...StoresData].sort((a, b) => {
+      const nameA = (a?.store?.storeName || "").toLowerCase();
+      const nameB = (b?.store?.storeName || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [StoresData]);
+
+  const [activeTab, setActiveTab] = useState(
+    sortedCategoriesData[0]?._id || ""
+  );
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  // Update activeTab when sortedCategoriesData changes
+  useEffect(() => {
+    if (sortedCategoriesData.length > 0 && !activeTab) {
+      setActiveTab(sortedCategoriesData[0]._id);
+    }
+  }, [sortedCategoriesData, activeTab]);
 
   useEffect(() => {
     Animated.parallel([
@@ -92,9 +122,19 @@ const Store = ({ StoresData, CategoriesData }) => {
     });
   };
 
-  const filteredStores = StoresData.filter((store) =>
-    store?.store?.categories.some((category) => category._id === activeTab)
-  );
+  // Filter and sort stores based on active category
+  const filteredAndSortedStores = useMemo(() => {
+    const filtered = sortedStoresData.filter((store) =>
+      store?.store?.categories.some((category) => category._id === activeTab)
+    );
+
+    // Sort filtered results alphabetically by store name
+    return filtered.sort((a, b) => {
+      const nameA = (a?.store?.storeName || "").toLowerCase();
+      const nameB = (b?.store?.storeName || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [sortedStoresData, activeTab]);
 
   const renderStoreCard = ({ item }) => (
     <StoreCard
@@ -125,7 +165,7 @@ const Store = ({ StoresData, CategoriesData }) => {
       {/* Categories horizontal scroll - fixed at top */}
       <View style={styles.categoriesContainer}>
         <FlatList
-          data={CategoriesData}
+          data={sortedCategoriesData} // Use sorted categories
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(category) => category._id}
@@ -162,7 +202,7 @@ const Store = ({ StoresData, CategoriesData }) => {
         ]}
       >
         <FlatList
-          data={filteredStores}
+          data={filteredAndSortedStores} // Use filtered and sorted stores
           renderItem={renderStoreCard}
           keyExtractor={(store) => store._id}
           ListEmptyComponent={renderNoStores}

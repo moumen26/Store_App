@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   View,
   Text,
@@ -27,7 +27,30 @@ const NonLinkedStores = ({
   const [snackbarType, setSnackbarType] = useState("");
 
   const [submitionLoading, setSubmitionLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
+
+  // Sort categories alphabetically by name (A to Z)
+  const sortedCategoriesData = useMemo(() => {
+    if (!CategoriesData || CategoriesData.length === 0) return [];
+    return [...CategoriesData].sort((a, b) => {
+      const nameA = (a?.name || "").toLowerCase();
+      const nameB = (b?.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [CategoriesData]);
+
+  // Sort stores alphabetically by store name (A to Z)
+  const sortedStoresData = useMemo(() => {
+    if (!StoresData || StoresData.length === 0) return [];
+    return [...StoresData].sort((a, b) => {
+      const nameA = (a?.storeName || "").toLowerCase();
+      const nameB = (b?.storeName || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [StoresData]);
+
+  const [activeTab, setActiveTab] = useState(
+    sortedCategoriesData[0]?._id || ""
+  );
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -41,6 +64,7 @@ const NonLinkedStores = ({
     useState(false);
 
   const [item, setItem] = useState(null);
+
   const openRequestModal = (val) => {
     setItem(val);
     setConfirmationModalVisible(true);
@@ -50,6 +74,13 @@ const NonLinkedStores = ({
     setItem(null);
     setConfirmationModalVisible(false);
   };
+
+  // Update activeTab when sortedCategoriesData changes
+  useEffect(() => {
+    if (sortedCategoriesData.length > 0 && !activeTab) {
+      setActiveTab(sortedCategoriesData[0]._id);
+    }
+  }, [sortedCategoriesData, activeTab]);
 
   useEffect(() => {
     Animated.parallel([
@@ -88,9 +119,19 @@ const NonLinkedStores = ({
     });
   };
 
-  const filteredStores = StoresData.filter((store) =>
-    store?.categories?.some((category) => category === activeTab)
-  );
+  // Filter and sort stores based on active category
+  const filteredAndSortedStores = useMemo(() => {
+    const filtered = sortedStoresData.filter((store) =>
+      store?.categories?.some((category) => category === activeTab)
+    );
+
+    // Already sorted by sortedStoresData, but if you want to sort again after filtering:
+    return filtered.sort((a, b) => {
+      const nameA = (a?.storeName || "").toLowerCase();
+      const nameB = (b?.storeName || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [sortedStoresData, activeTab]);
 
   const renderCategory = ({ item }) => (
     <TouchableOpacity
@@ -167,7 +208,7 @@ const NonLinkedStores = ({
     <View className="mx-5">
       <View style={[styles.allTransparent]}>
         <FlatList
-          data={CategoriesData}
+          data={sortedCategoriesData} // Use sorted categories
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={renderCategory}
@@ -183,7 +224,7 @@ const NonLinkedStores = ({
         ]}
       >
         <FlatList
-          data={filteredStores}
+          data={filteredAndSortedStores} // Use filtered and sorted stores
           renderItem={(store) => renderStoreCard(store)}
           keyExtractor={(store) => store._id}
           contentContainerStyle={{
@@ -242,9 +283,11 @@ const styles = StyleSheet.create({
     borderColor: "#C9E4EE",
     borderWidth: 0.5,
     marginRight: 4,
+    marginBottom: 2,
   },
   allTransparent: {
     backgroundColor: "transparent",
+    paddingBottom: 2,
   },
   containerScroll: {
     flexDirection: "column",

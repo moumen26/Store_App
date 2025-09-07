@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
     borderColor: "#C9E4EE",
     borderWidth: 0.5,
     marginRight: 4,
+    marginBottom: 2,
   },
   storeToggle: {
     backgroundColor: "#19213D",
