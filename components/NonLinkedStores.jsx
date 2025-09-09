@@ -15,6 +15,16 @@ import Snackbar from "./Snackbar";
 import useAuthContext from "../app/hooks/useAuthContext";
 import Config from "../app/config";
 
+// Helper function to capitalize first letter of each word
+const capitalizeFirstLetter = (text) => {
+  if (!text || typeof text !== "string") return "";
+  return text
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 const NonLinkedStores = ({
   StoresData,
   CategoriesData,
@@ -148,7 +158,7 @@ const NonLinkedStores = ({
           },
         ]}
       >
-        {item.name}
+        {capitalizeFirstLetter(item.name)}
       </Text>
     </TouchableOpacity>
   );
@@ -157,7 +167,7 @@ const NonLinkedStores = ({
     <>
       <StoreCard
         key={item._id}
-        title={item.storeName}
+        title={capitalizeFirstLetter(item.storeName)}
         sousTitle={`${item.wilaya}, ${item.commune}`}
         buttonText="Demander"
         onPress={() => openRequestModal(item)}
@@ -247,7 +257,9 @@ const NonLinkedStores = ({
         onConfirm={() => handleSubmitStoreAccess(item?._id)}
         isloading={submitionLoading}
         modalTitle="Demande d'accès au magasin"
-        modalSubTitle={`Votre demande sera envoyée à l'administrateur du magasin "${item?.storeName}".`}
+        modalSubTitle={`Votre demande sera envoyée à l'administrateur du magasin "${capitalizeFirstLetter(
+          item?.storeName || ""
+        )}".`}
       />
       {snackbarKey !== 0 && (
         <Snackbar
@@ -255,6 +267,8 @@ const NonLinkedStores = ({
           message={snackbarMessage}
           duration={2000}
           snackbarType={snackbarType}
+          position="bottom"
+          bottomOffset="70"
         />
       )}
     </View>

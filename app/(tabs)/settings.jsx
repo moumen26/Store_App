@@ -468,7 +468,7 @@ const Settings = () => {
             styles.titleScreen,
             {
               fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
-              marginBottom: verticalSpacing * 0.5,
+              marginBottom: isSmallScreen ? smallSpacing : verticalSpacing,
             },
           ]}
         >
@@ -484,7 +484,9 @@ const Settings = () => {
           <View
             style={[
               styles.mainContent,
-              { marginHorizontal: horizontalPadding },
+              {
+                marginHorizontal: horizontalPadding,
+              },
             ]}
           >
             <Text

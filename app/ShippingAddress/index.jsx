@@ -596,7 +596,8 @@ const ShippingAddressScreen = memo(() => {
                   onChangeText={(text) =>
                     setNewAddress((prev) => ({ ...prev, name: text }))
                   }
-                  placeholder="Maison, Travail, etc."
+                  placeholder="Maison, Dépot, etc."
+                  placeholderTextColor="#888888"
                 />
               </View>
 
@@ -610,6 +611,7 @@ const ShippingAddressScreen = memo(() => {
                     setNewAddress((prev) => ({ ...prev, address: text }))
                   }
                   placeholder="Adresse complète"
+                  placeholderTextColor="#888888"
                 />
               </View>
 

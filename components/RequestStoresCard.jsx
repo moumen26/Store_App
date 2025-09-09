@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,40 @@ import { StyleSheet } from "react-native";
 import StoreCard from "./StoreCard";
 import ConfirmationModal from "./ConfirmationModal";
 
+// Helper function to capitalize first letter of each word
+const capitalizeFirstLetter = (text) => {
+  if (!text || typeof text !== "string") return "";
+  return text
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 const RequestStoresCard = ({ StoresData, CategoriesData }) => {
-  const [activeTab, setActiveTab] = useState(CategoriesData[0]?._id || "");
+  // Sort categories alphabetically by name (A to Z)
+  const sortedCategoriesData = useMemo(() => {
+    if (!CategoriesData || CategoriesData.length === 0) return [];
+    return [...CategoriesData].sort((a, b) => {
+      const nameA = (a?.name || "").toLowerCase();
+      const nameB = (b?.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [CategoriesData]);
+
+  // Sort stores alphabetically by store name (A to Z)
+  const sortedStoresData = useMemo(() => {
+    if (!StoresData || StoresData.length === 0) return [];
+    return [...StoresData].sort((a, b) => {
+      const nameA = (a?.store?.storeName || "").toLowerCase();
+      const nameB = (b?.store?.storeName || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [StoresData]);
+
+  const [activeTab, setActiveTab] = useState(
+    sortedCategoriesData[0]?._id || ""
+  );
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -25,6 +57,13 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
   const isSmallScreen = width < 375;
   const isMediumScreen = width >= 375 && width < 768;
   const isLargeScreen = width >= 768;
+
+  // Update activeTab when sortedCategoriesData changes
+  useEffect(() => {
+    if (sortedCategoriesData.length > 0 && !activeTab) {
+      setActiveTab(sortedCategoriesData[0]._id);
+    }
+  }, [sortedCategoriesData, activeTab]);
 
   useEffect(() => {
     Animated.parallel([
@@ -63,14 +102,24 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
     });
   };
 
-  const filteredStores = StoresData.filter((store) =>
-    store?.store?.categories.some((category) => category._id === activeTab)
-  );
+  // Filter and sort stores based on active category
+  const filteredAndSortedStores = useMemo(() => {
+    const filtered = sortedStoresData.filter((store) =>
+      store?.store?.categories.some((category) => category._id === activeTab)
+    );
+
+    // Sort filtered results alphabetically by store name
+    return filtered.sort((a, b) => {
+      const nameA = (a?.store?.storeName || "").toLowerCase();
+      const nameB = (b?.store?.storeName || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [sortedStoresData, activeTab]);
 
   const renderStoreCard = ({ item }) => (
     <StoreCard
       key={item._id}
-      title={item.store.storeName}
+      title={capitalizeFirstLetter(item.store.storeName)}
       sousTitle={`${item.store.wilaya}, ${item.store.commune}`}
       buttonText={item?.status == "pending" ? "Pending" : "Rejected"}
       onPress={() => {
@@ -96,7 +145,7 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
     <View>
       <View style={[styles.allTransparent]}>
         <FlatList
-          data={CategoriesData}
+          data={sortedCategoriesData} // Use sorted categories
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(category) => category._id}
@@ -113,13 +162,12 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
                 style={[
                   styles.text,
                   activeTab === item._id && styles.storeToggle,
-
                   {
                     fontSize: isSmallScreen ? 11 : isLargeScreen ? 15 : 11,
                   },
                 ]}
               >
-                {item.name}
+                {capitalizeFirstLetter(item.name)}
               </Text>
             </TouchableOpacity>
           )}
@@ -135,7 +183,7 @@ const RequestStoresCard = ({ StoresData, CategoriesData }) => {
         ]}
       >
         <FlatList
-          data={filteredStores}
+          data={filteredAndSortedStores} // Use filtered and sorted stores
           renderItem={renderStoreCard}
           keyExtractor={(store) => store._id}
           contentContainerStyle={{

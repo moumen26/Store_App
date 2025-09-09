@@ -49,6 +49,16 @@ const getResponsiveDimension = (baseSize) => {
   }
 };
 
+// Helper function to capitalize first letter of each word
+const capitalizeFirstLetter = (text) => {
+  if (!text || typeof text !== "string") return "";
+  return text
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 const Store = ({ StoresData, CategoriesData }) => {
   const navigation = useNavigation();
 
@@ -139,7 +149,7 @@ const Store = ({ StoresData, CategoriesData }) => {
   const renderStoreCard = ({ item }) => (
     <StoreCard
       key={item._id}
-      title={item.store.storeName}
+      title={capitalizeFirstLetter(item.store.storeName)}
       sousTitle={`${item.store.wilaya}, ${item.store.commune}`}
       buttonText="Acheter"
       onPress={() =>
@@ -165,7 +175,7 @@ const Store = ({ StoresData, CategoriesData }) => {
       {/* Categories horizontal scroll - fixed at top */}
       <View style={styles.categoriesContainer}>
         <FlatList
-          data={sortedCategoriesData} // Use sorted categories
+          data={sortedCategoriesData}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(category) => category._id}
@@ -183,7 +193,7 @@ const Store = ({ StoresData, CategoriesData }) => {
                   activeTab === item._id && styles.storeToggleText,
                 ]}
               >
-                {item.name}
+                {capitalizeFirstLetter(item.name)}
               </Text>
             </TouchableOpacity>
           )}
@@ -202,11 +212,14 @@ const Store = ({ StoresData, CategoriesData }) => {
         ]}
       >
         <FlatList
-          data={filteredAndSortedStores} // Use filtered and sorted stores
+          data={filteredAndSortedStores}
           renderItem={renderStoreCard}
           keyExtractor={(store) => store._id}
           ListEmptyComponent={renderNoStores}
-          contentContainerStyle={styles.storesContentContainer}
+          contentContainerStyle={[
+            styles.storesContentContainer,
+            filteredAndSortedStores.length === 0 && { flex: 1 },
+          ]}
           showsVerticalScrollIndicator={true}
           bounces={true}
         />
@@ -236,9 +249,8 @@ const styles = StyleSheet.create({
   },
   noStoresContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: getResponsiveDimension(40),
+    paddingTop: 8,
+    maxHeight: 100,
   },
   noStoresText: {
     fontSize: getResponsiveFontSize(13),

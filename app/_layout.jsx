@@ -410,12 +410,7 @@ export default Sentry.wrap(function RootLayout() {
               headerShown: false,
             }}
           />
-          <Stack.Screen
-            name="TrackOrder/index"
-            options={{
-              headerShown: false,
-            }}
-          />
+
           <Stack.Screen
             name="Notifications/index"
             options={{
@@ -444,6 +439,13 @@ export default Sentry.wrap(function RootLayout() {
           />
           <Stack.Screen
             name="ScanBarCode/index"
+            options={{
+              headerShown: false,
+              presentation: "containedModal",
+            }}
+          />
+          <Stack.Screen
+            name="TrackOrder/index"
             options={{
               headerShown: false,
               presentation: "containedModal",

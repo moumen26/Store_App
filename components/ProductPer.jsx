@@ -110,20 +110,6 @@ const ProductPer = memo(
       <View style={styles.ProductDetail}>
         <View>
           <View style={styles.boxUnit}>
-            {(buyingMathode === "unity" || buyingMathode === "both") && (
-              <TouchableOpacity
-                style={styles.boxUnitText}
-                onPress={() => handleMenuClick("unity")}
-              >
-                <View
-                  style={[
-                    styles.checkbox,
-                    activeTab === "unity" && styles.checkboxChecked,
-                  ]}
-                />
-                <Text style={styles.PriceText}>Par unité</Text>
-              </TouchableOpacity>
-            )}
             {(buyingMathode === "box" || buyingMathode === "both") && (
               <TouchableOpacity
                 style={styles.boxUnitText}
@@ -136,6 +122,20 @@ const ProductPer = memo(
                   ]}
                 />
                 <Text style={styles.PriceText}>Par boîte</Text>
+              </TouchableOpacity>
+            )}
+            {(buyingMathode === "unity" || buyingMathode === "both") && (
+              <TouchableOpacity
+                style={styles.boxUnitText}
+                onPress={() => handleMenuClick("unity")}
+              >
+                <View
+                  style={[
+                    styles.checkbox,
+                    activeTab === "unity" && styles.checkboxChecked,
+                  ]}
+                />
+                <Text style={styles.PriceText}>Par unité</Text>
               </TouchableOpacity>
             )}
           </View>

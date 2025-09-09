@@ -12,6 +12,8 @@ const Snackbar = ({
   message,
   duration = 3000,
   position = "bottom", // Default position is bottom
+  topOffset = 30, // Default top offset
+  bottomOffset = 16, // Default bottom offset
   snackbarType,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -39,8 +41,8 @@ const Snackbar = ({
       style={[
         styles.container,
         position === "top"
-          ? { top: 30 } // Position for top
-          : { bottom: 16 }, // Increased bottom position to stay above tab bar
+          ? { top: topOffset } // Use custom top offset
+          : { bottom: bottomOffset }, // Use custom bottom offset
         {
           backgroundColor:
             backgroundColors[snackbarType] || backgroundColors.info,
@@ -68,7 +70,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 16,
     right: 16,
-    zIndex: 10000, // Increased z-index to be higher than tab bar
+    zIndex: 999999, // Increased z-index to be higher than tab bar
     elevation: 10, // Increased elevation
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },

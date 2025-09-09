@@ -205,7 +205,7 @@ const Stores = () => {
           styles.headerContainer,
           {
             marginHorizontal: horizontalPadding,
-            marginBottom: isSmallScreen ? smallSpacing : verticalSpacing * 0.7,
+            marginBottom: isSmallScreen ? smallSpacing : verticalSpacing,
           },
         ]}
       >
