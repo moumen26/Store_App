@@ -22,7 +22,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Config from "../config.jsx";
 import SubmitOrderModal from "../../components/SubmitOrderModal.jsx";
 import SubmitOderModalReason from "../../components/SubmitOderModalReason.jsx";
-import { formatNumber } from "../util/useFullFunctions.jsx";
+import { formatTimestamp, formatNumber } from "../util/useFullFunctions.jsx";
 
 const TrackOrder = () => {
   const navigation = useNavigation();
@@ -39,7 +39,7 @@ const TrackOrder = () => {
   const [notAllConfirmationModalVisible, setNotAllConfirmationModalVisible] =
     useState(false);
   const [reason, setReason] = useState("");
-
+  
   // Get screen dimensions
   const { width, height } = useWindowDimensions();
 
@@ -376,7 +376,7 @@ const TrackOrder = () => {
                       },
                     ]}
                   >
-                    {recieptData?.reciept?.expextedDeliveryDate}
+                    {formatTimestamp(recieptData?.reciept?.expextedDeliveryDate)}
                   </Text>
                 ) : (
                   <Text

@@ -124,8 +124,8 @@ const EReceiptScreen = () => {
       }
       return () => {};
     }, [user?.token, validOrderID])
-  );
-
+  );  
+  
   const html = `
   <html>
     <head>
@@ -475,7 +475,7 @@ const EReceiptScreen = () => {
           <p><strong>Montant Total:</strong> ${new Intl.NumberFormat(
             "fr-FR"
           ).format(
-            (OrderData?.reciept?.total || 0) + (OrderData?.deliveryCost || 0)
+            (OrderData?.reciept?.total || 0) + (OrderData?.reciept?.deliveryCost || 0)
           )} DA</p>
           <p><strong>Type de livraison:</strong> ${
             OrderData?.reciept?.type === "delivery" ? "Livraison" : "Retrait"
@@ -514,11 +514,9 @@ const EReceiptScreen = () => {
               OrderData?.recieptStatus?.products?.length > 0
                 ? OrderData.recieptStatus.products
                     .map((product) => {
-                      const unitPrice =
-                        product.quantity && product.total
-                          ? (product.total / product.quantity).toFixed(2)
-                          : "0.00";
-
+                      const unitPrice = Number(product.price).toFixed(2) || "0.00";
+                      const totalPrice = (Number(product.price) * Number(product.quantity)).toFixed(2) || "0.00";
+                      
                       return `
                     <tr>
                       <td class="quantity-col">${product?.quantity || 0}</td>
@@ -542,7 +540,7 @@ const EReceiptScreen = () => {
                       ).format(unitPrice)} DA</td>
                       <td class="total-col"><strong>${new Intl.NumberFormat(
                         "fr-FR"
-                      ).format(product?.total || 0)} DA</strong></td>
+                      ).format(totalPrice)} DA</strong></td>
                     </tr>
                   `;
                     })
@@ -576,15 +574,15 @@ const EReceiptScreen = () => {
             </tr>
             
             ${
-              OrderData?.reciept?.type === "delivery" &&
-              OrderData?.deliveryCost > 0
+              OrderData?.reciept?.type == "delivery" &&
+              OrderData?.reciept?.deliveryCost > 0
                 ? `
             <!-- Delivery Fee Row -->
             <tr class="delivery-row">
               <td colspan="3" class="label">FRAIS DE LIVRAISON</td>
               <td class="total-col"><strong>${new Intl.NumberFormat(
                 "fr-FR"
-              ).format(OrderData.deliveryCost)} DA</strong></td>
+              ).format(OrderData?.reciept?.deliveryCost)} DA</strong></td>
             </tr>
             `
                 : ""
@@ -595,7 +593,7 @@ const EReceiptScreen = () => {
               <td colspan="3" class="label">TOTAL TTC</td>
               <td class="value"><strong>${new Intl.NumberFormat("fr-FR").format(
                 (OrderData?.reciept?.total || 0) +
-                  (OrderData?.deliveryCost || 0)
+                  (OrderData?.reciept?.deliveryCost || 0)
               )} DA</strong></td>
             </tr>
           </tbody>
@@ -644,7 +642,7 @@ const EReceiptScreen = () => {
           <div class="remaining-amount">
             Reste à payer: ${new Intl.NumberFormat("fr-FR").format(
               (OrderData?.reciept?.total || 0) +
-                (OrderData?.deliveryCost || 0) -
+                (OrderData?.reciept?.deliveryCost || 0) -
                 OrderData.reciept.payment.reduce(
                   (sum, pay) => sum + pay.amount,
                   0
@@ -968,7 +966,7 @@ const EReceiptScreen = () => {
               OrderDate={OrderData?.reciept?.date}
               OrderStatus={OrderData?.reciept?.status}
               OrderSubTotal={OrderData?.reciept?.total}
-              OrderDeliveryCharge={OrderData?.deliveryCost}
+              OrderDeliveryCharge={OrderData?.reciept?.deliveryCost}
               OrderDiscount={""}
             />
           }

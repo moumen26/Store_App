@@ -10,6 +10,28 @@ const formatDate = (dateString) => {
   return date.format(outputFormat);
 };
 
+function formatTimestamp(timestamp) {
+  if (!timestamp) return "";
+  
+  // Handle string timestamps
+  const numericTimestamp = typeof timestamp === 'string' ? parseInt(timestamp, 10) : timestamp;
+  
+  if (isNaN(numericTimestamp)) return "Invalid Date";
+  
+  const date = new Date(numericTimestamp);
+  
+  if (isNaN(date.getTime())) return "Invalid Date";
+  
+  const day = date.getDate();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `${day}-${month}-${year} - ${hours}:${minutes}:${seconds}`;
+}
+
 const orderStatusTextDisplayer = (status, type) => {
   switch (status?.toString()) {
     case "-2":
@@ -39,6 +61,7 @@ const orderStatusTextDisplayer = (status, type) => {
 const UtilityFunctions = {
   formatDate,
   orderStatusTextDisplayer,
+  formatTimestamp
 };
 
 const formatNumber = (num) => {
@@ -50,4 +73,4 @@ const formatNumber = (num) => {
 };
 
 export default UtilityFunctions;
-export { formatDate, orderStatusTextDisplayer, formatNumber };
+export { formatDate, orderStatusTextDisplayer, formatNumber, formatTimestamp };
