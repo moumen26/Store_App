@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { ClockIcon, PencilIcon } from "react-native-heroicons/outline";
-const LocationIcon = require("../assets/icons/Location.png");
+import { MapPinIcon } from "react-native-heroicons/solid";
 
 const ShippingAddressCard = ({
   index,
@@ -27,11 +27,7 @@ const ShippingAddressCard = ({
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.iconContainer}>
-            <Image
-              source={LocationIcon}
-              style={styles.locationIcon}
-              resizeMode="contain"
-            />
+            <MapPinIcon size={20} color="#19213D" />
           </View>
 
           <View style={styles.textContainer}>
