@@ -9,7 +9,10 @@ import {
   Platform,
 } from "react-native";
 import { useEffect, useState, useCallback } from "react";
-import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
+import {
+  MagnifyingGlassIcon,
+  FunnelIcon,
+} from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
@@ -23,6 +26,7 @@ import Brands from "../loading/Brands";
 import LoadingStores from "../loading/LoadingStores";
 import NonLinkedStores from "../../components/NonLinkedStores";
 import RequestButton from "../../components/RequestButton";
+import WilayaFilterModal from "../../components/WilayaFilterModal";
 
 // Axios instance for base URL configuration
 const api = axios.create({
@@ -37,6 +41,9 @@ const Stores = () => {
   const { user } = useAuthContext();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredAllStoresData, setFilteredAllStoresData] = useState([]);
+  const [selectedWilaya, setSelectedWilaya] = useState("");
+  const [wilayaFilterModalVisible, setWilayaFilterModalVisible] =
+    useState(false);
 
   // Get screen dimensions
   const { width, height } = useWindowDimensions();
@@ -149,31 +156,60 @@ const Stores = () => {
     }, [user?.token])
   );
 
-  // Update filteredAllStoresData whenever AllStoresData or searchQuery changes
+  // Extract unique wilayas from stores data
+  const getUniqueWilayas = () => {
+    if (!AllStoresData || AllStoresData.length === 0) return [];
+
+    const uniqueWilayas = [
+      ...new Set(AllStoresData.map((store) => store.wilaya)),
+    ];
+    return uniqueWilayas
+      .filter((wilaya) => wilaya && wilaya.trim() !== "")
+      .sort()
+      .map((wilaya) => ({ value: wilaya, label: wilaya }));
+  };
+
+  // Update filteredAllStoresData whenever AllStoresData, searchQuery, or selectedWilaya changes
   useEffect(() => {
     if (AllStoresData) {
-      if (searchQuery.trim() === "") {
-        // If search query is empty, show all stores
-        setFilteredAllStoresData(AllStoresData);
-      } else {
-        // Filter stores based on search query
+      let filtered = AllStoresData;
+
+      // Apply search filter
+      if (searchQuery.trim() !== "") {
         const query = searchQuery.toLowerCase().trim();
-        const filtered = AllStoresData?.filter(
+        filtered = filtered.filter(
           (store) =>
             (store.storeName &&
               store.storeName?.toLowerCase().includes(query)) ||
             (store.wilaya && store.wilaya?.toLowerCase().includes(query))
         );
-        setFilteredAllStoresData(filtered);
       }
+
+      // Apply wilaya filter
+      if (selectedWilaya && selectedWilaya.trim() !== "") {
+        filtered = filtered.filter((store) => store.wilaya === selectedWilaya);
+      }
+
+      setFilteredAllStoresData(filtered);
     } else {
       setFilteredAllStoresData([]);
     }
-  }, [AllStoresData, searchQuery]);
+  }, [AllStoresData, searchQuery, selectedWilaya]);
 
   // Handle search clear function
   const handleClearSearch = () => {
     setSearchQuery("");
+  };
+
+  // Handle wilaya selection
+  const handleWilayaSelect = (wilaya) => {
+    setSelectedWilaya(wilaya);
+    setWilayaFilterModalVisible(false);
+  };
+
+  // Handle clear wilaya filter
+  const handleClearWilayaFilter = () => {
+    setSelectedWilaya("");
   };
 
   //--------------------------------------------Rendering--------------------------------------------
@@ -231,45 +267,94 @@ const Stores = () => {
         <RequestButton CategoriesData={CategoriesData} />
       </View>
 
+      {/* Search and Filter Container */}
       <View
         style={[
-          styles.searchBar,
+          styles.searchFilterContainer,
           {
             marginHorizontal: horizontalPadding,
             marginBottom: smallSpacing,
-            height: Math.max(45, height * 0.06),
           },
         ]}
       >
-        <View style={styles.searchInputContainer}>
-          <MagnifyingGlassIcon size={isSmallScreen ? 16 : 20} color="#19213D" />
-          <TextInput
-            style={[
-              styles.searchBarItem,
-              {
-                width: isSmallScreen
-                  ? width * 0.6
-                  : isLargeScreen
-                  ? width * 0.7
-                  : width * 0.65,
-                fontSize: isSmallScreen ? 11 : 12,
-              },
-            ]}
-            placeholder="Rechercher par magasin..."
-            placeholderTextColor="#888888"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+        <View
+          style={[
+            styles.searchBar,
+            {
+              height: Math.max(45, height * 0.06),
+              flex: 1,
+            },
+          ]}
+        >
+          <View style={styles.searchInputContainer}>
+            <MagnifyingGlassIcon
+              size={isSmallScreen ? 16 : 20}
+              color="#19213D"
+            />
+            <TextInput
+              style={[
+                styles.searchBarItem,
+                {
+                  fontSize: isSmallScreen ? 11 : 12,
+                },
+              ]}
+              placeholder="Rechercher par magasin..."
+              placeholderTextColor="#888888"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              onPress={handleClearSearch}
+              style={styles.clearButton}
+            >
+              <Text style={styles.clearButtonText}>✕</Text>
+            </TouchableOpacity>
+          )}
         </View>
-        {searchQuery.length > 0 && (
-          <TouchableOpacity
-            onPress={handleClearSearch}
-            style={styles.clearButton}
-          >
-            <Text style={styles.clearButtonText}>✕</Text>
-          </TouchableOpacity>
-        )}
+
+        {/* Filter Button */}
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            selectedWilaya ? styles.filterButtonActive : {},
+            {
+              height: Math.max(45, height * 0.06),
+            },
+          ]}
+          onPress={() => setWilayaFilterModalVisible(true)}
+        >
+          <FunnelIcon
+            size={isSmallScreen ? 18 : 20}
+            color={selectedWilaya ? "#fff" : "#19213D"}
+          />
+          {selectedWilaya && <View style={styles.filterIndicator} />}
+        </TouchableOpacity>
       </View>
+
+      {/* Selected Wilaya Display */}
+      {selectedWilaya && (
+        <View
+          style={[
+            styles.selectedFilterContainer,
+            {
+              marginHorizontal: horizontalPadding,
+              marginBottom: smallSpacing,
+            },
+          ]}
+        >
+          <Text style={styles.selectedFilterText}>
+            Wilaya: {selectedWilaya}
+          </Text>
+          <TouchableOpacity
+            onPress={handleClearWilayaFilter}
+            style={styles.clearFilterButton}
+          >
+            <Text style={styles.clearFilterButtonText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View
         style={[
@@ -286,6 +371,16 @@ const Stores = () => {
           AllStoresDataRefetch={AllStoresDataRefetch}
         />
       </View>
+
+      {/* Wilaya Filter Modal */}
+      <WilayaFilterModal
+        visible={wilayaFilterModalVisible}
+        onClose={() => setWilayaFilterModalVisible(false)}
+        wilayas={getUniqueWilayas()}
+        selectedWilaya={selectedWilaya}
+        onSelect={handleWilayaSelect}
+        onClear={handleClearWilayaFilter}
+      />
     </SafeAreaView>
   );
 };
@@ -306,6 +401,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  searchFilterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   searchBar: {
     borderColor: "#E3EFFF",
@@ -333,6 +433,52 @@ const styles = StyleSheet.create({
   clearButtonText: {
     color: "#888888",
     fontSize: 14,
+  },
+  filterButton: {
+    width: 50,
+    borderRadius: 30,
+    borderColor: "#E3EFFF",
+    borderWidth: 1,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  filterButtonActive: {
+    backgroundColor: "#19213D",
+    borderColor: "#19213D",
+  },
+  filterIndicator: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#fff",
+  },
+  selectedFilterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#E3EFFF",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  selectedFilterText: {
+    fontSize: 12,
+    fontFamily: "Montserrat-Regular",
+    color: "#19213D",
+    flex: 1,
+  },
+  clearFilterButton: {
+    padding: 4,
+  },
+  clearFilterButtonText: {
+    color: "#19213D",
+    fontSize: 14,
+    fontWeight: "bold",
   },
   storesContainer: {
     flex: 1,
