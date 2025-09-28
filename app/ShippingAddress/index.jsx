@@ -13,20 +13,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import * as Location from "expo-location";
 import BackButton from "../../components/BackButton";
 import ShippingAddressCard from "../../components/ShippingAddressCard";
 import useAuthContext from "../hooks/useAuthContext";
 import Snackbar from "../../components/Snackbar";
-import {
-  UserIcon,
-  MapPinIcon,
-  MapIcon,
-  PencilIcon,
-  ArrowLeftIcon,
-  CheckIcon,
-} from "react-native-heroicons/outline";
+import { UserIcon, MapPinIcon } from "react-native-heroicons/outline";
 import Config from "../config";
 
 const { width, height } = Dimensions.get("window");
@@ -41,14 +32,6 @@ const ShippingAddressScreen = memo(() => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("error");
 
-  // State for map selection modal
-  const [mapModalVisible, setMapModalVisible] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const [mapRegion, setMapRegion] = useState(null);
-  const [loadingLocation, setLoadingLocation] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState("");
-
   // For address modal states
   const [modalVisible, setModalVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -56,7 +39,6 @@ const ShippingAddressScreen = memo(() => {
   const [newAddress, setNewAddress] = useState({
     name: "",
     address: "",
-    location: "Sélectionnez un lieu sur la carte",
   });
 
   // Filter cart items for the current store
@@ -64,98 +46,6 @@ const ShippingAddressScreen = memo(() => {
     () => cart?.filter((item) => item.store === storeId) || [],
     [cart, storeId]
   );
-
-  // Get current location
-  const getCurrentLocation = async () => {
-    try {
-      setLoadingLocation(true);
-
-      // Request permissions
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission refusée",
-          "Nous avons besoin de votre permission pour accéder à votre localisation.",
-          [{ text: "OK" }]
-        );
-        return;
-      }
-
-      // Get current position
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-
-      const { latitude, longitude } = location.coords;
-
-      setCurrentLocation({
-        latitude,
-        longitude,
-      });
-
-      setMapRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-
-      // Set initial selected location to current location
-      setSelectedLocation({
-        latitude,
-        longitude,
-      });
-
-      // Get address for current location
-      await reverseGeocode(latitude, longitude);
-    } catch (error) {
-      console.error("Error getting location:", error);
-      Alert.alert(
-        "Erreur",
-        "Impossible d'obtenir votre localisation. Veuillez réessayer.",
-        [{ text: "OK" }]
-      );
-    } finally {
-      setLoadingLocation(false);
-    }
-  };
-
-  // Reverse geocode coordinates to address
-  const reverseGeocode = async (latitude, longitude) => {
-    try {
-      const result = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-
-      if (result.length > 0) {
-        const address = result[0];
-        const formattedAddress = `${address.street || ""} ${
-          address.streetNumber || ""
-        }, ${address.city || ""}, ${address.postalCode || ""}, ${
-          address.country || ""
-        }`.trim();
-        setSelectedAddress(formattedAddress);
-      }
-    } catch (error) {
-      console.error("Error reverse geocoding:", error);
-      setSelectedAddress(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
-    }
-  };
-
-  // Handle map press
-  const onMapPress = async (event) => {
-    const { coordinate } = event.nativeEvent;
-    const { latitude, longitude } = coordinate;
-
-    setSelectedLocation({
-      latitude,
-      longitude,
-    });
-
-    // Get address for selected location
-    await reverseGeocode(latitude, longitude);
-  };
 
   const handleSelectItem = useCallback((index) => {
     setSelectedIndex(index);
@@ -199,7 +89,6 @@ const ShippingAddressScreen = memo(() => {
     setNewAddress({
       name: "",
       address: "",
-      location: "Sélectionnez un lieu sur la carte",
     });
     setModalVisible(true);
   };
@@ -214,7 +103,6 @@ const ShippingAddressScreen = memo(() => {
       setNewAddress({
         name: addressToEdit.name || "",
         address: addressToEdit.address || "",
-        location: addressToEdit.location || "Sélectionnez un lieu sur la carte",
       });
       setModalVisible(true);
     } else {
@@ -229,46 +117,8 @@ const ShippingAddressScreen = memo(() => {
     setNewAddress({
       name: "",
       address: "",
-      location: "Sélectionnez un lieu sur la carte",
     });
     setAddressToEdit(null);
-  };
-
-  const openLocationPicker = async () => {
-    setMapModalVisible(true);
-    // Get current location when opening map
-    await getCurrentLocation();
-  };
-
-  const handleLocationSelect = () => {
-    if (selectedLocation && selectedAddress) {
-      // Update the address with the selected location
-      setNewAddress((prev) => ({
-        ...prev,
-        location: selectedAddress,
-        coordinates: selectedLocation,
-      }));
-
-      // Close the map modal
-      setMapModalVisible(false);
-
-      // Reset selected location for next time
-      setSelectedLocation(null);
-      setSelectedAddress("");
-    } else {
-      Alert.alert(
-        "Erreur",
-        "Veuillez sélectionner un emplacement sur la carte."
-      );
-    }
-  };
-
-  const closeMapModal = () => {
-    setMapModalVisible(false);
-    setSelectedLocation(null);
-    setSelectedAddress("");
-    setCurrentLocation(null);
-    setMapRegion(null);
   };
 
   const handleSaveAddress = async () => {
@@ -322,8 +172,6 @@ const ShippingAddressScreen = memo(() => {
         body: JSON.stringify({
           name: newAddress.name,
           addr: newAddress.address,
-          location: newAddress.location,
-          coordinates: newAddress.coordinates, // Include coordinates
         }),
       }
     );
@@ -345,8 +193,6 @@ const ShippingAddressScreen = memo(() => {
         _id: newAddressAdded._id,
         name: newAddressAdded.name,
         address: newAddressAdded.address,
-        location: newAddressAdded.location,
-        coordinates: newAddressAdded.coordinates,
       },
     ];
 
@@ -380,8 +226,6 @@ const ShippingAddressScreen = memo(() => {
           addressId: addressToEdit._id,
           name: newAddress.name,
           addr: newAddress.address,
-          location: newAddress.location,
-          coordinates: newAddress.coordinates, // Include coordinates
         }),
       }
     );
@@ -401,8 +245,6 @@ const ShippingAddressScreen = memo(() => {
             ...address,
             name: newAddress.name,
             address: newAddress.address,
-            location: newAddress.location,
-            coordinates: newAddress.coordinates,
           }
         : address
     );
@@ -612,34 +454,11 @@ const ShippingAddressScreen = memo(() => {
                   }
                   placeholder="Adresse complète"
                   placeholderTextColor="#888888"
+                  multiline={true}
+                  numberOfLines={3}
+                  textAlignVertical="top"
                 />
               </View>
-
-              <Text style={styles.modalLabel}>Lieu</Text>
-              <TouchableOpacity
-                style={styles.locationSelector}
-                onPress={openLocationPicker}
-                activeOpacity={0.7}
-              >
-                <MapIcon size={20} color="#19213D" />
-                <Text
-                  style={[
-                    styles.locationText,
-                    newAddress.location ===
-                      "Sélectionnez un lieu sur la carte" &&
-                      styles.locationPlaceholder,
-                  ]}
-                >
-                  {newAddress.location === "Sélectionnez un lieu sur la carte"
-                    ? newAddress.location
-                    : newAddress.location.length > 30
-                    ? newAddress.location.substring(0, 30) + "..."
-                    : newAddress.location}
-                </Text>
-                {/* <View style={styles.mapButton}>
-                  <Text style={styles.mapButtonText}>Sélectionner</Text>
-                </View> */}
-              </TouchableOpacity>
             </View>
 
             <View style={styles.modalButtons}>
@@ -669,117 +488,6 @@ const ShippingAddressScreen = memo(() => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-      </Modal>
-
-      {/* Map Location Selection Modal */}
-      <Modal
-        visible={mapModalVisible}
-        animationType="slide"
-        transparent={false}
-        statusBarTranslucent={true}
-      >
-        <View style={styles.mapModalContainer}>
-          <SafeAreaView style={styles.mapModalSafeArea}>
-            {/* Enhanced Header */}
-            <View style={styles.mapHeader}>
-              <TouchableOpacity
-                style={styles.closeMapButton}
-                onPress={closeMapModal}
-              >
-                <ArrowLeftIcon color="#19213D" size={18} />
-              </TouchableOpacity>
-              <View style={styles.mapHeaderContent}>
-                <Text style={styles.mapTitleText}>Sélectionner un lieu</Text>
-                {/* <Text style={styles.mapSubtitleText}>
-                  Appuyez sur la carte pour choisir votre emplacement
-                </Text> */}
-              </View>
-              <TouchableOpacity
-                style={[
-                  styles.confirmHeaderButton,
-                  (!selectedLocation || !selectedAddress) &&
-                    styles.disabledHeaderButton,
-                ]}
-                onPress={handleLocationSelect}
-                disabled={!selectedLocation || !selectedAddress}
-              >
-                <CheckIcon
-                  color={
-                    !selectedLocation || !selectedAddress ? "#999" : "#19213D"
-                  }
-                  size={18}
-                />
-              </TouchableOpacity>
-            </View>
-
-            {/* Map View - Full Screen */}
-            <View style={styles.mapContainer}>
-              {loadingLocation ? (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color="#19213D" />
-                  <Text style={styles.loadingText}>
-                    Recherche de votre position...
-                  </Text>
-                </View>
-              ) : mapRegion ? (
-                <MapView
-                  style={styles.map}
-                  provider={PROVIDER_GOOGLE}
-                  region={mapRegion}
-                  onPress={onMapPress}
-                  showsUserLocation={true}
-                  showsMyLocationButton={true}
-                  toolbarEnabled={false}
-                  mapType="standard"
-                >
-                  {selectedLocation && (
-                    <Marker
-                      coordinate={selectedLocation}
-                      title="Adresse sélectionnée"
-                      description={selectedAddress}
-                      pinColor="red"
-                    />
-                  )}
-                </MapView>
-              ) : (
-                <View style={styles.mapPlaceholder}>
-                  <MapIcon size={60} color="#19213D" />
-                  <Text style={styles.mapPlaceholderText}>
-                    Appuyez pour obtenir votre position
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.getCurrentLocationButton}
-                    onPress={getCurrentLocation}
-                  >
-                    <Text style={styles.getCurrentLocationText}>
-                      Obtenir ma position
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-
-            {/* Selected Address Display - Floating at bottom */}
-            {selectedAddress && (
-              <View style={styles.selectedAddressFloating}>
-                <View style={styles.selectedAddressContent}>
-                  <MapPinIcon size={20} color="#19213D" />
-                  <Text style={styles.selectedAddressText}>
-                    {selectedAddress}
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            {/* Quick Actions Floating Button */}
-            <TouchableOpacity
-              style={styles.myLocationFloatingButton}
-              onPress={getCurrentLocation}
-            >
-              <MapIcon size={24} color="white" />
-            </TouchableOpacity>
-          </SafeAreaView>
         </View>
       </Modal>
     </View>
@@ -923,58 +631,23 @@ const styles = StyleSheet.create({
   },
   inputChange: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     width: "100%",
-    height: 45,
+    minHeight: 45,
     borderColor: "#ccc",
     marginTop: 5,
     borderWidth: 1,
     paddingLeft: 10,
+    paddingTop: 12,
     borderRadius: 8,
     marginBottom: 15,
     backgroundColor: "white",
   },
   modalInput: {
-    height: 40,
+    minHeight: 40,
     paddingLeft: 10,
     width: "100%",
     fontFamily: "Montserrat-Regular",
-  },
-  locationSelector: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    height: 45,
-    borderColor: "#19213D",
-    marginTop: 5,
-    borderWidth: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderRadius: 8,
-    marginBottom: 15,
-    backgroundColor: "#e8f4f8",
-  },
-  locationText: {
-    marginLeft: 10,
-    fontFamily: "Montserrat-Regular",
-    color: "#333",
-    flex: 1,
-  },
-  locationPlaceholder: {
-    color: "#666",
-    fontStyle: "italic",
-  },
-  mapButton: {
-    backgroundColor: "#19213D",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    marginLeft: 5,
-  },
-  mapButtonText: {
-    color: "white",
-    fontSize: 12,
-    fontFamily: "Montserrat-Medium",
   },
   modalButton: {
     backgroundColor: "#F7F7F7",
@@ -985,169 +658,6 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     backgroundColor: "#19213D",
-  },
-
-  // Map modal styles - Full Screen
-  mapModalContainer: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  mapModalSafeArea: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  mapHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: "white",
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    zIndex: 1000,
-  },
-  closeMapButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    borderColor: "#E3EFFF",
-    borderWidth: 1,
-  },
-
-  mapHeaderContent: {
-    flex: 1,
-    alignItems: "center",
-    marginHorizontal: 15,
-  },
-  mapTitleText: {
-    fontSize: 20,
-    fontFamily: "Montserrat-Regular",
-    marginBottom: 2,
-  },
-  mapSubtitleText: {
-    fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-    color: "#666",
-    textAlign: "center",
-  },
-  confirmHeaderButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    borderColor: "#E3EFFF",
-    borderWidth: 1,
-  },
-
-  disabledHeaderButton: {
-    backgroundColor: "#f5f5f5",
-    backgroundColor: "#e0e0e0",
-  },
-
-  mapContainer: {
-    flex: 1,
-    position: "relative",
-  },
-  map: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
-  },
-  loadingText: {
-    marginTop: 15,
-    fontSize: 16,
-    fontFamily: "Montserrat-Regular",
-    color: "#19213D",
-  },
-  mapPlaceholder: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
-    paddingHorizontal: 40,
-  },
-  mapPlaceholderText: {
-    fontSize: 18,
-    fontFamily: "Montserrat-Regular",
-    color: "#666",
-    marginTop: 20,
-    marginBottom: 30,
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  getCurrentLocationButton: {
-    backgroundColor: "#19213D",
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  getCurrentLocationText: {
-    color: "white",
-    fontSize: 16,
-    fontFamily: "Montserrat-Medium",
-  },
-  selectedAddressFloating: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
-    backgroundColor: "white",
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 8,
-    zIndex: 1000,
-  },
-  selectedAddressContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-  },
-  selectedAddressText: {
-    marginLeft: 12,
-    fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-    color: "#333",
-    flex: 1,
-    lineHeight: 18,
-  },
-  myLocationFloatingButton: {
-    position: "absolute",
-    bottom: 80,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#19213D",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-    zIndex: 1000,
   },
 });
 
