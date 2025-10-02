@@ -9,9 +9,6 @@ import {
   useWindowDimensions,
   Platform,
 } from "react-native";
-// Remove the problematic barcode import
-// import Barcode, { Format } from "react-native-barcode-builder";
-
 import React, { useLayoutEffect, useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
