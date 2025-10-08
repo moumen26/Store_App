@@ -7,7 +7,7 @@
     "icon": "./assets/Light.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -26,10 +26,7 @@
         "android.permission.ACCESS_NETWORK_STATE"
       ],
       "package": "com.mosagro.clientapplication",
-      "jsEngine": "hermes",
-      "compileSdkVersion": 34,
-      "targetSdkVersion": 34,
-      "buildToolsVersion": "34.0.0"
+      "jsEngine": "hermes"
     },
     "web": {
       "bundler": "metro",

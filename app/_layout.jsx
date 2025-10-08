@@ -17,18 +17,6 @@ import "./../global.css";
 import "core-js/stable/atob";
 import { AuthContextProvider } from "./context/Authcontext.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as Sentry from "@sentry/react-native";
-
-Sentry.init({
-  dsn: "https://eab083935172317d16868ec02d78fd4b@o4509713532846080.ingest.de.sentry.io/4509713538547792",
-  sendDefaultPii: true,
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [
-    Sentry.mobileReplayIntegration(),
-    Sentry.feedbackIntegration(),
-  ],
-});
 
 const queryClient = new QueryClient();
 
@@ -284,7 +272,7 @@ const NoInternetScreen = () => {
   );
 };
 
-export default Sentry.wrap(function RootLayout() {
+export default function RootLayout() {
   const [isConnected, setIsConnected] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -517,7 +505,7 @@ export default Sentry.wrap(function RootLayout() {
       </AuthContextProvider>
     </QueryClientProvider>
   );
-});
+};
 
 // Enhanced NoInternetScreen Styles
 const noInternetStyles = StyleSheet.create({
