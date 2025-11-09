@@ -348,10 +348,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Montserrat-Regular",
     marginTop: 4,
+    color: "#000",
   },
   textInputPassword: {
     flex: 1,
     fontFamily: "Montserrat-Regular",
+    color: "#000",
   },
   eyeIcon: {
     padding: 8,

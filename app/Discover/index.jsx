@@ -11,6 +11,7 @@ import React from "react";
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 const Home = require("../../assets/images/Home.png");
@@ -56,6 +57,7 @@ const getResponsiveDimension = (baseSize) => {
 const DiscoverScreen = () => {
   const navigation = useNavigation();
   const { markDiscoverAsSeen, completeAllOnboarding } = useAuthContext();
+  const insets = useSafeAreaInsets();
 
   // Calculate responsive values
   const horizontalPadding = screenWidth * 0.05;
@@ -118,9 +120,13 @@ const DiscoverScreen = () => {
   });
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingBottom: insets.bottom },
+      ]}
+    >
       <StatusBar style="dark" />
-
       <View style={dynamicStyles.imageContainer}>
         <View style={dynamicStyles.circleContainer}></View>
         <Image style={dynamicStyles.image} source={Home} />
@@ -130,14 +136,13 @@ const DiscoverScreen = () => {
             styles.skipContainer,
             {
               right: horizontalPadding,
-              top: getResponsiveDimension(50),
+              top: getResponsiveDimension(60),
             },
           ]}
         >
           <Text style={styles.skipText}>Passer</Text>
         </TouchableOpacity>
       </View>
-
       <View
         style={[
           styles.contentContainer,

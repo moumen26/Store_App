@@ -11,7 +11,9 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "We need access to your camera to scan barcodes."
+        "NSCameraUsageDescription": "We need access to your camera to scan barcodes.",
+        "NSLocationWhenInUseUsageDescription": "We need your location to set your delivery address.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location to set your delivery address."
       }
     },
     "android": {
@@ -23,7 +25,9 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "android.permission.INTERNET",
-        "android.permission.ACCESS_NETWORK_STATE"
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
       "package": "com.mosagro.clientapplication",
       "jsEngine": "hermes"
@@ -39,6 +43,13 @@
         "expo-camera",
         {
           "cameraPermission": "We need access to your camera to scan barcodes."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "We need your location to set your delivery address.",
+          "locationWhenInUsePermission": "We need your location to set your delivery address."
         }
       ],
       [

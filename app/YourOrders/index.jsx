@@ -1,20 +1,28 @@
-import { View, StyleSheet, Text, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import React from "react";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "expo-router";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Track = require("../../assets/images/Track.png");
 
 // Get screen dimensions
-const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
+const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
 
 // Helper function to get responsive font size
 const getResponsiveFontSize = (baseSize) => {
   const scale = screenWidth / 375; // Base width (iPhone X)
   const newSize = baseSize * scale;
-  
+
   // Screen size categories
   if (screenWidth <= 360) {
     // Small screens
@@ -32,7 +40,7 @@ const getResponsiveFontSize = (baseSize) => {
 const getResponsiveDimension = (baseSize) => {
   const scale = screenWidth / 375;
   const newSize = baseSize * scale;
-  
+
   if (screenWidth <= 360) {
     // Small screens
     return Math.max(newSize * 0.9, baseSize * 0.85);
@@ -48,6 +56,7 @@ const getResponsiveDimension = (baseSize) => {
 const YourOrdersScreen = () => {
   const navigation = useNavigation();
   const { markYourOrdersAsSeen, completeAllOnboarding } = useAuthContext();
+  const insets = useSafeAreaInsets();
 
   // Calculate responsive values
   const horizontalPadding = screenWidth * 0.05;
@@ -117,12 +126,16 @@ const YourOrdersScreen = () => {
   });
 
   return (
-    <>
-      <View style={styles.container}>
-        <View style={dynamicStyles.ImageContainer}>
-          <View style={dynamicStyles.Container}></View>
-          <Image style={dynamicStyles.Image} source={Track} />
-          {/* <TouchableOpacity
+    <View
+      style={[
+        styles.container,
+        { paddingBottom: insets.bottom },
+      ]}
+    >
+      <View style={dynamicStyles.ImageContainer}>
+        <View style={dynamicStyles.Container}></View>
+        <Image style={dynamicStyles.Image} source={Track} />
+        {/* <TouchableOpacity
             onPress={handleSkip}
             style={[
               styles.skipContainer,
@@ -134,112 +147,139 @@ const YourOrdersScreen = () => {
           >
             <Text style={styles.skipText}>Passer</Text>
           </TouchableOpacity> */}
-        </View>
-        
-        <View 
+      </View>
+      <View
+        style={{
+          marginHorizontal: horizontalPadding,
+          marginTop: verticalSpacing,
+          justifyContent: "center",
+          display: "flex",
+        }}
+      >
+        <View
           style={{
-            marginHorizontal: horizontalPadding,
-            marginTop: verticalSpacing,
+            height: getResponsiveDimension(90),
+            alignItems: "center",
             justifyContent: "center",
-            display: "flex"
+            display: "flex",
           }}
         >
-          <View 
-            style={{
-              height: getResponsiveDimension(90),
-              alignItems: "center",
-              justifyContent: "center",
-              display: "flex"
-            }}
-          >
-            <Text style={styles.title}>Restez informé sur</Text>
-            <Text style={[styles.title, { color: "#19213D" }]}>
-              vos commandes
-            </Text>
-          </View>
-          
-          <View 
-            style={{
-              height: getResponsiveDimension(50),
-              alignItems: "center",
-              justifyContent: "center",
-              display: "flex"
-            }}
-          >
-            <Text style={styles.description}>
-              Restez à jour sur le statut de vos commandes et suivez leur
-              progression en toute simplicité
-            </Text>
-          </View>
-          
-          <View 
+          <Text style={styles.title}>Restez informé sur</Text>
+          <Text style={[styles.title, { color: "#19213D" }]}>
+            vos commandes
+          </Text>
+        </View>
+
+        <View
+          style={{
+            height: getResponsiveDimension(50),
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
+          <Text style={styles.description}>
+            Restez à jour sur le statut de vos commandes et suivez leur
+            progression en toute simplicité
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginHorizontal: screenWidth * 0.05,
+            marginTop: getResponsiveDimension(40),
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity onPress={handleBack}>
+            <BackButton />
+          </TouchableOpacity>
+
+          <View
             style={{
               flexDirection: "row",
-              justifyContent: "space-between",
-              marginHorizontal: screenWidth * 0.05,
-              marginTop: getResponsiveDimension(40),
-              alignItems: "center"
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <TouchableOpacity onPress={handleBack}>
-              <BackButton />
-            </TouchableOpacity>
-            
-            <View 
+            <View
               style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center"
+                width: getResponsiveDimension(10),
+                height: getResponsiveDimension(10),
+                borderRadius: getResponsiveDimension(5),
+                backgroundColor: "#EDEDED",
+                marginRight: 4,
               }}
-            >
-              <View 
-                style={{
-                  width: getResponsiveDimension(10),
-                  height: getResponsiveDimension(10),
-                  borderRadius: getResponsiveDimension(5),
-                  backgroundColor: "#EDEDED",
-                  marginRight: 4
-                }}
-              ></View>
-              <View 
-                style={{
-                  width: getResponsiveDimension(10),
-                  height: getResponsiveDimension(10),
-                  borderRadius: getResponsiveDimension(5),
-                  backgroundColor: "#EDEDED",
-                  marginRight: 4
-                }}
-              ></View>
-              <View 
-                style={{
-                  width: getResponsiveDimension(10),
-                  height: getResponsiveDimension(10),
-                  borderRadius: getResponsiveDimension(5),
-                  backgroundColor: "#19213D"
-                }}
-              ></View>
-            </View>
-
-            <TouchableOpacity
-              style={[
-                styles.NextButton,
-                {
-                  width: screenWidth <= 360 ? 35 : screenWidth <= 414 ? 45 : screenWidth <= 768 ? 55 : 65,
-                  height: screenWidth <= 360 ? 35 : screenWidth <= 414 ? 45 : screenWidth <= 768 ? 55 : 65,
-                  borderRadius: (screenWidth <= 360 ? 35 : screenWidth <= 414 ? 45 : screenWidth <= 768 ? 55 : 65) / 2,
-                },
-              ]}
-              onPress={handleNextPress}
-            >
-              <ArrowRightIcon 
-                color="#fff" 
-                size={screenWidth <= 360 ? 16 : screenWidth <= 414 ? 18 : screenWidth <= 768 ? 22 : 26} 
-              />
-            </TouchableOpacity>
+            ></View>
+            <View
+              style={{
+                width: getResponsiveDimension(10),
+                height: getResponsiveDimension(10),
+                borderRadius: getResponsiveDimension(5),
+                backgroundColor: "#EDEDED",
+                marginRight: 4,
+              }}
+            ></View>
+            <View
+              style={{
+                width: getResponsiveDimension(10),
+                height: getResponsiveDimension(10),
+                borderRadius: getResponsiveDimension(5),
+                backgroundColor: "#19213D",
+              }}
+            ></View>
           </View>
+
+          <TouchableOpacity
+            style={[
+              styles.NextButton,
+              {
+                width:
+                  screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65,
+                height:
+                  screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65,
+                borderRadius:
+                  (screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65) / 2,
+              },
+            ]}
+            onPress={handleNextPress}
+          >
+            <ArrowRightIcon
+              color="#fff"
+              size={
+                screenWidth <= 360
+                  ? 16
+                  : screenWidth <= 414
+                  ? 18
+                  : screenWidth <= 768
+                  ? 22
+                  : 26
+              }
+            />
+          </TouchableOpacity>
         </View>
       </View>
-    </>
+    </View>
   );
 };
 

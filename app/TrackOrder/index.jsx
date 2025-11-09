@@ -310,6 +310,7 @@ const TrackOrder = () => {
               recieptData?.reciept?.status == 10 &&
               recieptData?.reciept?.delivered == true
             ) ? (
+              
               <ScanButton
                 onScanComplete={({ type, data }) => {
                   setScanedData({ type, data });

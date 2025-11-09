@@ -221,7 +221,7 @@ const SignUpScreen = () => {
                   fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
                 },
               ]}
-              placeholder="Ex. Amine"
+              placeholder="Ex. Abdelmoumen"
               placeholderTextColor="#888888"
               value={firstName}
               onChangeText={setFirstName}
@@ -252,7 +252,7 @@ const SignUpScreen = () => {
                   fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
                 },
               ]}
-              placeholder="Ex. Faroukhi"
+              placeholder="Ex. Khaldi"
               placeholderTextColor="#888888"
               value={lastName}
               onChangeText={setLastName}

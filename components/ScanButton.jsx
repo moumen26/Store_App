@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Scan } from "lucide-react-native";
 
 const ScanButton = ({ onScanComplete }) => {
   const navigation = useNavigation();
@@ -14,7 +14,7 @@ const ScanButton = ({ onScanComplete }) => {
 
   return (
     <TouchableOpacity style={styles.scanButton} onPress={handlePress}>
-      <AntDesign name="scan1" color="#19213D" size={20} />
+      <Scan color="#19213D" size={20} />
     </TouchableOpacity>
   );
 };

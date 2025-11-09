@@ -4,8 +4,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Animated,
 } from "react-native";
-import React from "react";
+import React, { useRef } from "react";
 import { ChevronRightIcon } from "react-native-heroicons/outline";
 import {
   orderStatusTextDisplayer,
@@ -69,6 +70,10 @@ const CartOrderItem = ({
 }) => {
   const navigation = useNavigation();
 
+  // Animation values
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const opacityAnim = useRef(new Animated.Value(1)).current;
+
   function capitalizeFirstLetters(text) {
     if (!text) return "";
     return text
@@ -85,62 +90,61 @@ const CartOrderItem = ({
   const gap = getResponsiveDimension(6);
   const marginTop = getResponsiveDimension(5);
 
+  const handlePressIn = () => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 0.92,
+        useNativeDriver: true,
+        tension: 150,
+        friction: 5,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 0.5,
+        duration: 80,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        tension: 150,
+        friction: 6,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
   return (
-    <View
-      style={[
-        styles.cartOrderItem,
-        {
-          paddingHorizontal: containerPadding,
-          paddingVertical: getResponsiveDimension(12),
-          borderRadius: borderRadius,
-          gap: gap,
-          minHeight: getResponsiveDimension(200),
-        },
-      ]}
+    <TouchableOpacity
+      onPress={() => navigation.navigate("E-Receipt/index", { OrderID })}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      accessibilityRole="button"
+      accessibilityLabel="Voir les détails de la commande"
+      activeOpacity={1}
     >
-      <View
+      <Animated.View
         style={[
-          styles.cartItem,
+          styles.cartOrderItem,
           {
-            paddingHorizontal: itemPadding,
+            paddingHorizontal: containerPadding,
+            paddingVertical: getResponsiveDimension(12),
+            borderRadius: borderRadius,
+            gap: gap,
+            minHeight: getResponsiveDimension(200),
+            transform: [{ scale: scaleAnim }],
+            opacity: opacityAnim,
           },
         ]}
       >
-        <Text style={styles.text}>Magasin</Text>
-        <Text style={styles.textDescription}>{OrderStoreName}</Text>
-      </View>
-
-      <View
-        style={[
-          styles.cartItem,
-          {
-            paddingHorizontal: itemPadding,
-          },
-        ]}
-      >
-        <Text style={styles.text}>Numéro de commande</Text>
-        <Text style={styles.textDescription}>{truncateText(OrderID, 12)}</Text>
-      </View>
-
-      <View
-        style={[
-          styles.cartItem,
-          {
-            paddingHorizontal: itemPadding,
-          },
-        ]}
-      >
-        <Text style={styles.text}>Type de commande</Text>
-        <Text style={styles.textDescription}>
-          {OrderType === "pickup"
-            ? "Retrait"
-            : OrderType === "delivery"
-            ? "Livraison"
-            : capitalizeFirstLetters(OrderType)}
-        </Text>
-      </View>
-
-      {OrderDeliveryAddress && (
         <View
           style={[
             styles.cartItem,
@@ -149,72 +153,119 @@ const CartOrderItem = ({
             },
           ]}
         >
-          <Text style={styles.text}>Adresse de livraison</Text>
-          <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
+          <Text style={styles.text}>Magasin</Text>
+          <Text style={styles.textDescription}>{OrderStoreName}</Text>
         </View>
-      )}
 
-      <View
-        style={[
-          styles.cartItem,
-          {
-            paddingHorizontal: itemPadding,
-          },
-        ]}
-      >
-        <Text style={styles.text}>Date de commande</Text>
-        <Text style={styles.textDescription}>{formatDate(OrderDate)}</Text>
-      </View>
-
-      <View
-        style={[
-          styles.cartItem,
-          {
-            paddingHorizontal: itemPadding,
-          },
-        ]}
-      >
-        <Text style={styles.text}>Statut</Text>
-        <Text style={styles.textDescription}>
-          {orderStatusTextDisplayer(OrderStatus, OrderType)}
-        </Text>
-      </View>
-
-      <View
-        style={[
-          styles.cartItem,
-          {
-            paddingHorizontal: itemPadding,
-          },
-        ]}
-      >
-        <Text style={styles.text}>Sous-total</Text>
-        <Text style={styles.textDescription}>DA {formatNumber(OrderSubTotal)}</Text>
-      </View>
-
-      <View
-        style={[
-          styles.cartItemMoreDetails,
-          {
-            paddingHorizontal: itemPadding,
-            marginTop: marginTop,
-          },
-        ]}
-      >
-        <TouchableOpacity
+        <View
           style={[
-            styles.moreDetailsButton,
+            styles.cartItem,
             {
-              marginTop: getResponsiveDimension(2),
+              paddingHorizontal: itemPadding,
             },
           ]}
-          onPress={() => navigation.navigate("E-Receipt/index", { OrderID })}
         >
-          <Text style={styles.text}>Plus de détails</Text>
-          <ChevronRightIcon size={iconSize} color="#888888" />
-        </TouchableOpacity>
-      </View>
-    </View>
+          <Text style={styles.text}>Numéro de commande</Text>
+          <Text style={styles.textDescription}>
+            {truncateText(OrderID, 12)}
+          </Text>
+        </View>
+
+        <View
+          style={[
+            styles.cartItem,
+            {
+              paddingHorizontal: itemPadding,
+            },
+          ]}
+        >
+          <Text style={styles.text}>Type de commande</Text>
+          <Text style={styles.textDescription}>
+            {OrderType === "pickup"
+              ? "Retrait"
+              : OrderType === "delivery"
+              ? "Livraison"
+              : capitalizeFirstLetters(OrderType)}
+          </Text>
+        </View>
+
+        {OrderDeliveryAddress && (
+          <View
+            style={[
+              styles.cartItem,
+              {
+                paddingHorizontal: itemPadding,
+              },
+            ]}
+          >
+            <Text style={styles.text}>Adresse de livraison</Text>
+            <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
+          </View>
+        )}
+
+        <View
+          style={[
+            styles.cartItem,
+            {
+              paddingHorizontal: itemPadding,
+            },
+          ]}
+        >
+          <Text style={styles.text}>Date de commande</Text>
+          <Text style={styles.textDescription}>{formatDate(OrderDate)}</Text>
+        </View>
+
+        <View
+          style={[
+            styles.cartItem,
+            {
+              paddingHorizontal: itemPadding,
+            },
+          ]}
+        >
+          <Text style={styles.text}>Statut</Text>
+          <Text style={styles.textDescription}>
+            {orderStatusTextDisplayer(OrderStatus, OrderType)}
+          </Text>
+        </View>
+
+        <View
+          style={[
+            styles.cartItem,
+            {
+              paddingHorizontal: itemPadding,
+            },
+          ]}
+        >
+          <Text style={styles.text}>Sous-total</Text>
+          <Text style={styles.textDescription}>
+            DA {formatNumber(OrderSubTotal)}
+          </Text>
+        </View>
+
+        <View
+          style={[
+            styles.cartItemMoreDetails,
+            {
+              paddingHorizontal: itemPadding,
+              marginTop: marginTop,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.moreDetailsButton,
+              {
+                marginTop: getResponsiveDimension(2),
+              },
+            ]}
+          >
+            <Text style={styles.text}>Plus de détails</Text>
+            <ChevronRightIcon size={iconSize} color="#888888" />
+          </View>
+        </View>
+      </Animated.View>
+    </TouchableOpacity>
   );
 };
 
@@ -236,6 +287,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "white",
   },
   cartItem: {
     width: "100%",

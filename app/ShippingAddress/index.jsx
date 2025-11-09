@@ -10,8 +10,12 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import BackButton from "../../components/BackButton";
 import ShippingAddressCard from "../../components/ShippingAddressCard";
@@ -19,6 +23,7 @@ import useAuthContext from "../hooks/useAuthContext";
 import Snackbar from "../../components/Snackbar";
 import { UserIcon, MapPinIcon } from "react-native-heroicons/outline";
 import Config from "../config";
+import * as Location from "expo-location";
 
 const { width, height } = Dimensions.get("window");
 
@@ -27,6 +32,17 @@ const ShippingAddressScreen = memo(() => {
   const route = useRoute();
   const { storeId } = route.params;
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
+  // Calculate responsive values
+  const isSmallScreen = width < 375;
+  const bottomBarHeight =
+    Platform.OS === "android"
+      ? (isSmallScreen ? 40 : 50) + insets.bottom
+      : isSmallScreen
+      ? 70
+      : 80;
+
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [snackbarKey, setSnackbarKey] = useState(0);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -36,6 +52,7 @@ const ShippingAddressScreen = memo(() => {
   const [modalVisible, setModalVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [addressToEdit, setAddressToEdit] = useState(null);
+  const [loadingLocation, setLoadingLocation] = useState(false);
   const [newAddress, setNewAddress] = useState({
     name: "",
     address: "",
@@ -83,6 +100,67 @@ const ShippingAddressScreen = memo(() => {
       setSnackbarKey((prevKey) => prevKey + 1);
     }
   }, [storeCart, selectedIndex, user, dispatch, storeId, navigation]);
+
+  const getCurrentLocation = async () => {
+    try {
+      setLoadingLocation(true);
+
+      // Request permission
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission refusée",
+          "Nous avons besoin de votre permission pour accéder à votre position."
+        );
+        setLoadingLocation(false);
+        return;
+      }
+
+      // Get current position
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      // Reverse geocoding to get address
+      const addresses = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      if (addresses.length > 0) {
+        const addr = addresses[0];
+        const fullAddress = [
+          addr.streetNumber,
+          addr.street,
+          addr.city,
+          addr.region,
+          addr.postalCode,
+          addr.country,
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        setNewAddress((prev) => ({
+          ...prev,
+          address: fullAddress,
+        }));
+
+        setSnackbarType("success");
+        setSnackbarMessage("Position récupérée avec succès!");
+        setSnackbarKey((prevKey) => prevKey + 1);
+      }
+    } catch (error) {
+      console.error("Erreur de localisation:", error);
+      setSnackbarType("error");
+      setSnackbarMessage(
+        "Impossible de récupérer votre position. Veuillez réessayer."
+      );
+      setSnackbarKey((prevKey) => prevKey + 1);
+    } finally {
+      setLoadingLocation(false);
+    }
+  };
 
   const handleAddAddress = () => {
     setAddressToEdit(null);
@@ -406,8 +484,14 @@ const ShippingAddressScreen = memo(() => {
           </TouchableOpacity>
         </View>
         <View
-          style={styles.navigationClass}
-          className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
+          style={[
+            styles.navigationClass,
+            {
+              height: bottomBarHeight,
+              paddingBottom:
+                Platform.OS === "android" ? insets.bottom / 1.5 : 0,
+            },
+          ]}
         >
           <TouchableOpacity
             style={styles.applyButton}
@@ -459,6 +543,24 @@ const ShippingAddressScreen = memo(() => {
                   textAlignVertical="top"
                 />
               </View>
+
+              {/* Location Button */}
+              <TouchableOpacity
+                style={styles.locationButton}
+                onPress={getCurrentLocation}
+                disabled={loadingLocation}
+              >
+                {loadingLocation ? (
+                  <ActivityIndicator size="small" color="#19213D" />
+                ) : (
+                  <>
+                    {/* <MapPinIcon size={18} color="#19213D" /> */}
+                    <Text style={styles.locationButtonText}>
+                      Utiliser ma position actuelle
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
             </View>
 
             <View style={styles.modalButtons}>
@@ -570,6 +672,14 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   navigationClass: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
     borderColor: "#888888",
     borderWidth: 0.5,
     backgroundColor: "#fff",
@@ -631,22 +741,22 @@ const styles = StyleSheet.create({
   },
   inputChange: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     width: "100%",
     minHeight: 45,
     borderColor: "#ccc",
     marginTop: 5,
     borderWidth: 1,
     paddingLeft: 10,
-    paddingTop: 12,
+    paddingRight: 10,
     borderRadius: 8,
     marginBottom: 15,
     backgroundColor: "white",
   },
   modalInput: {
-    minHeight: 40,
+    flex: 1,
+    minHeight: 45,
     paddingLeft: 10,
-    width: "100%",
     fontFamily: "Montserrat-Regular",
   },
   modalButton: {
@@ -658,6 +768,23 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     backgroundColor: "#19213D",
+  },
+  locationButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EFF7FA",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 5,
+    marginBottom: 10,
+    gap: 8,
+  },
+  locationButtonText: {
+    fontSize: 13,
+    fontFamily: "Montserrat-Medium",
+    color: "#19213D",
   },
 });
 

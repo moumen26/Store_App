@@ -8,7 +8,10 @@ import {
   useWindowDimensions,
   Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { CubeIcon } from "react-native-heroicons/outline"; // Import Cube icon from heroicons
 import FavoriteButton from "../../components/FavoriteButton";
@@ -20,6 +23,8 @@ import Config from "../config";
 import { formatNumber } from "../util/useFullFunctions.jsx";
 
 const Product = memo(() => {
+  const insets = useSafeAreaInsets();
+
   const route = useRoute();
   const navigator = useNavigation();
   const { data, storeId } = route.params;
@@ -86,7 +91,15 @@ const Product = memo(() => {
   const imageUri = `${Config.FILES_URL}/${data?.product?.image}`;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: Platform.OS === "android" ? insets.top + 10 : 20,
+          paddingBottom: insets.bottom,
+        },
+      ]}
+    >
       {snackbarKey !== 0 && (
         <Snackbar
           key={snackbarKey}
@@ -135,7 +148,8 @@ const Product = memo(() => {
             { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
           ]}
         >
-          Prix par boîte: {formatNumber(data?.selling * data?.product?.boxItems)} DA
+          Prix par boîte:{" "}
+          {formatNumber(data?.selling * data?.product?.boxItems)} DA
         </Text>
         <View style={styles.boxContainer}>
           <View
@@ -183,7 +197,7 @@ const Product = memo(() => {
       <View
         style={[
           styles.applyButtonContainer,
-          { bottom: Platform.OS === "ios" ? 30 : 20 },
+          { bottom: insets.bottom + (Platform.OS === "ios" ? 10 : 10) },
         ]}
       >
         <TouchableOpacity
@@ -207,7 +221,7 @@ const Product = memo(() => {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 });
 
@@ -215,7 +229,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: 20,
   },
   header: {
     flexDirection: "row",

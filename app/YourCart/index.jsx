@@ -11,6 +11,7 @@ import { ArrowRightIcon } from "react-native-heroicons/outline";
 import BackButton from "../../components/BackButton";
 import { useNavigation } from "expo-router";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Cart = require("../../assets/images/Cart.png");
 
@@ -55,6 +56,7 @@ const getResponsiveDimension = (baseSize) => {
 const YourCartScreen = () => {
   const navigation = useNavigation();
   const { markYourCartAsSeen, completeAllOnboarding } = useAuthContext();
+  const insets = useSafeAreaInsets();
 
   // Calculate responsive values
   const horizontalPadding = screenWidth * 0.05;
@@ -118,153 +120,155 @@ const YourCartScreen = () => {
   });
 
   return (
-    <>
-      <View style={styles.container}>
-        <View style={dynamicStyles.ImageContainer}>
-          <View style={dynamicStyles.Container}></View>
-          <Image style={dynamicStyles.Image} source={Cart} />
-          <TouchableOpacity
-            onPress={handleSkip}
-            style={[
-              styles.skipContainer,
-              {
-                right: horizontalPadding,
-                top: getResponsiveDimension(60),
-              },
-            ]}
-          >
-            <Text style={styles.skipText}>Passer</Text>
-          </TouchableOpacity>
-        </View>
-
+    <View
+      style={[
+        styles.container,
+        { paddingBottom: insets.bottom },
+      ]}
+    >
+      <View style={dynamicStyles.ImageContainer}>
+        <View style={dynamicStyles.Container}></View>
+        <Image style={dynamicStyles.Image} source={Cart} />
+        <TouchableOpacity
+          onPress={handleSkip}
+          style={[
+            styles.skipContainer,
+            {
+              right: horizontalPadding,
+              top: getResponsiveDimension(60),
+            },
+          ]}
+        >
+          <Text style={styles.skipText}>Passer</Text>
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          marginHorizontal: horizontalPadding,
+          marginTop: verticalSpacing,
+          justifyContent: "center",
+          display: "flex",
+        }}
+      >
         <View
           style={{
-            marginHorizontal: horizontalPadding,
-            marginTop: verticalSpacing,
+            height: getResponsiveDimension(90),
+            alignItems: "center",
             justifyContent: "center",
             display: "flex",
           }}
         >
-          <View
-            style={{
-              height: getResponsiveDimension(90),
-              alignItems: "center",
-              justifyContent: "center",
-              display: "flex",
-            }}
-          >
-            <Text style={styles.title}>Votre Panier</Text>
-            <Text style={[styles.title, { color: "#19213D" }]}>d'Achats</Text>
-          </View>
+          <Text style={styles.title}>Votre Panier</Text>
+          <Text style={[styles.title, { color: "#19213D" }]}>d'Achats</Text>
+        </View>
 
-          <View
-            style={{
-              height: getResponsiveDimension(50),
-              alignItems: "center",
-              justifyContent: "center",
-              display: "flex",
-            }}
-          >
-            <Text style={styles.description}>
-              Vérifiez vos articles sélectionnés avant de passer commande
-            </Text>
-          </View>
+        <View
+          style={{
+            height: getResponsiveDimension(50),
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
+          <Text style={styles.description}>
+            Vérifiez vos articles sélectionnés avant de passer commande
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginHorizontal: screenWidth * 0.05,
+            marginTop: getResponsiveDimension(40),
+            alignItems: "center",
+          }}
+        >
+          <BackButton />
 
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "space-between",
-              marginHorizontal: screenWidth * 0.05,
-              marginTop: getResponsiveDimension(40),
+              justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <BackButton />
-
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
+                width: getResponsiveDimension(10),
+                height: getResponsiveDimension(10),
+                borderRadius: getResponsiveDimension(5),
+                backgroundColor: "#EDEDED",
+                marginRight: 4,
               }}
-            >
-              <View
-                style={{
-                  width: getResponsiveDimension(10),
-                  height: getResponsiveDimension(10),
-                  borderRadius: getResponsiveDimension(5),
-                  backgroundColor: "#EDEDED",
-                  marginRight: 4,
-                }}
-              ></View>
-              <View
-                style={{
-                  width: getResponsiveDimension(10),
-                  height: getResponsiveDimension(10),
-                  borderRadius: getResponsiveDimension(5),
-                  backgroundColor: "#19213D",
-                  marginRight: 4,
-                }}
-              ></View>
-              <View
-                style={{
-                  width: getResponsiveDimension(10),
-                  height: getResponsiveDimension(10),
-                  borderRadius: getResponsiveDimension(5),
-                  backgroundColor: "#EDEDED",
-                }}
-              ></View>
-            </View>
-
-            <TouchableOpacity
-              style={[
-                styles.NextButton,
-                {
-                  width:
-                    screenWidth <= 360
-                      ? 35
-                      : screenWidth <= 414
-                      ? 45
-                      : screenWidth <= 768
-                      ? 55
-                      : 65,
-                  height:
-                    screenWidth <= 360
-                      ? 35
-                      : screenWidth <= 414
-                      ? 45
-                      : screenWidth <= 768
-                      ? 55
-                      : 65,
-                  borderRadius:
-                    (screenWidth <= 360
-                      ? 35
-                      : screenWidth <= 414
-                      ? 45
-                      : screenWidth <= 768
-                      ? 55
-                      : 65) / 2,
-                },
-              ]}
-              onPress={handleNextPress}
-            >
-              <ArrowRightIcon
-                color="#fff"
-                size={
-                  screenWidth <= 360
-                    ? 16
-                    : screenWidth <= 414
-                    ? 18
-                    : screenWidth <= 768
-                    ? 22
-                    : 26
-                }
-              />
-            </TouchableOpacity>
+            ></View>
+            <View
+              style={{
+                width: getResponsiveDimension(10),
+                height: getResponsiveDimension(10),
+                borderRadius: getResponsiveDimension(5),
+                backgroundColor: "#19213D",
+                marginRight: 4,
+              }}
+            ></View>
+            <View
+              style={{
+                width: getResponsiveDimension(10),
+                height: getResponsiveDimension(10),
+                borderRadius: getResponsiveDimension(5),
+                backgroundColor: "#EDEDED",
+              }}
+            ></View>
           </View>
+
+          <TouchableOpacity
+            style={[
+              styles.NextButton,
+              {
+                width:
+                  screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65,
+                height:
+                  screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65,
+                borderRadius:
+                  (screenWidth <= 360
+                    ? 35
+                    : screenWidth <= 414
+                    ? 45
+                    : screenWidth <= 768
+                    ? 55
+                    : 65) / 2,
+              },
+            ]}
+            onPress={handleNextPress}
+          >
+            <ArrowRightIcon
+              color="#fff"
+              size={
+                screenWidth <= 360
+                  ? 16
+                  : screenWidth <= 414
+                  ? 18
+                  : screenWidth <= 768
+                  ? 22
+                  : 26
+              }
+            />
+          </TouchableOpacity>
         </View>
       </View>
-    </>
+    </View>
   );
 };
 

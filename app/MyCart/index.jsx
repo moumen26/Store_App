@@ -9,11 +9,18 @@ import {
   ActivityIndicator,
   useWindowDimensions,
   Platform,
+  Animated,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import BackButton from "../../components/BackButton";
-import { PencilSquareIcon } from "react-native-heroicons/outline";
+import {
+  PencilSquareIcon,
+  ShoppingCartIcon,
+} from "react-native-heroicons/outline";
 import CartRow from "../../components/CartRow";
 import CommandeDetailsItem from "../../components/CommandeDetailsItem";
 import OrderType from "../../components/OrderType";
@@ -25,11 +32,84 @@ import Snackbar from "../../components/Snackbar.jsx";
 import ConfirmationModal from "../../components/ConfirmationModal.jsx";
 import { formatNumber } from "../util/useFullFunctions.jsx";
 
+const LoadingOverlay = ({ isSmallScreen }) => {
+  const pulseAnim = React.useRef(new Animated.Value(1)).current;
+  const rotateAnim = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    // Pulse animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Rotate animation
+    Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, []);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
+  return (
+    <View style={styles.loadingOverlay}>
+      <View style={styles.loadingCard}>
+        <Animated.View
+          style={[
+            styles.iconContainer,
+            {
+              transform: [{ scale: pulseAnim }, { rotate }],
+            },
+          ]}
+        >
+          <ShoppingCartIcon size={isSmallScreen ? 40 : 50} color="#19213D" />
+        </Animated.View>
+        <Text
+          style={[styles.loadingTitle, { fontSize: isSmallScreen ? 16 : 18 }]}
+        >
+          Traitement en cours
+        </Text>
+        <Text
+          style={[
+            styles.loadingSubtitle,
+            { fontSize: isSmallScreen ? 12 : 14 },
+          ]}
+        >
+          Votre commande est en cours de traitement...
+        </Text>
+        <ActivityIndicator
+          size="large"
+          color="#19213D"
+          style={{ marginTop: 20 }}
+        />
+      </View>
+    </View>
+  );
+};
+
 const MyCartScreen = () => {
   const { cart, user, dispatch } = useAuthContext();
   const route = useRoute();
   const { storeId, storeAddress } = route.params;
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   // Get screen dimensions
   const { width, height } = useWindowDimensions();
@@ -47,7 +127,12 @@ const MyCartScreen = () => {
   // Additional responsive values
   const buttonHeight = Math.max(45, height * 0.06);
   const buttonWidth = isLargeScreen ? width * 0.6 : width * 0.85;
-  const bottomBarHeight = isSmallScreen ? 70 : 80;
+  const bottomBarHeight =
+    Platform.OS === "android"
+      ? (isSmallScreen ? 40 : 50) + insets.bottom
+      : isSmallScreen
+      ? 70
+      : 80;
   const iconSize = isSmallScreen ? 20 : 24;
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -172,224 +257,213 @@ const MyCartScreen = () => {
           snackbarType={snackbarType}
         />
       )}
-      {submitionLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF033E" />
-          <Text
-            style={[
-              styles.loadingText,
-              {
-                fontSize: isSmallScreen ? 13 : 14,
-                marginTop: smallSpacing,
-              },
-            ]}
-          >
-            Veuillez patienter pendant le traitement de votre demande...
-          </Text>
-        </View>
-      ) : (
-        <>
+
+      <View
+        style={[
+          styles.contentContainer,
+          {
+            marginHorizontal: horizontalPadding,
+            flex: 1,
+          },
+        ]}
+      >
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: bottomBarHeight,
+            flexGrow: 1,
+          }}
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+        >
+          <View style={[styles.header, { marginBottom: verticalSpacing }]}>
+            <BackButton />
+            <Text
+              style={[
+                styles.titleScreen,
+                {
+                  fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
+                },
+              ]}
+            >
+              Mon Panier
+            </Text>
+            <View
+              style={[
+                styles.emptyView,
+                {
+                  width: isSmallScreen ? 32 : 40,
+                  height: isSmallScreen ? 32 : 40,
+                },
+              ]}
+            />
+          </View>
+
+          <View style={styles.orderDetailsHeader}>
+            <Text
+              style={[
+                styles.titleCategory,
+                {
+                  fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
+                  marginBottom: smallSpacing,
+                },
+              ]}
+            >
+              Détails de la Commande
+            </Text>
+            {storeCart.length > 0 && (
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <PencilSquareIcon size={iconSize} color="#19213D" />
+              </TouchableOpacity>
+            )}
+          </View>
+
           <View
             style={[
-              styles.contentContainer,
+              styles.productListContainer,
               {
-                marginHorizontal: horizontalPadding,
+                marginTop: smallSpacing,
+                minHeight: height * 0.4,
                 flex: 1,
               },
             ]}
           >
-            <ScrollView
-              contentContainerStyle={{
-                paddingBottom: bottomBarHeight,
-                flexGrow: 1,
-              }}
-              showsVerticalScrollIndicator={false}
-              style={{ flex: 1 }}
-            >
-              <View style={[styles.header, { marginBottom: verticalSpacing }]}>
-                <BackButton />
-                <Text
-                  style={[
-                    styles.titleScreen,
-                    {
-                      fontSize: isSmallScreen ? 18 : isLargeScreen ? 24 : 20,
-                    },
-                  ]}
-                >
-                  Mon Panier
-                </Text>
-                <View
-                  style={[
-                    styles.emptyView,
-                    {
-                      width: isSmallScreen ? 32 : 40,
-                      height: isSmallScreen ? 32 : 40,
-                    },
-                  ]}
-                />
+            {storeCart.length > 0 ? (
+              renderProductItems()
+            ) : (
+              <View style={styles.noProductContainer}>
+                <Text style={styles.noText}>Aucun produit disponible</Text>
               </View>
-
-              <View style={styles.orderDetailsHeader}>
-                <Text
-                  style={[
-                    styles.titleCategory,
-                    {
-                      fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
-                      marginBottom: smallSpacing,
-                    },
-                  ]}
-                >
-                  Détails de la Commande
-                </Text>
-                {storeCart.length > 0 && (
-                  <TouchableOpacity onPress={() => setModalVisible(true)}>
-                    <PencilSquareIcon size={iconSize} color="#19213D" />
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              <View
-                style={[
-                  styles.productListContainer,
-                  {
-                    marginTop: smallSpacing,
-                    minHeight: height * 0.4,
-                    flex: 1,
-                  },
-                ]}
-              >
-                {storeCart.length > 0 ? (
-                  renderProductItems()
-                ) : (
-                  <View style={styles.noProductContainer}>
-                    <Text style={styles.noText}>Aucun produit disponible</Text>
-                  </View>
-                )}
-              </View>
-
-              {storeCart.length > 0 && (
-                <View
-                  style={[
-                    styles.commandeContainer,
-                    {
-                      marginTop: verticalSpacing,
-                      paddingVertical: verticalSpacing / 2,
-                      gap: smallSpacing / 2,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.sousTitre,
-                      {
-                        fontSize: isSmallScreen ? 11 : 12,
-                      },
-                    ]}
-                  >
-                    Prix par défaut
-                  </Text>
-                  <View
-                    style={[
-                      styles.defaultPriceScroll,
-                      {
-                        gap: isSmallScreen ? 2 : 4,
-                        paddingBottom: smallSpacing,
-                      },
-                    ]}
-                  >
-                    {renderDetailsItems()}
-                  </View>
-                  <View
-                    style={[
-                      styles.subTotalContainer,
-                      {
-                        paddingTop: smallSpacing * 1.2,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.sousTitre,
-                        {
-                          fontSize: isSmallScreen ? 11 : 12,
-                        },
-                      ]}
-                    >
-                      Sous-total
-                    </Text>
-                    <Text
-                      style={[
-                        styles.sousTitre,
-                        {
-                          fontSize: isSmallScreen ? 11 : 12,
-                        },
-                      ]}
-                    >
-                      DA {formatNumber(total)}
-                    </Text>
-                  </View>
-                </View>
-              )}
-
-              <View
-                style={[
-                  styles.orderTypeContainer,
-                  {
-                    marginTop: verticalSpacing,
-                    marginBottom: bottomBarHeight + 20,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.titleCategory,
-                    {
-                      fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
-                      marginBottom: smallSpacing,
-                    },
-                  ]}
-                >
-                  Type de commande
-                </Text>
-                <OrderType
-                  storeId={storeId}
-                  storeCart={storeCart}
-                  handleChangeType={setType}
-                  navigation={navigation}
-                  storeAddress={storeAddress}
-                />
-              </View>
-            </ScrollView>
+            )}
           </View>
 
-          <View
-            className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
-            style={styles.navigationClass}
-          >
-            <TouchableOpacity
+          {storeCart.length > 0 && (
+            <View
               style={[
-                styles.orderButton,
+                styles.commandeContainer,
                 {
-                  height: buttonHeight,
-                  width: buttonWidth,
+                  marginTop: verticalSpacing,
+                  paddingVertical: verticalSpacing / 2,
+                  gap: smallSpacing / 2,
                 },
               ]}
-              onPress={() => setConfirmationModalVisible(true)}
             >
               <Text
                 style={[
-                  styles.orderButtonText,
+                  styles.sousTitre,
                   {
-                    fontSize: isSmallScreen ? 14 : 16,
+                    fontSize: isSmallScreen ? 11 : 12,
                   },
                 ]}
               >
-                Passer la commande
+                Prix par défaut
               </Text>
-            </TouchableOpacity>
+              <View
+                style={[
+                  styles.defaultPriceScroll,
+                  {
+                    gap: isSmallScreen ? 2 : 4,
+                    paddingBottom: smallSpacing,
+                  },
+                ]}
+              >
+                {renderDetailsItems()}
+              </View>
+              <View
+                style={[
+                  styles.subTotalContainer,
+                  {
+                    paddingTop: smallSpacing * 1.2,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.sousTitre,
+                    {
+                      fontSize: isSmallScreen ? 11 : 12,
+                    },
+                  ]}
+                >
+                  Sous-total
+                </Text>
+                <Text
+                  style={[
+                    styles.sousTitre,
+                    {
+                      fontSize: isSmallScreen ? 11 : 12,
+                    },
+                  ]}
+                >
+                  DA {formatNumber(total)}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          <View
+            style={[
+              styles.orderTypeContainer,
+              {
+                marginTop: verticalSpacing,
+                marginBottom: bottomBarHeight + 20,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.titleCategory,
+                {
+                  fontSize: isSmallScreen ? 16 : isLargeScreen ? 20 : 18,
+                  marginBottom: smallSpacing,
+                },
+              ]}
+            >
+              Type de commande
+            </Text>
+            <OrderType
+              storeId={storeId}
+              storeCart={storeCart}
+              handleChangeType={setType}
+              navigation={navigation}
+              storeAddress={storeAddress}
+            />
           </View>
-        </>
-      )}
+        </ScrollView>
+      </View>
+
+      <View
+        style={[
+          styles.navigationClass,
+          {
+            height: bottomBarHeight,
+            paddingBottom: Platform.OS === "android" ? insets.bottom / 1.5 : 0,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          style={[
+            styles.orderButton,
+            {
+              height: buttonHeight,
+              width: buttonWidth,
+            },
+          ]}
+          onPress={() => setConfirmationModalVisible(true)}
+        >
+          <Text
+            style={[
+              styles.orderButtonText,
+              {
+                fontSize: isSmallScreen ? 14 : 16,
+              },
+            ]}
+          >
+            Passer la commande
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {submitionLoading && <LoadingOverlay isSmallScreen={isSmallScreen} />}
 
       <Modal
         animationType="slide"
@@ -449,7 +523,7 @@ const styles = StyleSheet.create({
   },
   productListContainer: {
     justifyContent: "flex-start",
-    flexGrow: 1, // Added flexGrow to expand the container
+    flexGrow: 1,
   },
   noProductContainer: {
     flex: 1,
@@ -482,23 +556,15 @@ const styles = StyleSheet.create({
   orderTypeContainer: {
     // Margin bottom set dynamically
   },
-  bottomBar: {
+  navigationClass: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    borderColor: "#888888",
-    borderWidth: 0.5,
-    backgroundColor: "#fff",
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 10,
-    zIndex: 10,
-  },
-  navigationClass: {
+    justifyContent: "space-around",
     borderColor: "#888888",
     borderWidth: 0.5,
     backgroundColor: "#fff",
@@ -523,15 +589,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(201, 228, 238, 0.7)",
   },
-
-  loadingContainer: {
-    flex: 1,
+  loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 9999,
   },
-  loadingText: {
+  loadingCard: {
+    backgroundColor: "white",
+    padding: 30,
+    alignItems: "center",
+    minWidth: 280,
+  },
+  iconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#E3EFFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  loadingTitle: {
+    fontFamily: "Montserrat-Medium",
+    color: "#19213D",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  loadingSubtitle: {
     fontFamily: "Montserrat-Regular",
-    color: "#FF033E",
+    color: "#888888",
+    textAlign: "center",
   },
 });
 

@@ -10,13 +10,17 @@ import {
   Platform,
 } from "react-native";
 import React, { useLayoutEffect, useState, useCallback } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import BackButton from "../../components/BackButton";
 import CartRow from "../../components/CartRow";
 import SubmitOrderModal from "../../components/SubmitOrderModal.jsx";
 import EReceiptDetails from "../../components/EReceiptDetails";
 import { useRoute } from "@react-navigation/native";
+import { router } from "expo-router";
 import useAuthContext from "../hooks/useAuthContext";
 import axios from "axios";
 import Config from "../config";
@@ -28,6 +32,7 @@ import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
 import TrackButton from "../../components/TrackButton";
+import { ArrowLeftIcon } from "lucide-react-native";
 const Logo = require("../../assets/Logo-vertical.png");
 
 // Axios instance for base URL configuration
@@ -42,6 +47,7 @@ const EReceiptScreen = () => {
   const { user } = useAuthContext();
   const route = useRoute();
   const { OrderID } = route.params;
+  const insets = useSafeAreaInsets();
 
   // Get screen dimensions with validation
   const { width, height } = useWindowDimensions();
@@ -68,7 +74,12 @@ const EReceiptScreen = () => {
     : isLargeScreen
     ? safeWidth * 0.85
     : safeWidth * 0.9;
-  const bottomBarHeight = isSmallScreen ? 70 : 80;
+  const bottomBarHeight =
+    Platform.OS === "android"
+      ? (isSmallScreen ? 40 : 50) + insets.bottom
+      : isSmallScreen
+      ? 70
+      : 80;
 
   // Validate OrderID before using it
   const validOrderID =
@@ -121,8 +132,8 @@ const EReceiptScreen = () => {
       }
       return () => {};
     }, [user?.token, validOrderID])
-  );  
-  
+  );
+
   const html = `
   <html>
     <head>
@@ -472,7 +483,8 @@ const EReceiptScreen = () => {
           <p><strong>Montant Total:</strong> ${new Intl.NumberFormat(
             "fr-FR"
           ).format(
-            (OrderData?.reciept?.total || 0) + (OrderData?.reciept?.deliveryCost || 0)
+            (OrderData?.reciept?.total || 0) +
+              (OrderData?.reciept?.deliveryCost || 0)
           )} DA</p>
           <p><strong>Type de livraison:</strong> ${
             OrderData?.reciept?.type === "delivery" ? "Livraison" : "Retrait"
@@ -511,9 +523,13 @@ const EReceiptScreen = () => {
               OrderData?.recieptStatus?.products?.length > 0
                 ? OrderData.recieptStatus.products
                     .map((product) => {
-                      const unitPrice = Number(product.price).toFixed(2) || "0.00";
-                      const totalPrice = (Number(product.price) * Number(product.quantity)).toFixed(2) || "0.00";
-                      
+                      const unitPrice =
+                        Number(product.price).toFixed(2) || "0.00";
+                      const totalPrice =
+                        (
+                          Number(product.price) * Number(product.quantity)
+                        ).toFixed(2) || "0.00";
+
                       return `
                     <tr>
                       <td class="quantity-col">${product?.quantity || 0}</td>
@@ -850,7 +866,12 @@ const EReceiptScreen = () => {
           style={[styles.container, { marginHorizontal: horizontalPadding }]}
         >
           <View style={styles.headerContainer}>
-            <BackButton />
+            <TouchableOpacity
+              style={styles.BackButton}
+              onPress={() => router.navigate("/(tabs)/cart")}
+            >
+              <ArrowLeftIcon color="#19213D" size={18} />
+            </TouchableOpacity>
             <Text style={styles.titleScreen}>E-Reçu</Text>
             <View style={{ width: 24 }} />
           </View>
@@ -886,7 +907,12 @@ const EReceiptScreen = () => {
                   { marginBottom: verticalSpacing },
                 ]}
               >
-                <BackButton />
+                <TouchableOpacity
+                  style={styles.BackButton}
+                  onPress={() => router.navigate("/(tabs)/cart")}
+                >
+                  <ArrowLeftIcon color="#19213D" size={18} />
+                </TouchableOpacity>
                 <Text
                   style={[
                     styles.titleScreen,
@@ -971,8 +997,13 @@ const EReceiptScreen = () => {
       </View>
 
       <View
-        className="bg-white w-full h-[80px] absolute left-0 bottom-0 flex-row items-center justify-around pb-3"
-        style={styles.navigationClass}
+        style={[
+          styles.navigationClass,
+          {
+            height: bottomBarHeight,
+            paddingBottom: Platform.OS === "android" ? insets.bottom / 1.5 : 0,
+          },
+        ]}
       >
         <TouchableOpacity
           style={[
@@ -1007,6 +1038,16 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? 10 : 3,
     height: "100%",
     position: "relative",
+  },
+  BackButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: "#E3EFFF",
+    borderWidth: 1,
   },
   container: {
     flexDirection: "column",
@@ -1063,6 +1104,14 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   navigationClass: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
     borderColor: "#888888",
     borderWidth: 0.5,
     backgroundColor: "#fff",

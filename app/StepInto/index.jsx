@@ -10,6 +10,7 @@ import React from "react";
 import { Link, useNavigation } from "expo-router";
 import { ArrowRightIcon } from "react-native-heroicons/outline";
 import useAuthContext from "../hooks/useAuthContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const StepIntoImg = require("../../assets/images/StepInto.png");
 
@@ -54,6 +55,8 @@ const getResponsiveDimension = (baseSize) => {
 const StepIntoScreen = () => {
   const navigation = useNavigation();
   const { markStepIntoAsSeen, completeAllOnboarding } = useAuthContext();
+
+  const insets = useSafeAreaInsets();
 
   // Calculate responsive heights
   const imageContainerHeight = screenHeight * 0.5; // 60% of screen height
@@ -111,7 +114,10 @@ const StepIntoScreen = () => {
   });
 
   return (
-    <View className="bg-white h-full">
+    <View
+      className="bg-white h-full"
+      style={[{ paddingTop: insets.top, paddingBottom: insets.bottom }]}
+    >
       <View
         style={dynamicStyles.ImageContainer}
         className="flex items-center justify-center"
@@ -160,8 +166,6 @@ const StepIntoScreen = () => {
             <Text style={styles.textForgotPassword}>Se connecter</Text>
           </TouchableOpacity>
         </View>
-
-
       </View>
     </View>
   );

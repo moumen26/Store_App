@@ -1,6 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Animated, View } from "react-native";
+import { Animated } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Cog8ToothIcon,
   HeartIcon,
@@ -47,6 +48,8 @@ const AnimatedTabIcon = ({ Icon, focused, color, name, size = 24 }) => {
 };
 
 const TabLayout = () => {
+  const insets = useSafeAreaInsets();
+
   return (
     <ProtectedScreen>
       <Tabs
@@ -57,12 +60,11 @@ const TabLayout = () => {
             backgroundColor: "white",
             borderWidth: 1,
             borderTopColor: "#E3EFFF",
-            // borderTopLeftRadius: 20,
-            // borderTopRightRadius: 20,
-            paddingTop: 3,
+            paddingTop: 4,
+            paddingBottom: insets.bottom || 3,
             position: "absolute",
             overflow: "hidden",
-            height: 80,
+            height: 45 + (insets.bottom || 0),
             zIndex: 1000,
           },
         }}
