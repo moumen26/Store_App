@@ -491,7 +491,7 @@ export default function RootLayout() {
             name="E-Receipt/index"
             options={{
               headerShown: false,
-              presentation: "containedModal",
+              // presentation: "containedModal",
             }}
           />
           <Stack.Screen

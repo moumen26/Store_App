@@ -81,12 +81,6 @@ const OrderType = memo(
                 <Text style={styles.textdescription}>
                   {storeCart[0]?.shippingAddress?.address}
                 </Text>
-                <View style={styles.timeContainer}>
-                  <ClockIcon size={16} color="#888888" />
-                  <Text style={styles.textdescription}>
-                    25 minutes estimate arrived
-                  </Text>
-                </View>
               </View>
             </View>
             <TouchableOpacity
@@ -109,7 +103,9 @@ const OrderType = memo(
               <BuildingStorefrontIcon color="#19213D" size={20} />
             </View>
             <View style={styles.gapColumn}>
-              <Text style={styles.textPlace}>{storeAddress || "Aucune adresse fournie"}</Text>
+              <Text style={styles.textPlace}>
+                {storeAddress || "Aucune adresse fournie"}
+              </Text>
               {/* <Text style={styles.textdescription}>
                 {storeAddress || "Aucune adresse fournie"}
               </Text> */}
