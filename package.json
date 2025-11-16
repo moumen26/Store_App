@@ -86,7 +86,8 @@
     "jest": "~29.7.0",
     "jest-expo": "~54.0.12",
     "react-test-renderer": "19.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "yaml": "^2.8.1"
   },
   "private": true
 }
