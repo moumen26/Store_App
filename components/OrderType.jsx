@@ -10,9 +10,8 @@ import {
 import {
   BuildingStorefrontIcon,
   ClockIcon,
+  MapPinIcon,
 } from "react-native-heroicons/outline";
-
-const LocationIcon = require("../assets/icons/Location.png");
 
 const OrderType = memo(
   ({ storeId, storeAddress, storeCart, navigation, handleChangeType }) => {
@@ -72,13 +71,17 @@ const OrderType = memo(
           <View style={styles.addressContainer}>
             <View style={styles.gapRow}>
               <View style={styles.iconClass}>
-                <Image source={LocationIcon} />
+                <MapPinIcon color="#19213D" size={20} />
               </View>
               <View style={styles.gapColumn}>
                 <Text style={styles.textPlace}>
                   {storeCart[0]?.shippingAddress?.name}
                 </Text>
-                <Text style={styles.textdescription}>
+                <Text
+                  style={styles.textdescription}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
                   {storeCart[0]?.shippingAddress?.address}
                 </Text>
               </View>
@@ -177,6 +180,7 @@ const styles = StyleSheet.create({
   gapColumn: {
     flexDirection: "column",
     gap: 4,
+    width: "70%",
   },
   changeButton: {
     width: 65,

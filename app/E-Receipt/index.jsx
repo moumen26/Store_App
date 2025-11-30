@@ -1,3 +1,5 @@
+import * as FileSystem from "expo-file-system";
+import { Alert } from "react-native";
 import {
   View,
   Text,
@@ -690,14 +692,63 @@ const EReceiptScreen = () => {
 
   const generatePDF = async () => {
     try {
+      // 1. Generate the PDF file in the app's cache
       const file = await printToFileAsync({
         html: html,
         base64: false,
       });
-      await shareAsync(file.uri);
+
+      if (Platform.OS === "android") {
+        // --- ANDROID SPECIFIC: Save directly to storage ---
+
+        // Request permission to access a directory (User picks 'Downloads' usually)
+        const permissions =
+          await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+        if (permissions.granted) {
+          // Read the generated PDF as a Base64 string
+          const base64 = await FileSystem.readAsStringAsync(file.uri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+
+          // Create a filename (e.g., "Reçu_ORDER123.pdf")
+          const fileName = `Recu_${OrderID || "Commande"}.pdf`;
+
+          try {
+            // Create the file in the selected directory
+            const createdUri =
+              await FileSystem.StorageAccessFramework.createFileAsync(
+                permissions.directoryUri,
+                fileName,
+                "application/pdf"
+              );
+
+            // Write the data to the new file
+            await FileSystem.writeAsStringAsync(createdUri, base64, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+
+            Alert.alert("Succès", "Le reçu a été téléchargé avec succès !");
+          } catch (e) {
+            console.log(e);
+            Alert.alert("Erreur", "Impossible de sauvegarder le fichier.");
+          }
+        } else {
+          // If permission denied, fallback to share or do nothing
+          // await shareAsync(file.uri);
+        }
+      } else {
+        // --- iOS SPECIFIC ---
+        // On iOS, the file system is sandboxed.
+        // shareAsync is the standard way to let users "Save to Files".
+        await shareAsync(file.uri);
+      }
     } catch (error) {
       console.log("Error generating PDF:", error);
-      // You might want to show an alert or toast here
+      Alert.alert(
+        "Erreur",
+        "Une erreur est survenue lors de la génération du PDF."
+      );
     }
   };
 
