@@ -7,9 +7,14 @@
     "scheme": "Mosagro",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "icon": "./assets/images/Frame1.jpg",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.increadz.Mosagro",
@@ -18,7 +23,9 @@
       "infoPlist": {
         "NSCameraUsageDescription": "We need access to your camera to scan barcodes.",
         "NSLocationWhenInUseUsageDescription": "We need your location to set your delivery address.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location to set your delivery address."
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location to set your delivery address.",
+        "NSPhotoLibraryAddUsageDescription": "Allow Mosagro to save receipts to your device.",
+        "NSPhotoLibraryUsageDescription": "Allow Mosagro to access your photo library."
       },
       "config": {
         "usesNonExemptEncryption": false
@@ -45,14 +52,13 @@
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.INTERNET",
-        "android.permission.ACCESS_NETWORK_STATE",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.ACCESS_MEDIA_LOCATION",
+        "android.permission.READ_MEDIA_AUDIO"
       ],
       "intentFilters": [
         {
@@ -68,7 +74,10 @@
               "host": "www.api.mosagro.com.dz"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         },
         {
           "action": "VIEW",
@@ -83,7 +92,10 @@
               "host": "www.api.mosagro.com.dz"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -116,6 +128,14 @@
           "backgroundColor": "#070D45"
         }
       ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Mosagro to access your photos.",
+          "savePhotosPermission": "Allow Mosagro to save receipts to your device.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
       "expo-font",
       "expo-web-browser"
     ],
@@ -125,6 +145,9 @@
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "ae234ee2-5fa5-45df-92e1-af98f66c08a1"
       }
     },
     "runtimeVersion": {

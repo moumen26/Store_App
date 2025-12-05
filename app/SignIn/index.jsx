@@ -128,7 +128,7 @@ const SignInScreen = () => {
               styles.textInput,
               { height: inputHeight, borderRadius: isSmallScreen ? 8 : 10 },
             ]}
-            placeholder="+213 000 00 00 00"
+            placeholder="0000 00 00 00"
             placeholderTextColor="#888888"
             value={userName}
             onChangeText={setUserName}

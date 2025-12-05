@@ -165,7 +165,7 @@ const CartOrderItem = ({
             },
           ]}
         >
-          <Text style={styles.text}>Numéro de commande</Text>
+          <Text style={styles.text}>bu</Text>
           <Text style={styles.textDescription}>
             {truncateText(OrderID, 12)}
           </Text>
@@ -199,7 +199,9 @@ const CartOrderItem = ({
             ]}
           >
             <Text style={styles.text}>Adresse de livraison</Text>
-            <Text style={styles.textDescription}>{OrderDeliveryAddress}</Text>
+            <Text style={styles.textDescription}>
+              {truncateText(OrderDeliveryAddress, 12)}
+            </Text>
           </View>
         )}
 

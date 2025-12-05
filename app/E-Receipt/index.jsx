@@ -1,4 +1,3 @@
-import * as FileSystem from "expo-file-system";
 import { Alert } from "react-native";
 import {
   View,
@@ -33,6 +32,8 @@ import ArticleItem from "../loading/ArticleItem";
 import EReceiptDetailsShimmer from "../loading/EReceiptDetails";
 import { printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
+import * as FileSystem from "expo-file-system/legacy";
+import * as MediaLibrary from "expo-media-library";
 import TrackButton from "../../components/TrackButton";
 import { ArrowLeftIcon } from "lucide-react-native";
 const Logo = require("../../assets/Logo-vertical.png");
@@ -690,67 +691,123 @@ const EReceiptScreen = () => {
   </html>
   `;
 
-  const generatePDF = async () => {
-    try {
-      // 1. Generate the PDF file in the app's cache
-      const file = await printToFileAsync({
-        html: html,
-        base64: false,
-      });
+const generatePDF = async () => {
+  try {
+    // Generate the PDF file
+    const file = await printToFileAsync({
+      html: html,
+      base64: false,
+    });
 
-      if (Platform.OS === "android") {
-        // --- ANDROID SPECIFIC: Save directly to storage ---
+    // Request media library permissions
+    const { status } = await MediaLibrary.requestPermissionsAsync();
 
-        // Request permission to access a directory (User picks 'Downloads' usually)
-        const permissions =
-          await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-
-        if (permissions.granted) {
-          // Read the generated PDF as a Base64 string
-          const base64 = await FileSystem.readAsStringAsync(file.uri, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-
-          // Create a filename (e.g., "Reçu_ORDER123.pdf")
-          const fileName = `Recu_${OrderID || "Commande"}.pdf`;
-
-          try {
-            // Create the file in the selected directory
-            const createdUri =
-              await FileSystem.StorageAccessFramework.createFileAsync(
-                permissions.directoryUri,
-                fileName,
-                "application/pdf"
-              );
-
-            // Write the data to the new file
-            await FileSystem.writeAsStringAsync(createdUri, base64, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
-
-            Alert.alert("Succès", "Le reçu a été téléchargé avec succès !");
-          } catch (e) {
-            console.log(e);
-            Alert.alert("Erreur", "Impossible de sauvegarder le fichier.");
-          }
-        } else {
-          // If permission denied, fallback to share or do nothing
-          // await shareAsync(file.uri);
-        }
-      } else {
-        // --- iOS SPECIFIC ---
-        // On iOS, the file system is sandboxed.
-        // shareAsync is the standard way to let users "Save to Files".
-        await shareAsync(file.uri);
-      }
-    } catch (error) {
-      console.log("Error generating PDF:", error);
+    if (status !== "granted") {
       Alert.alert(
-        "Erreur",
-        "Une erreur est survenue lors de la génération du PDF."
+        "Permission requise",
+        "Pour enregistrer le PDF, nous avons besoin de l'autorisation d'accès au stockage. Voulez-vous partager le fichier à la place ?",
+        [
+          {
+            text: "Annuler",
+            style: "cancel",
+          },
+          {
+            text: "Partager",
+            onPress: async () => {
+              try {
+                await shareAsync(file.uri, {
+                  UTI: ".pdf",
+                  mimeType: "application/pdf",
+                });
+              } catch (shareError) {
+                console.log("Share error:", shareError);
+              }
+            },
+          },
+        ]
       );
+      return;
     }
-  };
+
+    // Create the file name with timestamp
+    const fileName = `Recu_${
+      OrderData?.reciept?._id || "commande"
+    }_${new Date().getTime()}.pdf`;
+
+    // Define the destination path in the app's document directory
+    const downloadDir = FileSystem.documentDirectory + fileName;
+
+    // Copy file to app's document directory using legacy API
+    await FileSystem.copyAsync({
+      from: file.uri,
+      to: downloadDir,
+    });
+
+    // Save to media library (this will make it accessible in Downloads/Files)
+    const asset = await MediaLibrary.createAssetAsync(downloadDir);
+
+    // Try to create/add to album
+    try {
+      const album = await MediaLibrary.getAlbumAsync("Download");
+      if (album) {
+        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+      } else {
+        await MediaLibrary.createAlbumAsync("Download", asset, false);
+      }
+    } catch (albumError) {
+      // Album operations might fail, but file is still saved
+      console.log("Album operation note:", albumError.message);
+    }
+
+    Alert.alert(
+      "Succès",
+      Platform.OS === "android"
+        ? "Le reçu a été enregistré avec succès dans vos téléchargements."
+        : "Le reçu a été enregistré avec succès.",
+      [
+        {
+          text: "OK",
+          onPress: () => console.log("PDF saved successfully"),
+        },
+      ]
+    );
+  } catch (error) {
+    console.log("Error generating PDF:", error);
+
+    // If saving fails, offer to share instead
+    Alert.alert(
+      "Erreur d'enregistrement",
+      "Impossible d'enregistrer le fichier. Voulez-vous le partager à la place ?",
+      [
+        {
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Partager",
+          onPress: async () => {
+            try {
+              const file = await printToFileAsync({
+                html: html,
+                base64: false,
+              });
+              await shareAsync(file.uri, {
+                UTI: ".pdf",
+                mimeType: "application/pdf",
+              });
+            } catch (shareError) {
+              console.log("Share error:", shareError);
+              Alert.alert(
+                "Erreur",
+                "Une erreur est survenue. Veuillez réessayer."
+              );
+            }
+          },
+        },
+      ]
+    );
+  }
+};
 
   // Alternative Barcode Component using online service
   const BarcodeWrapper = ({ value, width, height }) => {

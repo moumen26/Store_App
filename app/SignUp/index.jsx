@@ -288,7 +288,7 @@ const SignUpScreen = () => {
                   styles.textInputPhone,
                   { fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12 },
                 ]}
-                placeholder="+213 000 00 00 00"
+                placeholder="0000 00 00 00"
                 placeholderTextColor="#888888"
                 value={phone}
                 onChangeText={setPhone}

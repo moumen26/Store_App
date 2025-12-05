@@ -82,7 +82,7 @@ const ResetPassword = () => {
                 fontSize: isSmallScreen ? 11 : isLargeScreen ? 14 : 12,
               },
             ]}
-            placeholder="+213 000 000 000"
+            placeholder="0000 000 000"
             placeholderTextColor="#888888"
             // value={}
             // onChangeText={}
