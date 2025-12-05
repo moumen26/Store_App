@@ -120,12 +120,7 @@ const YourCartScreen = () => {
   });
 
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={dynamicStyles.ImageContainer}>
         <View style={dynamicStyles.Container}></View>
         <Image style={dynamicStyles.Image} source={Cart} />
@@ -156,10 +151,19 @@ const YourCartScreen = () => {
             alignItems: "center",
             justifyContent: "center",
             display: "flex",
+            paddingHorizontal: getResponsiveDimension(10),
           }}
         >
-          <Text style={styles.title}>Votre Panier</Text>
-          <Text style={[styles.title, { color: "#19213D" }]}>d'Achats</Text>
+          <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>
+            Votre Panier
+          </Text>
+          <Text
+            style={[styles.title, { color: "#19213D" }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
+            d'Achats
+          </Text>
         </View>
 
         <View

@@ -132,10 +132,17 @@ const StepIntoScreen = () => {
             alignItems: "center",
             justifyContent: "center",
             display: "flex",
+            paddingHorizontal: getResponsiveDimension(10),
           }}
         >
-          <Text style={styles.title}>Entrez dans notre</Text>
-          <Text style={styles.title} className="text-[#19213D]">
+          <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>
+            Entrez dans notre
+          </Text>
+          <Text
+            style={[styles.title, { color: "#19213D" }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             monde de magasins
           </Text>
         </View>

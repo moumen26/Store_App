@@ -120,12 +120,7 @@ const DiscoverScreen = () => {
   });
 
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <StatusBar style="dark" />
       <View style={dynamicStyles.imageContainer}>
         <View style={dynamicStyles.circleContainer}></View>
@@ -155,11 +150,20 @@ const DiscoverScreen = () => {
         <View
           style={[
             styles.titleContainer,
-            { height: getResponsiveDimension(90) },
+            {
+              height: getResponsiveDimension(90),
+              paddingHorizontal: getResponsiveDimension(10),
+            },
           ]}
         >
-          <Text style={styles.title}>Découvrez l’univers</Text>
-          <Text style={[styles.title, { color: "#19213D" }]}>
+          <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>
+            Découvrez l'univers
+          </Text>
+          <Text
+            style={[styles.title, { color: "#19213D" }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             de votre magasin
           </Text>
         </View>

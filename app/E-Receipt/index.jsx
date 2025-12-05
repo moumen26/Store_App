@@ -1104,7 +1104,7 @@ const generatePDF = async () => {
         />
       </View>
 
-      <View
+      {/* <View
         style={[
           styles.navigationClass,
           {
@@ -1134,7 +1134,7 @@ const generatePDF = async () => {
             Télécharger le reçu électronique
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

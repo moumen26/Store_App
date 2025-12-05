@@ -126,12 +126,7 @@ const YourOrdersScreen = () => {
   });
 
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={dynamicStyles.ImageContainer}>
         <View style={dynamicStyles.Container}></View>
         <Image style={dynamicStyles.Image} source={Track} />
@@ -162,10 +157,17 @@ const YourOrdersScreen = () => {
             alignItems: "center",
             justifyContent: "center",
             display: "flex",
+            paddingHorizontal: getResponsiveDimension(10),
           }}
         >
-          <Text style={styles.title}>Restez informé sur</Text>
-          <Text style={[styles.title, { color: "#19213D" }]}>
+          <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>
+            Restez informé sur
+          </Text>
+          <Text
+            style={[styles.title, { color: "#19213D" }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             vos commandes
           </Text>
         </View>
